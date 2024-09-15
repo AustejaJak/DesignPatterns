@@ -4,7 +4,7 @@ Project for university module **T120B516 Objektinis programų projektavimas.**
 
 ## installation
 1. Install **.NET 5.0.100 SDK** from https://dotnet.microsoft.com/en-us/download/dotnet/5.0
-2. Install **SplashKit** from https://splashkit.io/installation/
+2. Install **SplashKit** from https://splashkit.io/installation/    *(Recommendation to install the MSYS2 way)*
 3. Open the project with VS code and install plugins related to C#.
 4. Launch the project.
 
