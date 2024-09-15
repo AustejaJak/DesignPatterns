@@ -1,0 +1,53 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
+  &lt;Assembly Path="C:\Users\julia\OneDrive\Desktop\Coding\BloonsGame\BloonsLibrary\bin\Debug\net5.0\BloonLibrary.dll" /&gt;&#xD;
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=27aad622_002Db156_002D43e3_002Dad64_002D77ce1de5493f/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestTargetLast" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.Tests.TestTargetLast&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.Tests.TestTargetFirst&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.Tests.TestTargetStrong&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.Tests.TestTargetWeak&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.Tests.TestReturnBloonWhenBloonListIsOfSizeOne&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestBloonProperties.TestBloonCanBeAdded&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestBloonProperties.TestCountBloonsOnScreen&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=801db744_002D1a9d_002D4d98_002D828f_002D83ada9368dad/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestProjectileDamagesBloon" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestProjectileDamagesBloon&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=a155ba87_002Da3d7_002D486b_002Db752_002Dc04d66cc0012/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" Name="TestTargetLast #2" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::8B1CB4A4-17AC-4B19-9456-0623518D4753::net5.0::BloonsTests.Tests.TestTargetLast&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String>
+	<s:String x:Key="/Default/Environment/UnitTesting/UnitTestSessionStore/Sessions/=de3ba71c_002D5866_002D441d_002D8793_002Dedc4c61ea65a/@EntryIndexedValue">&lt;SessionState ContinuousTestingMode="0" IsActive="True" Name="TestCountBloonsOnScreen" xmlns="urn:schemas-jetbrains-com:jetbrains-ut-session"&gt;&#xD;
+  &lt;TestAncestor&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestBloonProperties.TestCountBloonsOnScreen&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestBloonProperties.TestBloonHealthCheck&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestAddTower&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestAddTowerUsesMoney&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestSetTowerTargeting&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.ShootBloons&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestHaveSufficientFundsToPlaceTower&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestShootBloonsAddsProjectile&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestUpgradeTowerRange&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestUpgradeFirerate&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestShooting.TestSellTower&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestMap.TestGetMapByName&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestMap.TestCanPlaceTowerOnMap&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestMap.TestCannotPlaceTowerOnMap&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestMap.TestCannotPlaceTowerOffMap&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestGame.TestBloonsGetRemovedAtFinalCheckpoint&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestGame.TestPlayerLosesLives&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestAddProjectile&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestIncrementProjectile&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestProjectileRemovalAtEndpoint&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestLingeringProjectileDoesntRemoveAtEndpoint&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestProjectileDamagesBloon&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestProjectiles.TestProjectileRemovesWhenInRangeOfBloon&lt;/TestId&gt;&#xD;
+    &lt;TestId&gt;NUnit3x::F11B4ABB-9AAA-4420-88E5-4E60C0ABC899::net5.0::BloonsTests.TestBloonProperties&lt;/TestId&gt;&#xD;
+  &lt;/TestAncestor&gt;&#xD;
+&lt;/SessionState&gt;</s:String></wpf:ResourceDictionary>

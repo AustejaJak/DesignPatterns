@@ -1,0 +1,20 @@
+﻿<Window x:Class="BloonsGame.LoseWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d"
+        Title="PauseWindow" Height="233" Width="400">
+    <Grid Margin="0,0,0,-16">
+        <Grid.Background>
+            <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+                <GradientStop Color="#FFF30B0B" Offset="0" />
+                <GradientStop Color="#FF1D0808" Offset="0.79" />
+            </LinearGradientBrush>
+        </Grid.Background>
+        <Label x:Name="label" Content="GAME OVER" HorizontalAlignment="Center" Height="56" VerticalAlignment="Top" Width="192" FontSize="30" FontStretch="Expanded" FontStyle="Normal" FontWeight="ExtraBold" Foreground="Black" />
+        <Button x:Name="ExitButton" Content="Exit" HorizontalAlignment="Left" Height="50" Margin="31,146,0,0" VerticalAlignment="Top" Width="141" FontSize="20" FontWeight="Bold" Click="OnExitButtonClick" />
+        <Button x:Name="PlayAgainButton" Content="Play again" HorizontalAlignment="Left" Height="50" Margin="225,146,0,0" VerticalAlignment="Top" Width="140" FontSize="20" FontWeight="Bold" Click="PlayAgainButton_OnClickButtonClick" />
+        <Label x:Name="RoundSurvivedLabel" Content="You have survived " HorizontalAlignment="Center" Height="56" VerticalAlignment="Top" Width="330" FontSize="23" FontStretch="Expanded" FontStyle="Normal" FontWeight="UltraLight" Foreground="Black" Margin="0,53,0,0" HorizontalContentAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Hidden" />
+    </Grid>
+</Window>

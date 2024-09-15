@@ -1,0 +1,208 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1" MembersFormat="NameAndType">
+  <Comment CommentText="The TileButtonFactory is used to make different types of TileButtons, such as Checkpoint and Regular tiles">
+    <Position X="29.158" Y="4.704" Height="0.93" Width="1.844" />
+  </Comment>
+  <Comment CommentText="The TileFactory is used to make different types of Tile, such as Checkpoint and Regular tiles.">
+    <Position X="36.481" Y="15.559" Height="0.93" Width="1.844" />
+  </Comment>
+  <Comment CommentText="The GridCalculations class is used in the  TileEditorTool, and contains static functions that determine the grid points and lines of a specified window, alongside a specified grid size.">
+    <Position X="28.55" Y="13.857" Height="0.93" Width="2.733" />
+  </Comment>
+  <Class Name="BloonsCreator.CheckpointTile">
+    <Position X="32.5" Y="17" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\CheckpointTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.GrassTile">
+    <Position X="34.75" Y="17" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\GrassTile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.Tile">
+    <Position X="33.75" Y="14.25" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIBAAAAAAgAAgAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\Tile.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.TileButton">
+    <Position X="31.5" Y="5.75" Width="1.5" />
+    <AssociationLine Name="TileType" Type="BloonsCreator.TileType" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="33" Y="6.366" />
+        <Point X="34.5" Y="6.366" />
+        <Point X="34.5" Y="8.25" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\TileButton.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="TileType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="BloonsCreator.TileButtonFactory">
+    <Position X="29" Y="5.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\TileButtonFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.TileFactory">
+    <Position X="36.5" Y="14.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\TileFactory.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.Button">
+    <Position X="33.5" Y="2.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQAAAAAABAAAABAgAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Buttons\Button.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ButtonType" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="BloonsCreator.SaveButton">
+    <Position X="35.75" Y="5.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAA=</HashCode>
+      <FileName>Buttons\SaveButton.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.SaveManager">
+    <Position X="46.25" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAgAAAAAAAAAAAAAAAABEAAAAAAAAAgAAA=</HashCode>
+      <FileName>Managers\SaveManager.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_creatorState" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="BloonsCreator.TileEditorTool">
+    <Position X="33" Y="11" Width="3" />
+    <AssociationLine Name="_creatorState" Type="BloonsCreator.CreatorState" FixedFromPoint="true">
+      <Path>
+        <Point X="36" Y="12.875" />
+        <Point X="46.25" Y="12.875" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="SelectedTileType" Type="BloonsCreator.TileType" FixedToPoint="true">
+      <Path>
+        <Point X="34.5" Y="11" />
+        <Point X="34.5" Y="9.296" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="TemplateTiles" Type="BloonsCreator.TileButton" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="33" Y="11.625" />
+        <Point X="31.812" Y="11.625" />
+        <Point X="31.812" Y="6.983" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAECAAABAAAwIAFBABAAAQAAgAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Managers\TileEditorTool.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_creatorState" />
+      <Property Name="SelectedTileType" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="TemplateTiles" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="BloonsCreator.CreatorState">
+    <Position X="46.25" Y="11.75" Width="2.75" />
+    <NestedTypes>
+      <Delegate Name="BloonsCreator.CreatorState.ButtonClickHandler" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>CreatorState.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Delegate>
+    </NestedTypes>
+    <TypeIdentifier>
+      <HashCode>AAQAAAAgAAAgAEAAAAAASAAAAAAACAIAAAAACAAAAAA=</HashCode>
+      <FileName>CreatorState.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.GridCalculations">
+    <Position X="28.5" Y="11.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQCAAAAAAAAAAAAAAAAQAAAAAAAAAABAABAAAA=</HashCode>
+      <FileName>GridCalculations.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="BloonsCreator.ProgramLoop">
+    <Position X="39.5" Y="8.25" Width="1.75" />
+    <AssociationLine Name="_creatorState" Type="BloonsCreator.CreatorState" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="40.667" Y="9.997" />
+        <Point X="40.667" Y="12.25" />
+        <Point X="46.25" Y="12.25" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_renderer" Type="BloonsCreator.Renderer" FixedFromPoint="true">
+      <Path>
+        <Point X="40.74" Y="8.25" />
+        <Point X="40.74" Y="5.459" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="_saveButton" Type="BloonsCreator.SaveButton" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="39.865" Y="8.25" />
+        <Point X="39.865" Y="6.342" />
+        <Point X="38.25" Y="6.342" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="TileEditorTool" Type="BloonsCreator.TileEditorTool" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="39.865" Y="9.997" />
+        <Point X="39.865" Y="12.187" />
+        <Point X="36" Y="12.187" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAiAgAAACAAAAAAAAEAAAAAAABAAAIAAAAAA=</HashCode>
+      <FileName>ProgramLoop.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_creatorState" />
+      <Field Name="_renderer" />
+      <Field Name="_saveButton" />
+      <Field Name="_saveManager" />
+      <Field Name="TileEditorTool" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="BloonsCreator.Renderer">
+    <Position X="39.75" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAACEAAACEAAAAAAAAADAAAAQAAAAA=</HashCode>
+      <FileName>Renderer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Enum Name="BloonsCreator.TileType">
+    <Position X="33.5" Y="8.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAgAAAAAAAAAAAAAIAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Tiles\TileType.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="BloonsCreator.ButtonTypes">
+    <Position X="33.5" Y="0.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAIAAAAAAACAAAAAAAEAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Buttons\ButtonTypes.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

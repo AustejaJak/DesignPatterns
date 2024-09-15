@@ -1,0 +1,5 @@
+﻿<wpf:ResourceDictionary xml:space="preserve" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:s="clr-namespace:System;assembly=mscorlib" xmlns:ss="urn:shemas-jetbrains-com:settings-storage-xaml" xmlns:wpf="http://schemas.microsoft.com/winfx/2006/xaml/presentation">
+	<s:String x:Key="/Default/CodeInspection/WebPathMapping/IgnoredPaths/=BLOONSHOMESCREEN_002EJPG/@EntryIndexedValue">BloonsHomeScreen.jpg</s:String>
+	<s:String x:Key="/Default/CodeInspection/WebPathMapping/MappedPaths/=FORMS_005CRESOURCES/@EntryIndexedValue"></s:String>
+	<s:String x:Key="/Default/CodeInspection/WebPathMapping/PathsInCorrectCasing/=BLOONSHOMESCREEN_002EJPG/@EntryIndexedValue">BloonsHomeScreen.jpg</s:String>
+	<s:String x:Key="/Default/CodeInspection/WebPathMapping/PathsInCorrectCasing/=FORMS_005CRESOURCES/@EntryIndexedValue">Forms\Resources</s:String></wpf:ResourceDictionary>

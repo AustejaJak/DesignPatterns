@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "BloonsGame": {
+      "commandName": "Project",
+      "workingDirectory": "C:\\BloonsTD\\BloonsLibrary"
+    }
+  }
+}
