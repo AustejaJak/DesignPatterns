@@ -46,4 +46,5 @@ Project for university module **T120B516 Objektinis programų projektavimas.**
 ## MySQL
 - Entity framework is used, to install paste into terminal `dotnet add package Pomelo.EntityFrameworkCore.MySql -v 5.0`.
 - To access local database change the connection string which is in `DbContext.cs`.
+- Might need to change the MySQL version, can check it with query `SELECT VERSION();`.
 - Update the database migrations with `dotnet ef database update`.
