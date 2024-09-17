@@ -1,4 +1,5 @@
-﻿using SplashKitSDK;
+﻿using Microsoft.VisualBasic;
+using SplashKitSDK;
 using Color = SplashKitSDK.Color;
 
 namespace BloonsProject
@@ -11,6 +12,8 @@ namespace BloonsProject
         private readonly Map _map;
         private readonly TowerOptionsRenderer _towerOptionsRenderer = new TowerOptionsRenderer();
         private readonly Window _window;
+
+        private Cursor cursor;
 
         public Renderer(Window window, Map map)
         {
@@ -63,6 +66,12 @@ namespace BloonsProject
         public void RenderSelectedTowerOptions(TowerGuiOptions towerOptions, TowerTargetingGuiOptions targetOptions)
         {
             _towerOptionsRenderer.RenderSelectedTowerOptions(towerOptions, targetOptions); // If tower is selected, render it's options (buy, sell, targeting).
+        }
+
+
+        public void RenderCursor(){
+            Cursor cursor = new Cursor(Color.Black);
+            _guiRenderer.DrawCursor(cursor);
         }
     }
 }

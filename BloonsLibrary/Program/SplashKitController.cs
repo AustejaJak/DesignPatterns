@@ -73,6 +73,7 @@ namespace BloonsProject
             _renderer.RenderGuiTowerOptions(_towerPlacer, _towerController, _mapController);
             _renderer.RenderEntities(_bloonController, _towerController, _towerOptions, _targetOptions);
             _renderer.RenderSelectedTowerOptions(_towerOptions, _targetOptions);
+            _renderer.RenderCursor();
         }
 
         private void GameEvents() // Checks game events

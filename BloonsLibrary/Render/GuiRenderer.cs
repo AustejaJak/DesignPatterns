@@ -33,5 +33,11 @@ namespace BloonsProject
                 textPositionY += 30;
             }
         }
+
+        public void DrawCursor(Cursor cursor){
+            cursor.UpdatePosition();
+            cursor.Draw();
+            SplashKit.HideMouse();
+        }
     }
 }
