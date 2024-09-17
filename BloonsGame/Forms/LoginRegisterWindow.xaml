@@ -56,6 +56,6 @@
                          Width="250"
                          Margin="0,0,0,0"/>
         </StackPanel>
-        <Button Content="Login / Register" HorizontalAlignment="Center" Height="30" Margin="0,326,0,0" VerticalAlignment="Top" Width="250" AutomationProperties.Name="LoginRegisterButton" FontSize="15" FontWeight="UltraLight" />
+        <Button Content="Login / Register" HorizontalAlignment="Center" Height="30" Margin="0,326,0,0" VerticalAlignment="Top" Width="250" AutomationProperties.Name="LoginRegisterButton" FontSize="15" FontWeight="UltraLight" Click="Button_Click" />
     </Grid>
 </Window>
