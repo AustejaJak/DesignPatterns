@@ -42,3 +42,9 @@ Project for university module **T120B516 Objektinis programų projektavimas.**
 > eg, if the folder name is MyProject, and you are using .NET 7.0, it would be:
 
 > MyProject\bin\Debug\net7.0
+
+## MySQL
+- Entity framework is used, to install paste into terminal `dotnet add package Pomelo.EntityFrameworkCore.MySql -v 5.0`.
+- To access local database change the connection string which is in `DbContext.cs`.
+- Might need to change the MySQL version, can check it with query `SELECT VERSION();`.
+- Update the database migrations with `dotnet ef database update`.
