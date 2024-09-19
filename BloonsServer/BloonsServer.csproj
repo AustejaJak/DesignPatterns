@@ -6,7 +6,7 @@
     <OutputType>Exe</OutputType>
   </PropertyGroup>
 
-  <ItemGroup>
+  <!-- <ItemGroup>
     <ProjectReference Include="..\BloonsCreator\BloonsCreator.csproj" />
     <ProjectReference Include="..\BloonsLibrary\BloonLibrary.csproj" />
   </ItemGroup>
@@ -15,6 +15,6 @@
     <Reference Include="BloonLibrary">
       <HintPath>..\BloonsLibrary\bin\Debug\net5.0\BloonLibrary.dll</HintPath>
     </Reference>
-  </ItemGroup>
+  </ItemGroup> -->
 
 </Project>
