@@ -5,8 +5,6 @@
 
 connection.start().then(() => {
     console.log("Connected to the server.");
-    connection.invoke("SendUsername", "Player1");
-    connection.invoke("SendUsername", "Player2");
 }).catch(err => console.error(err.toString()));
 
 connection.on("SendUsername", (message) => {

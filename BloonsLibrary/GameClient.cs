@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BloonLibrary
 {
-    internal class GameClient
+    public class GameClient
     {
         private HubConnection _connection;
 
@@ -17,14 +17,9 @@ namespace BloonLibrary
                             .WithUrl(url)
                             .Build();
 
-            _connection.On<string>("ReceiveMessage", (message) =>
+            _connection.On<string>("SendUsername", (message) =>
             {
-                Console.WriteLine($"Message from server: {message}");
-            });
-
-            _connection.On<string>("TowerPlaced", (towerInfo) =>
-            {
-                Console.WriteLine($"Tower placed: {towerInfo}");
+                Console.WriteLine($"Received username from the server: {message}");
             });
 
             try
@@ -38,19 +33,11 @@ namespace BloonLibrary
             }
         }
 
-        public async Task SendMessageToServer(string message)
+        public async Task SendUsernameToServer(string username)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
-                await _connection.InvokeAsync("SendMessage", message);
-            }
-        }
-
-        public async Task PlaceTower(string towerInfo)
-        {
-            if (_connection != null && _connection.State == HubConnectionState.Connected)
-            {
-                await _connection.InvokeAsync("PlaceTower", towerInfo);
+                await _connection.InvokeAsync("SendUsername", username);
             }
         }
 

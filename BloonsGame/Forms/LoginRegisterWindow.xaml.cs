@@ -1,4 +1,5 @@
 using BloonLibrary;
+using System;
 using System.Windows;
 
 namespace BloonsGame
@@ -6,13 +7,31 @@ namespace BloonsGame
     public partial class LoginRegisterWindow : Window
     {
         private UserController _userController;
+        private GameClient _gameclient;
 
         public LoginRegisterWindow()
         {
             InitializeComponent();
+            _gameclient = new GameClient();
+
+            this.Loaded += LoginRegisterWindow_Loaded;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+         private async void LoginRegisterWindow_Loaded(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                await _gameclient.ConnectToServer("http://localhost:5000/gamehub");
+
+                MessageBox.Show("Connected to the server!", "Connection Successful", MessageBoxButton.OK, MessageBoxImage.Information);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Failed to connect to the server: {ex.Message}", "Connection Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             string username = usernameInput.Text;
             string password = passwordInput.Password;
@@ -37,6 +56,7 @@ namespace BloonsGame
                     if (existingUser.Password == password)
                     {
                         MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        await _gameclient.SendUsernameToServer(existingUser.Username);
                         OpenMainWindow();
                     }
                     else
@@ -54,6 +74,7 @@ namespace BloonsGame
 
                     _userController.CreateUser(newUser);
                     MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                    await _gameclient.SendUsernameToServer(newUser.Username);
                     OpenMainWindow();
                 }
             }
