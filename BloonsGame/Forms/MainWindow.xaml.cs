@@ -1,5 +1,6 @@
 ﻿using BloonsProject;
 using System.Windows;
+using BloonLibrary;
 
 namespace BloonsGame
 {
@@ -7,10 +8,14 @@ namespace BloonsGame
     {
         private PauseWindow _pauseWindow;
         private IProgramController _programController;
+        private GameClient _gameclient;
 
-        public MainWindow()
+        public MainWindow(GameClient gameClient)
         {
             InitializeComponent();
+
+            _gameclient = gameClient;
+
             foreach (var map in MapManager.GetAllMaps())
                 MapComboBox.Items.Add(map.Name); // Adds the maps to the combobox on the WPF display from the map manager.
         }
@@ -43,6 +48,14 @@ namespace BloonsGame
             _programController.PauseEventHandler += OpenPauseScreen; // Event handlers for when the game is paused or the user loses.
             _programController.LoseEventHandler += OpenLossScreen;
             _programController.Start();
+        }
+
+        private async void Window_closing(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            if (_gameclient != null)
+            {
+                await _gameclient.Disconnect(); // Disconnect GameClient
+            }
         }
     }
 }

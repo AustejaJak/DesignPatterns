@@ -57,7 +57,7 @@ namespace BloonsGame
                     {
                         MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                         await _gameclient.SendUsernameToServer(existingUser.Username);
-                        OpenMainWindow();
+                        OpenMainWindow(_gameclient);
                     }
                     else
                     {
@@ -75,13 +75,13 @@ namespace BloonsGame
                     _userController.CreateUser(newUser);
                     MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     await _gameclient.SendUsernameToServer(newUser.Username);
-                    OpenMainWindow();
+                    OpenMainWindow(_gameclient);
                 }
             }
         }
-        private void OpenMainWindow()
+        private void OpenMainWindow(GameClient gameclient)
         {
-            var mainWindow = new MainWindow();
+            var mainWindow = new MainWindow(gameclient);
             mainWindow.Show();
 
             this.Close();
