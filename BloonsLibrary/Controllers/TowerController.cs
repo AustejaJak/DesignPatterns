@@ -1,16 +1,23 @@
-﻿using SplashKitSDK;
+﻿using BloonLibrary;
+using SplashKitSDK;
 using System.Linq;
 
 namespace BloonsProject
 {
     public class TowerController
     {
+        public GameClient GameClient;
+        public TowerController(GameClient gameClient)
+        {
+            GameClient = gameClient;
+        }
         private readonly GameState _gameState = GameState.GetGameStateInstance(); // Game state singleton.
 
         public void AddTower(Tower tower) // Adds a tower
         {
             if (_gameState.Player.Money < tower.Cost) return; // If the player doesn't have the sufficient funds, return
-            _gameState.Towers.Add(tower); // Otherwise add the tower
+            tower.Username = GameClient.Username; 
+            _gameState.Towers.Add(tower);// Otherwise add the tower
             _gameState.Player.Money -= tower.Cost; // Then remove cost of the tower from the player's money.
         }
 

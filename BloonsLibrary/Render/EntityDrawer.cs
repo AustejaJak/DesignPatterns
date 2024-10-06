@@ -14,8 +14,13 @@ namespace BloonsProject
 
         public void DrawTower(Tower tower) // Draws a tower when the tower position is.
         {
+            // Draw the tower bitmap at its position
             SplashKit.DrawBitmap(tower.TowerBitmap, tower.Position.X - 13, tower.Position.Y - 13);
+
+            // Draw the username on the tower
+            SplashKit.DrawText(tower.Username, Color.Black, tower.Position.X - 10, tower.Position.Y - 10);
         }
+
 
         public void DrawTowerRange(Tower tower) // Draws the towers range
         {

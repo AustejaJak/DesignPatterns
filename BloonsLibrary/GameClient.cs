@@ -11,6 +11,8 @@ namespace BloonLibrary
     {
         private HubConnection _connection;
 
+        public string Username{get; set;}
+
         public async Task ConnectToServer(string url)
         {
             _connection = new HubConnectionBuilder()
@@ -20,6 +22,11 @@ namespace BloonLibrary
             _connection.On<string>("SendUsername", (message) =>
             {
                 Console.WriteLine($"Received username from the server: {message}");
+            });
+
+            _connection.On<string>("SendTowerLocation", (message) =>
+            {
+                Console.WriteLine($"Received tower location from the server: {message}");
             });
 
             try
@@ -37,7 +44,16 @@ namespace BloonLibrary
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
+                Username = username;
                 await _connection.InvokeAsync("SendUsername", username);
+            }
+        }
+
+        public async Task SendTowerLocationToServer(string location)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendTowerLocation", location);
             }
         }
 

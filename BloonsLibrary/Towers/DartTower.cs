@@ -6,7 +6,7 @@ namespace BloonsProject
 {
     public class DartTower : Tower
     {
-        public DartTower() : base("Dart Monkey", 120, "The Regular Tower", new Bitmap("DartTower",
+        public DartTower(string username) : base("Dart Monkey", username, 120, "The Regular Tower", new Bitmap("DartTower",
             "../BloonsLibrary/Resources/Dart.png"), new DartShot(), 100)
         {
         }

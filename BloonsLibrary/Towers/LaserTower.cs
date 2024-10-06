@@ -4,7 +4,7 @@ namespace BloonsProject
 {
     public class LaserTower : Tower
     {
-        public LaserTower() : base("Laser Monkey", 400, "Did someone say rapidfire?", new Bitmap("LaserTower", "../BloonsLibrary/Resources/Laser.png"), new LaserShot(), 300)
+        public LaserTower(string username) : base("Laser Monkey", username, 400, "Did someone say rapidfire?", new Bitmap("LaserTower", "../BloonsLibrary/Resources/Laser.png"), new LaserShot(), 300)
         {
         }
 

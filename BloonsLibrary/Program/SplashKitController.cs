@@ -1,4 +1,5 @@
-﻿using SplashKitSDK;
+﻿using BloonLibrary;
+using SplashKitSDK;
 using System;
 using System.Diagnostics;
 
@@ -14,17 +15,21 @@ namespace BloonsProject
         private readonly MapController _mapController = new MapController();
         private readonly Renderer _renderer;
         private readonly TowerTargetingGuiOptions _targetOptions = new TowerTargetingGuiOptions();
-        private readonly TowerController _towerController = new TowerController();
         private readonly TowerGuiOptions _towerOptions = new TowerGuiOptions();
         private readonly TowerPlacerGuiOptions _towerPlacer = new TowerPlacerGuiOptions();
         private readonly Window _window;
         private bool _isPaused;
 
-        public SplashKitController(Map map)
+        private GameClient _gameClient;
+        private readonly TowerController _towerController;
+
+        public SplashKitController(Map map, GameClient gameClient)
         {
             _map = map;
+            _gameClient = gameClient;
+            _towerController = new TowerController(_gameClient);
             _window = new Window("Bloons", 1135, 550);
-            _renderer = new Renderer(_window, _map);
+            _renderer = new Renderer(_window, _map, _gameClient);
         }
 
         public event Action LoseEventHandler;
@@ -112,7 +117,7 @@ namespace BloonsProject
             if (_mapController.CanPlaceTowerOnMap(SplashKit.MousePosition(), _map))
             {
                 if (_towerPlacer.SelectedInGui == "none") return;
-                var tower = TowerFactory.CreateTowerOfType(_towerPlacer.SelectedInGui);
+                var tower = TowerFactory.CreateTowerOfType(_towerPlacer.SelectedInGui, _gameClient.Username);
                 _towerController.AddTower(tower);
                 _towerPlacer.SelectedInGui = "none";
             }

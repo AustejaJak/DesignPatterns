@@ -4,7 +4,7 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
-        Title="MainWindow" Height="650" Width="1200" Closing="Window_closing">
+        Title="MainWindow" Height="650" Width="1200">
     <Grid x:Name="MainMenu">
         <Grid.Background>
             <ImageBrush ImageSource = "/Forms/Resources/BloonsHomeScreen.jpg" />

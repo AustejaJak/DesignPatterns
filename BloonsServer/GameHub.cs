@@ -14,6 +14,11 @@ public class GameHub : Hub
         await Clients.All.SendAsync("SendUsername", username);
     }
 
+    public async Task SendTowerLocation(string location)
+    {
+        await Clients.All.SendAsync("SendTowerLocation", location);
+    }
+
     public override Task OnConnectedAsync()
     {
         return base.OnConnectedAsync();

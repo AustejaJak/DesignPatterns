@@ -1,4 +1,5 @@
-﻿using Microsoft.VisualBasic;
+﻿using BloonLibrary;
+using Microsoft.VisualBasic;
 using SplashKitSDK;
 using Color = SplashKitSDK.Color;
 
@@ -14,11 +15,13 @@ namespace BloonsProject
         private readonly Window _window;
 
         private Cursor cursor;
+        private GameClient _gameClient;
 
-        public Renderer(Window window, Map map)
+        public Renderer(Window window, Map map, GameClient gameClient)
         {
             _window = window;
             _map = map;
+            _gameClient = gameClient;
             SplashKit.LoadFont("BloonFont", "../BloonsLibrary/Resources/BloonFont.ttf"); // Load custom font.
         }
 
@@ -43,7 +46,7 @@ namespace BloonsProject
                 _guiRenderer.HighlightTowerInGui(towerPlacer, towerPositionInGui);
 
                 // Create a new tower depending on the selected tower and write tower description in GUI
-                var selectedTower = TowerFactory.CreateTowerOfType(towerPlacer.SelectedInGui);
+                var selectedTower = TowerFactory.CreateTowerOfType(towerPlacer.SelectedInGui, _gameClient.Username);
                 _guiRenderer.WriteTowerDescription(towerPlacer, selectedTower);
 
                 // If you have enough money, selecting tower will draw the tower at your mouses location to place.

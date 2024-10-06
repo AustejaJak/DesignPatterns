@@ -10,9 +10,12 @@ namespace BloonsProject
         private readonly string _description; // Each tower has a description and name that is never changed.
         private readonly string _name;
 
-        public Tower(string name, int cost, string description, Bitmap towerBitmap, IShotType shotType, int range)
+        public string Username {get;  set;}
+
+        public Tower(string name, string username, int cost, string description, Bitmap towerBitmap, IShotType shotType, int range)
         {
             TowerBitmap = towerBitmap;
+            Username = username;
             Selected = false;
             Cost = cost;
             Position = SplashKit.MousePosition();
