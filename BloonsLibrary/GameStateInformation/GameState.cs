@@ -3,21 +3,20 @@ using Color = SplashKitSDK.Color;
 
 namespace BloonsProject
 {
-    public class GameState // Singleton containing information about the gamestate.
+    public class GameState
     {
         private static GameState _state;
         public readonly List<Bloon> Bloons = new List<Bloon>();
         public readonly List<Tower> Towers = new List<Tower>();
-        public Dictionary<Color, int> BloonsSpawned = new Dictionary<Color, int>();
-        public Dictionary<Color, int> BloonsToBeSpawned = new Dictionary<Color, int>();
-        public readonly Player Player = new Player();
+
+        // Now we're using User instead of Player
+        public readonly Dictionary<string, User> Users = new Dictionary<string, User>();
+
         public readonly ProjectileManager ProjectileManager = new ProjectileManager();
 
         private static readonly object Locker = new object();
 
-        protected GameState()
-        {
-        }
+        protected GameState() { }
 
         public static GameState GetGameStateInstance()
         {
@@ -31,8 +30,19 @@ namespace BloonsProject
                     }
                 }
             }
-
             return _state;
+        }
+
+        // Get a User object by username
+        public User GetUser(string username)
+        {
+            return Users.ContainsKey(username) ? Users[username] : null;
+        }
+
+        // Add a new User to the game
+        public void AddUser(string username, User user)
+        {
+            Users[username] = user;
         }
     }
 }

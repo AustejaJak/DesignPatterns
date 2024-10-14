@@ -6,10 +6,28 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <PackageReference Include="MySql.Data" Version="9.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- Reference SplashKit SDK DLL -->
+    <Reference Include="SplashKitSDK">
+      <HintPath>bin\Debug\net5.0\SplashKitSDK.dll</HintPath>  <!-- Adjust this path according to where you placed the DLL -->
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BloonLibrary">
+      <HintPath>..\BloonsLibrary\bin\Debug\net5.0\BloonLibrary.dll</HintPath>
+    </Reference>
   </ItemGroup>
 
   <ItemGroup>
     <None Include="wwwroot\index.html" />
+    <Compile Include="..\BloonsLibrary\Entities\User.cs" />
+    <Compile Include="..\BloonsLibrary\Bloons\Bloon.cs" />
+    <Compile Include="..\BloonsLibrary\Towers\Tower.cs" />
+    <Compile Include="..\BloonsLibrary\GameStateInformation\GameState.cs" />
+    <Compile Include="..\BloonsLibrary\GameStateInformation\Player.cs" />
   </ItemGroup>
-
 </Project>
