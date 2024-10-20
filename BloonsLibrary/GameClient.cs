@@ -39,7 +39,6 @@ namespace BloonLibrary
                 };
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.AddTower(tower);
-
             });
             
             try

@@ -18,8 +18,7 @@ namespace BloonsProject
         {
             if (_gameState.Player.Money < tower.Cost) return; // If the player doesn't have the sufficient funds, return
             tower.Username = GameClient.Username; 
-            _gameState.Towers.Add(tower);// Otherwise add the tower
-            GameClient.PlaceTowerAsync(new PlaceTowerRequest(tower._name, NetworkPoint2D.Serialize(tower.Position)));
+            _ = GameClient.PlaceTowerAsync(new PlaceTowerRequest(tower._name, NetworkPoint2D.Serialize(tower.Position)));
             _gameState.Player.Money -= tower.Cost; // Then remove cost of the tower from the player's money.
         }
 
