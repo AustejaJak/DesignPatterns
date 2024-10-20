@@ -2,7 +2,7 @@
 
 namespace BloonLibrary
 {
-    public record PlaceTowerRequest(string TowerType, NetworkPoint2D Position);
+    public record PlaceTowerRequest(string TowerType, NetworkPoint2D Position, string Username);
 
     public record SynchronizeTower(string TowerType, NetworkPoint2D Position, string PlayerName);
 

@@ -18,12 +18,12 @@ public class GameHub : Hub
         _connectedUsernames.Add(username);
         _username = username;
 
-        await Clients.All.SendAsync("SendUsername", username);
+        await Clients.Group("inGame").SendAsync("SendUsername", username);
     }
 
     public async Task PlaceTower(PlaceTowerRequest request)
     {
-        var towerInstance = TowerFactory.CreateTowerOfType(request.TowerType, _username);
+        var towerInstance = TowerFactory.CreateTowerOfType(request.TowerType, request.Username);
         towerInstance.Position = new Point2D()
         {
             X = request.Position.X,
@@ -32,17 +32,17 @@ public class GameHub : Hub
         var gameSession = GameSession.GetInstance();
         gameSession.GameState.AddTower(towerInstance);
 
-        var response = new SynchronizeTower(request.TowerType, NetworkPoint2D.Serialize(towerInstance.Position), _username);
+        var response = new SynchronizeTower(request.TowerType, NetworkPoint2D.Serialize(towerInstance.Position), request.Username);
         await Clients.Group("inGame").SendAsync("AddTower", response);
     }
-
-    public async Task JoinGame()
+    
+    public async Task JoinGame(string username)
     {
         var gameSession = GameSession.GetInstance();
-        gameSession.AddPlayer(_username);
+        gameSession.AddPlayer(username);
 
         await Groups.AddToGroupAsync(Context.ConnectionId, "inGame");
-        await Clients.Group("inGame").SendAsync("UserJoined", _username);
+        await Clients.Group("inGame").SendAsync("UserJoined", username);
     }
 
     public override Task OnConnectedAsync()

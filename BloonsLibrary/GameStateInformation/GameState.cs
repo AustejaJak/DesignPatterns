@@ -35,21 +35,11 @@ namespace BloonsProject
 
             return _state;
         }
-
-        public List<Tower> GetTowers()
-        {
-            return new List<Tower>(Towers);
-        }
-
+        
         public void AddTower(Tower tower)
         {
             Towers.Add(tower);
         }
-
-        // Retrieve the list of bloons
-        public List<Bloon> GetBloons()
-        {
-            return new List<Bloon>(Bloons);
-        }
+        
     }
 }

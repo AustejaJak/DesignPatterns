@@ -24,7 +24,7 @@ namespace BloonsProject
         {
             // Draw the tower bitmap at its position
             SplashKit.DrawBitmap(tower.TowerBitmap, tower.Position.X - 13, tower.Position.Y - 13);
-
+            
             // Draw the username on the tower
             SplashKit.DrawText(tower.Username, Color.Black, tower.Position.X - 10, tower.Position.Y - 10);
         }

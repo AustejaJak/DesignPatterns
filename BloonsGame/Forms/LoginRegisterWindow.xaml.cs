@@ -56,7 +56,8 @@ namespace BloonsGame
                     if (existingUser.Password == password)
                     {
                         MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                        await _gameclient.SendUsernameToServer(existingUser.Username);
+                        await _gameclient.SendUsernameAsync(existingUser.Username);
+                        _gameclient.JoinGameAsync(existingUser.Username);
                         OpenMainWindow(_gameclient);
                     }
                     else
@@ -74,7 +75,8 @@ namespace BloonsGame
 
                     _userController.CreateUser(newUser);
                     MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
-                    await _gameclient.SendUsernameToServer(newUser.Username);
+                    await _gameclient.SendUsernameAsync(newUser.Username);
+                    _gameclient.JoinGameAsync(newUser.Username);
                     OpenMainWindow(_gameclient);
                 }
             }
