@@ -1,11 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
 
   <PropertyGroup>
-    <TargetFramework>net5.0</TargetFramework>
+    <TargetFramework>net5.0-windows</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
+    <ProjectReference Include="..\BloonsLibrary\BloonLibrary.csproj" />
+    <ProjectReference Include="..\BloonsGame\BloonsGame.csproj" />
   </ItemGroup>
 
   <ItemGroup>

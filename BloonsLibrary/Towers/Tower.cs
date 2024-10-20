@@ -8,7 +8,7 @@ namespace BloonsProject
     {
         public static int Length = 35; // Each tower has an identical length of 35
         private readonly string _description; // Each tower has a description and name that is never changed.
-        private readonly string _name;
+        public readonly string _name;
 
         public string Username {get;  set;}
 

@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Text.Json;
 using Color = SplashKitSDK.Color;
 
 namespace BloonsProject
@@ -6,12 +7,12 @@ namespace BloonsProject
     public class GameState // Singleton containing information about the gamestate.
     {
         private static GameState _state;
-        public readonly List<Bloon> Bloons = new List<Bloon>();
-        public readonly List<Tower> Towers = new List<Tower>();
+        public List<Bloon> Bloons = new List<Bloon>();
+        public  List<Tower> Towers = new List<Tower>();
         public Dictionary<Color, int> BloonsSpawned = new Dictionary<Color, int>();
         public Dictionary<Color, int> BloonsToBeSpawned = new Dictionary<Color, int>();
-        public readonly Player Player = new Player();
-        public readonly ProjectileManager ProjectileManager = new ProjectileManager();
+        public  Player Player = new Player();
+        public  ProjectileManager ProjectileManager = new ProjectileManager();
 
         private static readonly object Locker = new object();
 
@@ -33,6 +34,22 @@ namespace BloonsProject
             }
 
             return _state;
+        }
+
+        public List<Tower> GetTowers()
+        {
+            return new List<Tower>(Towers);
+        }
+
+        public void AddTower(Tower tower)
+        {
+            Towers.Add(tower);
+        }
+
+        // Retrieve the list of bloons
+        public List<Bloon> GetBloons()
+        {
+            return new List<Bloon>(Bloons);
         }
     }
 }

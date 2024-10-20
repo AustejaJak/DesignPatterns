@@ -8,7 +8,7 @@ namespace BloonsProject
     public class Renderer
     {
         private readonly GameState _bloonSingleton = GameState.GetGameStateInstance();
-        private readonly EntityRenderer _entityRenderer = new EntityRenderer();
+        private readonly EntityRenderer _entityRenderer;
         private readonly GuiRenderer _guiRenderer = new GuiRenderer();
         private readonly Map _map;
         private readonly TowerOptionsRenderer _towerOptionsRenderer = new TowerOptionsRenderer();
@@ -22,6 +22,7 @@ namespace BloonsProject
             _window = window;
             _map = map;
             _gameClient = gameClient;
+            _entityRenderer = new EntityRenderer(_gameClient);
             SplashKit.LoadFont("BloonFont", "../BloonsLibrary/Resources/BloonFont.ttf"); // Load custom font.
         }
 

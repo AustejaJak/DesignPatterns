@@ -12,12 +12,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="BloonLibrary">
-      <HintPath>..\BloonsLibrary\bin\Debug\net5.0\BloonLibrary.dll</HintPath>
-    </Reference>
-  </ItemGroup>
-
-  <ItemGroup>
     <Resource Include="Forms\Resources\BloonsHomeScreen.jpg" />
   </ItemGroup>
 

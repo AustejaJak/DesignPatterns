@@ -1,4 +1,6 @@
 ﻿using System.Reflection;
+using System.Threading.Tasks;
+using BloonLibrary;
 using SplashKitSDK;
 
 namespace BloonsProject
@@ -6,6 +8,12 @@ namespace BloonsProject
     internal class EntityDrawer
     {
         private readonly GameState _gameState = GameState.GetGameStateInstance(); // Game state singleton
+        private readonly GameClient _gameClient;
+
+        public EntityDrawer(GameClient gameClient)
+        {
+            _gameClient = gameClient; // Store the GameClient instance
+        }
 
         public void DrawBloon(Bloon bloon) // Draws a circle when the bloons position is.
         {
