@@ -4,8 +4,11 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
+<<<<<<< Updated upstream
 using BloonsProject;
 
+=======
+>>>>>>> Stashed changes
 public class GameHub : Hub
 {
     private static List<string> _connectedUsernames = new List<string>();
@@ -24,6 +27,7 @@ public class GameHub : Hub
         BloonsProject.User user = GetUserFromDatabase(username, password);
         if (user != null)
         {
+<<<<<<< Updated upstream
             _connectedUsernames.Add(username);
             _username = username;
 
@@ -43,9 +47,27 @@ public class GameHub : Hub
     private BloonsProject.User GetUserFromDatabase(string username, string password)
 {
     try
+=======
+            X = request.Position.X,
+            Y = request.Position.Y
+        };
+
+        var gameSession = GameSession.GetInstance();
+        gameSession.GameState.AddTower(towerInstance);
+
+        // Broadcast tower placement to all clients
+        var response = new SynchronizeTower(request.TowerType, NetworkPoint2D.Serialize(towerInstance.Position), request.Username);
+        await Clients.Group("inGame").SendAsync("AddTower", response);
+    }
+
+
+    // Join the game and notify all players
+    public async Task JoinGame(string username)
+>>>>>>> Stashed changes
     {
         _dbConnection.Open();
 
+<<<<<<< Updated upstream
         string query = "SELECT * FROM users WHERE Username = @Username AND Password = @Password";
         MySqlCommand cmd = new MySqlCommand(query, _dbConnection);
         cmd.Parameters.AddWithValue("@Username", username);
@@ -66,6 +88,29 @@ public class GameHub : Hub
                     Lives = Convert.ToInt32(reader["Lives"])
                 };
             }
+=======
+        // Notify all clients that a new player has joined and update the player list
+        await Groups.AddToGroupAsync(Context.ConnectionId, "inGame");
+        
+        // Broadcast the updated player list to all clients
+        await Clients.Group("inGame").SendAsync("UserJoined", username, gameSession.GetPlayersList());
+    }
+
+
+    // Set the player as ready and handle map selection
+    public async Task SetPlayerReady(string username, string map)
+    {
+        var gameSession = GameSession.GetInstance();
+        gameSession.SetPlayerReady(username, map);
+        
+        // Notify all clients that a player is ready
+        await Clients.Group("inGame").SendAsync("PlayerReady", username, map);
+        
+        // Check if all players are ready and start the game
+        if (gameSession.AllPlayersReady())
+        {
+            await Clients.Group("inGame").SendAsync("StartGame", map); // Notify all clients to start the game
+>>>>>>> Stashed changes
         }
     }
     catch (Exception ex)
@@ -123,7 +168,17 @@ public class GameHub : Hub
     // Handle user disconnection
     public override Task OnDisconnectedAsync(Exception exception)
     {
+<<<<<<< Updated upstream
         _connectedUsernames.Remove(_username);
+=======
+        if (_username != null)
+        {
+            _connectedUsernames.Remove(_username);
+            var gameSession = GameSession.GetInstance();
+            gameSession.RemovePlayer(_username);
+        }
+
+>>>>>>> Stashed changes
         return base.OnDisconnectedAsync(exception);
     }
 }

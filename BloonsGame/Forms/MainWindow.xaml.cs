@@ -1,55 +1,69 @@
 ﻿using BloonsProject;
 using System.Windows;
 using BloonLibrary;
+using System.Threading.Tasks;
 
 namespace BloonsGame
 {
     public partial class MainWindow : Window
     {
-        private PauseWindow _pauseWindow;
-        private IProgramController _programController;
-        private GameClient _gameclient;
+        private GameClient _gameClient;
 
         public MainWindow(GameClient gameClient)
         {
             InitializeComponent();
-
-            _gameclient = gameClient;
+            _gameClient = gameClient;
 
             MapComboBox.Items.Add("The Original");
 
-            // foreach (var map in MapManager.GetAllMaps())
-            //     MapComboBox.Items.Add(map.Name); // Adds the maps to the combobox on the WPF display from the map manager.
+            // Listen for player join updates from the server
+            _gameClient.OnPlayerJoined += UpdatePlayersList;
+            _gameClient.OnPlayerReady += PlayerIsReady;
+            _gameClient.OnStartGame += StartGame;
         }
 
-        public void OpenLossScreen()
+        private void UpdatePlayersList(string playersList)
         {
-            var loseWindow = new LoseWindow();
-            loseWindow.Show();
+            Dispatcher.Invoke(() =>
+            {
+                PlayersListLabel.Content = "Players: " + playersList;
+            });
         }
 
-        public void OpenPauseScreen()
+
+        private void PlayerIsReady(string username, string map)
         {
-            _pauseWindow = new PauseWindow(_programController);
-            _pauseWindow.Show();
+            Dispatcher.Invoke(() =>
+            {
+                //MessageBox.Show($"{username} is ready with map: {map}");
+            });
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void ReadyButton_Click(object sender, RoutedEventArgs e)
         {
             SelectMapLabelError.Visibility = Visibility.Hidden;
             if (MapComboBox.SelectedItem == null)
             {
                 SelectMapLabelError.Visibility = Visibility.Visible;
-                return; // If a map hasn't been selected and the user attempts to hit "play", the program will tell the user to select a map.
+                return;
             }
-            var map = MapManager.GetMapByName(MapComboBox.SelectedItem.ToString()); // Gets the map name from the combobox and gets the object from its name.
-            _programController = new SplashKitController(map, _gameclient); // Runs the program.
-            OpenPauseScreen(); // Opens pause screen and hides it immediately, and closes the main window to decrease lag (can demonstrate if you'd like).
-            _pauseWindow.Hide();
-            Close();
-            _programController.PauseEventHandler += OpenPauseScreen; // Event handlers for when the game is paused or the user loses.
-            _programController.LoseEventHandler += OpenLossScreen;
-            _programController.Start();
+
+            // Send the ready status to the server
+            var selectedMap = MapComboBox.SelectedItem.ToString();
+            await _gameClient.SendReadyStatus(selectedMap);
+        }
+
+        private void StartGame(string map)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                //MessageBox.Show("All players are ready. Starting the game on map: " + map);
+                // Start the game logic here
+                var mapObj = MapManager.GetMapByName(map);
+                var controller = new SplashKitController(mapObj, _gameClient);
+                controller.Start();
+                Close();
+            });
         }
     }
 }
