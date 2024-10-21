@@ -6,10 +6,12 @@ namespace BloonsProject
     public abstract class Bloon
     {
         private Point2D _position;
+        public string Name;
 
         public Bloon(int health, string name, Color color, int velocityX, int velocityY)
         {
             Health = health;
+            Name = name;
             Color = color;
             Radius = 15;
             _position.X = 20;

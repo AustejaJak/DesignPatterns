@@ -3,17 +3,26 @@ using SplashKitSDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
+using BloonLibrary;
 
 namespace BloonsProject
 {
     public class BloonController
     {
         private readonly GameState _gameState = GameState.GetGameStateInstance(); // Game state singleton.
+        public GameClient GameClient;
         public int ticksSinceLastSentBloon { get; set; } // Keeps track of the last time a bloon was sent.
+        
+        public BloonController(GameClient gameClient)
+        {
+            GameClient = gameClient;
+        }
 
         public void AddBloon(Bloon bloon) // Adds bloon to the list of bloons in the singleton.
         {
-            _gameState.Bloons.Add(bloon);
+            //_gameState.Bloons.Add(bloon);
+            _ = GameClient.PlaceBloonAsync(new PlaceBloonRequest(bloon.Name, NetworkPoint2D.Serialize(bloon.Position)));
             _gameState.BloonsSpawned[bloon.Color] += 1; // Increments the number of bloons spawned for the specific colour added.
             ticksSinceLastSentBloon = 0; // When a bloon is added, reset the last time a bloon was added to 0.
         }
@@ -81,18 +90,25 @@ namespace BloonsProject
                 bloon.Checkpoint++;
         }
 
-        public void ProcessBloons(Player player, Map map)
+        public async void ProcessBloons(Player player, Map map)
         {
-            ticksSinceLastSentBloon++;
-            var sendBloonSpeed = 30 - player.Round; // Speed at which bloons are sent increase with rounds.
-            if (player.Round >= 20) sendBloonSpeed = 1;
-            if (ticksSinceLastSentBloon <= sendBloonSpeed) return; //If a bloon has recently spawned, return
-            var bloonsToAdd = new List<Bloon> { new RedBloon(), new BlueBloon(), new GreenBloon() }; // Creates a list of each bloons and randomly selects from it
-            var randomBloonSelection = new Random().Next(bloonsToAdd.Count);
-            var bloon = bloonsToAdd[randomBloonSelection];
-            if (_gameState.BloonsSpawned[bloon.Color] >= _gameState.BloonsToBeSpawned[bloon.Color]) return; // If the chosen bloon has already had its number of spawns for that round, return.
-            AddBloon(bloon); // Otherwise add bloon
-            bloon.Position = SplashKitExtensions.PointFromVector(map.Checkpoints[0]); // Convert bloons position from a serializable vector to Point2D.
+                ticksSinceLastSentBloon++;
+                var sendBloonSpeed = 30 - player.Round; // Speed at which bloons are sent increase with rounds.
+                if (player.Round >= 20) sendBloonSpeed = 1;
+                if (ticksSinceLastSentBloon <= sendBloonSpeed) return; //If a bloon has recently spawned, return
+                var bloonsToAdd = new List<Bloon>
+                {
+                    new RedBloon(), new BlueBloon(), new GreenBloon()
+                }; // Creates a list of each bloons and randomly selects from it
+                var randomBloonSelection = new Random().Next(bloonsToAdd.Count);
+                var bloon = bloonsToAdd[randomBloonSelection];
+                if (_gameState.BloonsSpawned[bloon.Color] >= _gameState.BloonsToBeSpawned[bloon.Color])
+                    return; // If the chosen bloon has already had its number of spawns for that round, return.
+                AddBloon(bloon); // Otherwise add bloon
+                bloon.Position =
+                    SplashKitExtensions
+                        .PointFromVector(map
+                            .Checkpoints[0]); // Convert bloons position from a serializable vector to Point2D.
         }
     }
 }

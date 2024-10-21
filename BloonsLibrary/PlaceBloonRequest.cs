@@ -1,9 +1,9 @@
-﻿namespace BloonLibrary
-{
-    public class PlaceBloonsRequest
-    {
-        public record PlaceBloonRequest(string TowerType, NetworkPoint2D Position, string Username);
+﻿using SplashKitSDK;
 
-        public record SynchronizeBloon(string TowerType, NetworkPoint2D Position, string PlayerName);
-    }
+namespace BloonLibrary
+{ 
+        public record PlaceBloonRequest(string BloonType, NetworkPoint2D Position);
+        
+        public record SynchronizeBloon(string BloonType, NetworkPoint2D Position);
+        
 }

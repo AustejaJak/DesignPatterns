@@ -7,15 +7,17 @@ using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SplashKitSDK;
+using System.Timers;
+using Timer = System.Timers.Timer;
 
 namespace BloonLibrary
 {
     public class GameClient
     {
         private HubConnection _connection;
-        private EntityDrawer _entityDrawer;
 
         public string Username { get; set; }
+        
 
         public async Task ConnectToServer(string url)
         {
@@ -41,10 +43,31 @@ namespace BloonLibrary
                 gameSession.GameState.AddTower(tower);
             });
             
-            _connection.On<string>("UserJoined", (username) =>
+            _connection.On<SynchronizeBloon>("AddBloon", (request) =>
+            {
+                var bloon = BloonFactory.CreateBloon(request.BloonType);
+                bloon.Position = new Point2D()
+                {
+                    X = request.Position.X,
+                    Y = request.Position.Y
+                };
+                var gameSession = GameSession.GetInstance();
+                gameSession.GameState.AddBloon(bloon);
+            });
+            
+            _connection.On<string>("JoinedGroup", (username) =>
             {
                 Console.WriteLine($"{username} has joined the game.");
             });
+            
+            _connection.On("GameStarted", () =>
+            {
+                Console.WriteLine("The game has started!");
+                
+                var gameState = GameState.GetGameStateInstance();
+
+            });
+            
             
             try
             {
@@ -74,14 +97,42 @@ namespace BloonLibrary
             }
         }
         
-        public async Task JoinGameAsync(string username)
+        public async Task PlaceBloonAsync(PlaceBloonRequest request)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
-                await _connection.InvokeAsync("JoinGame", username);
+                await _connection.InvokeAsync("PlaceBloon", request);
+            }
+        }
+        
+        public async Task<bool> JoinGameAsync(string username)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                try
+                {
+                    return await _connection.InvokeAsync<bool>("JoinGame", username);
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"Error while joining game: {ex.Message}");
+                    return false;
+                }
+            }
+
+            return false;
+        }
+
+        
+        public async Task StartGameAsync()
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("StartGame");
             }
         }
 
+        
         public async Task Disconnect()
         {
             if (_connection != null)

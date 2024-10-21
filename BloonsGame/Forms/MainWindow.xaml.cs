@@ -9,12 +9,14 @@ namespace BloonsGame
         private PauseWindow _pauseWindow;
         private IProgramController _programController;
         private GameClient _gameclient;
+        private string Username;
 
-        public MainWindow(GameClient gameClient)
+        public MainWindow(GameClient gameClient, string username)
         {
             InitializeComponent();
 
             _gameclient = gameClient;
+            Username = username;
 
             MapComboBox.Items.Add("The Original");
 
@@ -34,7 +36,7 @@ namespace BloonsGame
             _pauseWindow.Show();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private async void Button_Click(object sender, RoutedEventArgs e)
         {
             SelectMapLabelError.Visibility = Visibility.Hidden;
             if (MapComboBox.SelectedItem == null)
@@ -43,6 +45,13 @@ namespace BloonsGame
                 return; // If a map hasn't been selected and the user attempts to hit "play", the program will tell the user to select a map.
             }
             var map = MapManager.GetMapByName(MapComboBox.SelectedItem.ToString()); // Gets the map name from the combobox and gets the object from its name.
+            bool isJoined = await _gameclient.JoinGameAsync(Username);
+
+            if (!isJoined)
+            {
+                MessageBox.Show("Not enough players to start the game. Please wait for more players to join.", "Game Start Error", MessageBoxButton.OK, MessageBoxImage.Warning);
+                return;
+            }
             _programController = new SplashKitController(map, _gameclient); // Runs the program.
             OpenPauseScreen(); // Opens pause screen and hides it immediately, and closes the main window to decrease lag (can demonstrate if you'd like).
             _pauseWindow.Hide();

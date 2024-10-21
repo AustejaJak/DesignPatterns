@@ -3,15 +3,21 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Timers;
 using BloonLibrary;
 using BloonsProject;
+using System.Timers;
 using SplashKitSDK;
+using Timer = System.Timers.Timer;
 
 
 public class GameHub : Hub
 {
     private static List<string> _connectedUsernames = new List<string>();
+    private static List<string> _readyPlayers = new List<string>();
+    private const int RequiredPlayers = 2;
     private string _username;
+    
 
     public async Task SendUsername(string username)
     {
@@ -20,7 +26,7 @@ public class GameHub : Hub
 
         await Clients.Group("inGame").SendAsync("SendUsername", username);
     }
-
+    
     public async Task PlaceTower(PlaceTowerRequest request)
     {
         var towerInstance = TowerFactory.CreateTowerOfType(request.TowerType, request.Username);
@@ -36,14 +42,59 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("AddTower", response);
     }
     
-    public async Task JoinGame(string username)
+    public async Task PlaceBloon(PlaceBloonRequest request)
+    {
+        var bloonInstance = BloonFactory.CreateBloon(request.BloonType);
+
+        var gameSession = GameSession.GetInstance();
+        gameSession.GameState.AddBloon(bloonInstance);
+
+        var response = new SynchronizeBloon(request.BloonType, NetworkPoint2D.Serialize(bloonInstance.Position));
+        await Clients.Group("inGame").SendAsync("AddBloon", response);
+    }
+    
+    public async Task<bool> JoinGame(string username)
     {
         var gameSession = GameSession.GetInstance();
         gameSession.AddPlayer(username);
+        
+        var playerGroupName = $"PlayerGroup{username}";
+        await Groups.AddToGroupAsync(Context.ConnectionId, playerGroupName);
+        
+        await Clients.Caller.SendAsync("JoinedGroup", playerGroupName);
+        
+        await Clients.Group(playerGroupName).SendAsync("UserJoined", username);
+    
+        var gameState = gameSession.GetCurrentGameState();
+        await Clients.Caller.SendAsync("ReceiveGameState", gameState);
+        
+        _readyPlayers.Add(username);
+        
+        if (gameSession.AllPlayersReady(RequiredPlayers))
+        {
+            await StartGame();
+            return true;
+        }
 
-        await Groups.AddToGroupAsync(Context.ConnectionId, "inGame");
-        await Clients.Group("inGame").SendAsync("UserJoined", username);
+        return false;
     }
+    
+    public async Task StartGame()
+    {
+        var gameSession = GameSession.GetInstance();
+        var players = gameSession.GetPlayers();
+        
+        foreach (var player in players)
+        {
+            var playerGroupName = $"PlayerGroup{player}";
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, playerGroupName);
+            await Groups.AddToGroupAsync(Context.ConnectionId, "inGame");
+        }
+        
+        await Clients.Group("inGame").SendAsync("GameStarted");
+    }
+
+
 
     public override Task OnConnectedAsync()
     {

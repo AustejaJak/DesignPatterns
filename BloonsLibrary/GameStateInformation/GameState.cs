@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Text.Json;
 using Color = SplashKitSDK.Color;
 
@@ -39,6 +40,21 @@ namespace BloonsProject
         public void AddTower(Tower tower)
         {
             Towers.Add(tower);
+        }
+        
+        public void AddBloon(Bloon bloon)
+        {
+            Bloons.Add(bloon);
+        }
+        
+        public Bloon GetBloon(string bloonType)
+        {
+            return Bloons.FirstOrDefault(b => b.Name == bloonType);
+        }
+        
+        public List<Bloon> GetAllBloons()
+        {
+            return Bloons.ToList();
         }
         
     }
