@@ -42,15 +42,21 @@ namespace BloonsProject
                 { // Pass over the information of the bloon to the newly created one.
                     _gameState.Bloons.Add(new BlueBloon { Position = b.Position, Checkpoint = b.Checkpoint, DistanceTravelled = b.DistanceTravelled });
                     _gameState.Bloons.Remove(b);
+                    //_gameState.Player.BloonsKilled++;
                 }
 
                 if (b.Color.ToString() == Color.Blue.ToString() && b.Health == 1) // If a blue bloon has 1 health, then remove it and replace it with a red bloon.
                 { // Pass over the information of the bloon to the newly created one.
                     _gameState.Bloons.Add(new RedBloon { Position = b.Position, Checkpoint = b.Checkpoint, DistanceTravelled = b.DistanceTravelled });
                     _gameState.Bloons.Remove(b);
+                    //_gameState.Player.BloonsKilled++;
                 }
                 // if the bloon has no health, rmeove it.
-                if (b.Health <= 0) _gameState.Bloons.Remove(b);
+                if (b.Health <= 0) 
+                { 
+                    _gameState.Bloons.Remove(b);
+                    //_gameState.Player.BloonsKilled++;
+                }
             }
         }
 

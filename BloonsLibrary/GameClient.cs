@@ -67,8 +67,16 @@ namespace BloonLibrary
                 var gameState = GameState.GetGameStateInstance();
 
             });
-            
-            
+            _connection.On<string>("SendGameOverStats", (message) =>
+            {
+                Console.WriteLine("Game is over");
+
+                var gameState = GameState.GetGameStateInstance();
+                gameState.AddGameStats(message);
+
+            });
+
+
             try
             {
                 await _connection.StartAsync();
@@ -86,6 +94,14 @@ namespace BloonLibrary
             {
                 Username = username;
                 await _connection.InvokeAsync("SendUsername", username);
+            }
+        }
+
+        public async Task SendGameOverStats(string message)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendGameOverStats", message);
             }
         }
 

@@ -26,7 +26,13 @@ public class GameHub : Hub
 
         await Clients.Group("inGame").SendAsync("SendUsername", username);
     }
-    
+
+    public async Task SendGameOverStats(string message)
+    {
+
+        await Clients.Group("inGame").SendAsync("SendGameOverStats", message);
+    }
+
     public async Task PlaceTower(PlaceTowerRequest request)
     {
         var towerInstance = TowerFactory.CreateTowerOfType(request.TowerType, request.Username);

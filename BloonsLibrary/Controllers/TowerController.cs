@@ -51,6 +51,8 @@ namespace BloonsProject
                         var oldBloonHealth = bloon.Health; // Then decrease the health of the bloon depending on the damage of the shot type.
                         bloon.TakeDamage(projectile.ProjectileShotType.Damage);
                         _gameState.Player.Money += oldBloonHealth - bloon.Health; // Gain money depending on the damage dealt.
+                        //_gameState.Player.MoneyEarned += oldBloonHealth - bloon.Health;
+                        
                     }
                 }
             }

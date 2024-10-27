@@ -1,5 +1,5 @@
 {
-  "BloonsMap": "../../BloonsLibrary/Resources/BloonsMap2.png",
+  "BloonsMap": "../BloonsLibrary/Resources/BloonsMap2.png",
   "Name": "The Original",
   "Height": 560,
   "Length": 800,

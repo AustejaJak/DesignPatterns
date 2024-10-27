@@ -14,6 +14,7 @@ namespace BloonsProject
         public Dictionary<Color, int> BloonsToBeSpawned = new Dictionary<Color, int>();
         public  Player Player = new Player();
         public  ProjectileManager ProjectileManager = new ProjectileManager();
+        public List<string> OtherPlayerStats = new List<string>();
 
         private static readonly object Locker = new object();
 
@@ -41,7 +42,12 @@ namespace BloonsProject
         {
             Towers.Add(tower);
         }
-        
+
+        public void AddGameStats(string message)
+        {
+            OtherPlayerStats.Add(message);
+        }
+
         public void AddBloon(Bloon bloon)
         {
             Bloons.Add(bloon);

@@ -26,7 +26,7 @@ namespace BloonsGame
 
         public void OpenLossScreen()
         {
-            var loseWindow = new LoseWindow();
+            var loseWindow = new LoseWindow(_gameclient);
             loseWindow.Show();
         }
 

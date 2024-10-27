@@ -1,14 +1,19 @@
-﻿using BloonsProject;
+﻿using BloonLibrary;
+using BloonLibrary.Decorator;
+using BloonsProject;
 using System;
 using System.Diagnostics;
+using System.Linq;
 using System.Windows;
 
 namespace BloonsGame
 {
     public partial class LoseWindow : Window
     {
-        public LoseWindow()
+        GameClient gameClient;
+        public LoseWindow(GameClient client)
         {
+            gameClient = client;
             InitializeComponent();
             var gameState = GameState.GetGameStateInstance();
             var plural = " rounds.";
@@ -16,8 +21,20 @@ namespace BloonsGame
             {
                 plural = " round.";
             }
-            RoundSurvivedLabel.Content = "You have survived " + gameState.Player.Round + plural; // Displays the rounds that the player survived in the loss screen.
+            string message = "You have survived " + gameState.Player.Round + plural + " ,you had " + gameState.Player.Money +  " money";
+            //BaseNotifierDecorator baseNotifierDecorator = new GameOverNotifierDecorator(client);
+            
+            RoundSurvivedLabel.Content = message; // Displays the rounds that the player survived in the loss screen.
             RoundSurvivedLabel.Visibility = Visibility.Visible;
+            client.SendGameOverStats(message);
+            OtherP_ayerStatsLabel.Content = gameState.OtherPlayerStats.ToString();
+            WaitForOtherPLayerMessgaes(gameState, message);
+        }
+
+        private async void WaitForOtherPLayerMessgaes(GameState gameState, string message)
+        {
+            await gameClient.SendGameOverStats(message);
+            OtherP_ayerStatsLabel.Content = gameState.OtherPlayerStats.FirstOrDefault();
         }
 
         private void OnExitButtonClick(object sender, RoutedEventArgs e)
