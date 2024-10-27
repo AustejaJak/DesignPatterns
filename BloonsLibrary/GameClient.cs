@@ -42,7 +42,14 @@ namespace BloonLibrary
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.AddTower(tower);
             });
-            
+
+            _connection.On<UpgradeOrSellTowerRequest>("UpgradeOrSellTower", (request) =>
+            {
+                Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
+                var gameSession = GameSession.GetInstance();
+                gameSession.GameState.upgradeOrSellTower(position, request.option, request.upgradeCount);
+            });
+
             _connection.On<SynchronizeBloon>("AddBloon", (request) =>
             {
                 var bloon = BloonFactory.CreateBloon(request.BloonType);
@@ -112,7 +119,15 @@ namespace BloonLibrary
                 await _connection.InvokeAsync("PlaceTower", request);
             }
         }
-        
+
+        public async Task UpgradeOrSellTowerAsync(UpgradeOrSellTowerRequest request)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("UpgradeOrSellTower", request);
+            }
+        }
+
         public async Task PlaceBloonAsync(PlaceBloonRequest request)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)

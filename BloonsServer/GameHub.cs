@@ -47,7 +47,15 @@ public class GameHub : Hub
         var response = new SynchronizeTower(request.TowerType, NetworkPoint2D.Serialize(towerInstance.Position), request.Username);
         await Clients.Group("inGame").SendAsync("AddTower", response);
     }
-    
+
+    public async Task UpgradeOrSellTower(UpgradeOrSellTowerRequest request)
+    {
+        //Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
+        //var gameSession = GameSession.GetInstance();
+        //gameSession.GameState.upgradeTowerRange(position, request.option, request.upgradeCount);
+        await Clients.Group("inGame").SendAsync("UpgradeOrSellTower", request);
+    }
+
     public async Task PlaceBloon(PlaceBloonRequest request)
     {
         var bloonInstance = BloonFactory.CreateBloon(request.BloonType);
