@@ -6,19 +6,48 @@ using System.Threading.Tasks;
 using BloonLibrary;
 using BloonsProject;
 using SplashKitSDK;
-
+using System.Linq;
 
 public class GameHub : Hub
 {
     private static List<string> _connectedUsernames = new List<string>();
+    private static Dictionary<string, bool> _playerReadyStatus = new Dictionary<string, bool>();
     private string _username;
 
     public async Task SendUsername(string username)
     {
         _connectedUsernames.Add(username);
         _username = username;
+        _playerReadyStatus[username] = false;
 
         await Clients.Group("inGame").SendAsync("SendUsername", username);
+        await UpdatePlayerStatuses();
+    }
+
+    public async Task SetPlayerReady(string username, bool isReady)
+    {
+        _playerReadyStatus[username] = isReady;
+        await UpdatePlayerStatuses();
+        
+        // Check if all players are ready
+        if (_playerReadyStatus.Count >= 2 && _playerReadyStatus.All(p => p.Value))
+        {
+            // Start countdown on all clients
+            await Clients.Group("inGame").SendAsync("AllPlayersReady");
+        }
+    }
+
+    private async Task UpdatePlayerStatuses()
+    {
+        var playerStatuses = _connectedUsernames.Select(username => new PlayerStatus
+        {
+            Username = username,
+            ReadyStatus = _playerReadyStatus.ContainsKey(username) && _playerReadyStatus[username] 
+                ? "Ready" 
+                : "Not Ready"
+        }).ToList();
+
+        await Clients.Group("inGame").SendAsync("UpdatePlayerList", playerStatuses);
     }
 
     public async Task PlaceTower(PlaceTowerRequest request)
@@ -56,13 +85,15 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("UserJoined", username);
     }
     
-    public override Task OnDisconnectedAsync(Exception exception)
+    public override async Task OnDisconnectedAsync(Exception exception)
     {
         if (_username != null)
         {
             _connectedUsernames.Remove(_username);
+            _playerReadyStatus.Remove(_username);
+            await UpdatePlayerStatuses();
         }
 
-        return base.OnDisconnectedAsync(exception);
+        await base.OnDisconnectedAsync(exception);
     }
 }

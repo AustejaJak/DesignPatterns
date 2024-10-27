@@ -10,10 +10,19 @@ using SplashKitSDK;
 
 namespace BloonLibrary
 {
+    public class PlayerStatus
+    {
+        public string Username { get; set; }
+        public string ReadyStatus { get; set; }
+    }
+
     public class GameClient
     {
         private HubConnection _connection;
         private EntityDrawer _entityDrawer;
+
+        public event Action<List<PlayerStatus>> PlayerListUpdated;
+        public event Action AllPlayersReady;
 
         public string Username { get; set; }
 
@@ -22,7 +31,6 @@ namespace BloonLibrary
             _connection = new HubConnectionBuilder()
                             .WithUrl(url)
                             .Build();
-
 
             _connection.On<string>("SendUsername", (message) =>
             {
@@ -52,6 +60,16 @@ namespace BloonLibrary
             {
                 Console.WriteLine($"{username} has joined the game.");
             });
+
+            _connection.On<List<PlayerStatus>>("UpdatePlayerList", (players) =>
+            {
+                PlayerListUpdated?.Invoke(players);
+            });
+
+            _connection.On("AllPlayersReady", () =>
+            {
+                AllPlayersReady?.Invoke();
+            });
             
             try
             {
@@ -70,6 +88,14 @@ namespace BloonLibrary
             {
                 Username = username;
                 await _connection.InvokeAsync("SendUsername", username);
+            }
+        }
+
+        public async Task SetPlayerReadyAsync(bool isReady)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SetPlayerReady", Username, isReady);
             }
         }
 
