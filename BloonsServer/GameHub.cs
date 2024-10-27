@@ -44,7 +44,8 @@ public class GameHub : Hub
     
     public async Task PlaceBloon(PlaceBloonRequest request)
     {
-        var bloonInstance = BloonFactory.CreateBloon(request.BloonType);
+        var bloonFactory = new BloonFactory();
+        var bloonInstance = bloonFactory.CreateBloon(request.BloonType);
 
         var gameSession = GameSession.GetInstance();
         gameSession.GameState.AddBloon(bloonInstance);
@@ -93,8 +94,6 @@ public class GameHub : Hub
         
         await Clients.Group("inGame").SendAsync("GameStarted");
     }
-
-
 
     public override Task OnConnectedAsync()
     {

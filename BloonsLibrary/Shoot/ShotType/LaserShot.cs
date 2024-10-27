@@ -13,7 +13,7 @@ namespace BloonsProject
             FirerateUpgradeCost = 100;
             RangeUpgradeCost = 150;
             TimeSinceLastShot = 0;
-            ProjectileBitmap = new Bitmap("Laser", "../../BloonsLibrary/Resources/Blast.png");
+            ProjectileBitmap = new Bitmap("Laser", "../../Resources/Blast.png");
             ProjectileSpeed = 0.3;
             ProjectileSize = 2;
             ProjectileLength = 40;

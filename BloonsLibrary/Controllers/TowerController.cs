@@ -30,6 +30,7 @@ namespace BloonsProject
                 foreach (var targetOption in targetOptions.TargetingButtonLocations.Values.Where( //Depending on the targeting option that has been selected in the gui
                     targetOption => targetOptions.SelectedInGui == targetOption && tower.Selected))
                 {
+                    System.Console.WriteLine("Setting tower targeting to " + targetOptions + " for tower " + tower._name + " using Strategy Pattern");
                     towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
                 }
             }

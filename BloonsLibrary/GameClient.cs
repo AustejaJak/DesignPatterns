@@ -45,7 +45,8 @@ namespace BloonLibrary
             
             _connection.On<SynchronizeBloon>("AddBloon", (request) =>
             {
-                var bloon = BloonFactory.CreateBloon(request.BloonType);
+                var bloonFactory = new BloonFactory();
+                var bloon = bloonFactory.CreateBloon(request.BloonType);
                 bloon.Position = new Point2D()
                 {
                     X = request.Position.X,

@@ -1,45 +1,45 @@
 {
-    "BloonsMap": "../../BloonsLibrary/Resources/EmptyCornfieldMap.png",
-    "Name": "Farmers Paradise",
-    "Height": 560,
-    "Length": 811,
-    "TrackWidthRadius": 25,
-    "Checkpoints": [
-        {
-            "X": 25,
-            "Y": 0
-        },
-        {
-            "X": 27,
-            "Y": 535
-        },
-        {
-            "X": 50,
-            "Y": 535
-        },
-        {
-            "X": 275,
-            "Y": 535
-        },
-        {
-            "X": 285,
-            "Y": 205
-        },
-        {
-            "X": 452,
-            "Y": 205
-        },
-        {
-            "X": 464,
-            "Y": 388
-        },
-        {
-            "X": 718,
-            "Y": 385
-        },
-        {
-            "X": 723,
-            "Y": 0
-        }
-    ]
+	"BloonsMap": "../../Resources/EmptyCornfieldMap.png",
+	"Name": "Farmers Paradise",
+	"Height": 560,
+	"Length": 811,
+	"TrackWidthRadius": 25,
+	"Checkpoints": [
+		{
+			"X": 25,
+			"Y": 0
+		},
+		{
+			"X": 27,
+			"Y": 535
+		},
+		{
+			"X": 50,
+			"Y": 535
+		},
+		{
+			"X": 275,
+			"Y": 535
+		},
+		{
+			"X": 285,
+			"Y": 205
+		},
+		{
+			"X": 452,
+			"Y": 205
+		},
+		{
+			"X": 464,
+			"Y": 388
+		},
+		{
+			"X": 718,
+			"Y": 385
+		},
+		{
+			"X": 723,
+			"Y": 0
+		}
+	]
 }

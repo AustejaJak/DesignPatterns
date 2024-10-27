@@ -18,20 +18,22 @@ namespace BloonsProject
         private static readonly object Locker = new object();
 
         protected GameState()
-        {
-        }
+        {}
 
         public static GameState GetGameStateInstance()
         {
+            System.Console.WriteLine("Creating GameState");
             if (_state == null)
             {
+                System.Console.WriteLine("No GameState instance found, creating new GameState instance");
                 lock (Locker)
                 {
                     if (_state == null)
                     {
+                        System.Console.WriteLine("Creating new GameState instance");
                         _state = new GameState();
                     }
-                }
+                } 
             }
 
             return _state;
@@ -56,6 +58,5 @@ namespace BloonsProject
         {
             return Bloons.ToList();
         }
-        
     }
 }

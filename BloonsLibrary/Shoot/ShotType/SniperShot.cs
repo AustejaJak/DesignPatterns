@@ -18,7 +18,7 @@ namespace BloonsProject
             ProjectileLength = 94;
             ProjectileWidth = 94;
             ProjectileStationaryTime = 100;
-            ProjectileBitmap = new Bitmap("Sniper", "../../BloonsLibrary/Resources/Blade.png");
+            ProjectileBitmap = new Bitmap("Sniper", "../../Resources/Blade.png");
         }
 
         public Bitmap ProjectileBitmap { get; }
