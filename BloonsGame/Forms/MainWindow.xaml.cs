@@ -1,6 +1,9 @@
 ﻿using BloonsProject;
 using System.Windows;
+using System;
 using BloonLibrary;
+using System.Collections.Generic;
+using System.Windows.Threading;
 
 namespace BloonsGame
 {
@@ -8,20 +11,75 @@ namespace BloonsGame
     {
         private PauseWindow _pauseWindow;
         private IProgramController _programController;
-        private GameClient _gameclient;
-        private string Username;
+
+        private GameClient _gameClient;
+        private bool _isReady = false;
+        private DispatcherTimer _countdownTimer;
+        private int _countdownSeconds = 5;
 
         public MainWindow(GameClient gameClient, string username)
         {
             InitializeComponent();
-
-            _gameclient = gameClient;
-            Username = username;
-
+            _gameClient = gameClient;
             MapComboBox.Items.Add("The Original");
 
-            // foreach (var map in MapManager.GetAllMaps())
-            //     MapComboBox.Items.Add(map.Name); // Adds the maps to the combobox on the WPF display from the map manager.
+
+            // Subscribe to player list updates
+            _gameClient.PlayerListUpdated += UpdatePlayerList;
+            _gameClient.AllPlayersReady += StartCountdown;
+            
+            InitializeCountdownTimer();
+        }
+
+
+        private void InitializeCountdownTimer()
+        {
+            _countdownTimer = new DispatcherTimer();
+            _countdownTimer.Interval = TimeSpan.FromSeconds(1);
+            _countdownTimer.Tick += CountdownTick;
+        }
+
+        private void CountdownTick(object sender, EventArgs e)
+        {
+            _countdownSeconds--;
+            CountdownLabel.Content = _countdownSeconds.ToString();
+
+            if (_countdownSeconds <= 0)
+            {
+                _countdownTimer.Stop();
+                StartGame();
+            }
+        }
+
+        private void StartCountdown()
+        {
+            Dispatcher.Invoke(() =>
+            {
+                ReadyButton.IsEnabled = false;
+                MapComboBox.IsEnabled = false;
+                CountdownLabel.Visibility = Visibility.Visible;
+                CountdownLabel.Content = _countdownSeconds.ToString();
+                _countdownTimer.Start();
+            });
+        }
+
+        private void StartGame()
+        {
+            var map = MapManager.GetMapByName(MapComboBox.SelectedItem.ToString());
+            _programController = new SplashKitController(map, _gameClient);
+            OpenPauseScreen();
+            _pauseWindow.Hide();
+            Close();
+            _programController.PauseEventHandler += OpenPauseScreen;
+            _programController.LoseEventHandler += OpenLossScreen;
+            _programController.Start();
+        }
+        private void UpdatePlayerList(List<PlayerStatus> players)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                PlayerListView.ItemsSource = players;
+            });
         }
 
         public void OpenLossScreen()
@@ -36,29 +94,19 @@ namespace BloonsGame
             _pauseWindow.Show();
         }
 
-        private async void Button_Click(object sender, RoutedEventArgs e)
+
+        private async void ReadyButton_Click(object sender, RoutedEventArgs e)
         {
-            SelectMapLabelError.Visibility = Visibility.Hidden;
             if (MapComboBox.SelectedItem == null)
             {
                 SelectMapLabelError.Visibility = Visibility.Visible;
-                return; // If a map hasn't been selected and the user attempts to hit "play", the program will tell the user to select a map.
-            }
-            var map = MapManager.GetMapByName(MapComboBox.SelectedItem.ToString()); // Gets the map name from the combobox and gets the object from its name.
-            bool isJoined = await _gameclient.JoinGameAsync(Username);
-
-            if (!isJoined)
-            {
-                MessageBox.Show("Not enough players to start the game. Please wait for more players to join.", "Game Start Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
-            _programController = new SplashKitController(map, _gameclient); // Runs the program.
-            OpenPauseScreen(); // Opens pause screen and hides it immediately, and closes the main window to decrease lag (can demonstrate if you'd like).
-            _pauseWindow.Hide();
-            Close();
-            _programController.PauseEventHandler += OpenPauseScreen; // Event handlers for when the game is paused or the user loses.
-            _programController.LoseEventHandler += OpenLossScreen;
-            _programController.Start();
+
+
+            _isReady = !_isReady;
+            ReadyButton.Content = _isReady ? "Not Ready" : "Ready";
+            await _gameClient.SetPlayerReadyAsync(_isReady);
         }
     }
 }

@@ -12,9 +12,18 @@ using Timer = System.Timers.Timer;
 
 namespace BloonLibrary
 {
+    public class PlayerStatus
+    {
+        public string Username { get; set; }
+        public string ReadyStatus { get; set; }
+    }
+
     public class GameClient
     {
         private HubConnection _connection;
+
+        public event Action<List<PlayerStatus>> PlayerListUpdated;
+        public event Action AllPlayersReady;
 
         public string Username { get; set; }
         
@@ -24,7 +33,6 @@ namespace BloonLibrary
             _connection = new HubConnectionBuilder()
                             .WithUrl(url)
                             .Build();
-
 
             _connection.On<string>("SendUsername", (message) =>
             {
@@ -62,9 +70,27 @@ namespace BloonLibrary
                 gameSession.GameState.AddBloon(bloon);
             });
             
-            _connection.On<string>("JoinedGroup", (username) =>
+
+            _connection.On<SynchronizeBloon>("AddBloon", (request) =>
+            {
+                var bloon = BloonFactory.CreateBloonOfType(request.Name);
+                var gameSession = GameSession.GetInstance();
+                gameSession.GameState.AddBloon(bloon);
+            });
+            
+            _connection.On<string>("UserJoined", (username) =>
             {
                 Console.WriteLine($"{username} has joined the game.");
+            });
+
+            _connection.On<List<PlayerStatus>>("UpdatePlayerList", (players) =>
+            {
+                PlayerListUpdated?.Invoke(players);
+            });
+
+            _connection.On("AllPlayersReady", () =>
+            {
+                AllPlayersReady?.Invoke();
             });
             
             _connection.On("GameStarted", () =>
@@ -104,11 +130,21 @@ namespace BloonLibrary
             }
         }
 
+
         public async Task SendGameOverStats(string message)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
                 await _connection.InvokeAsync("SendGameOverStats", message);
+            }
+        }
+
+        public async Task SetPlayerReadyAsync(bool isReady)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SetPlayerReady", Username, isReady);
+
             }
         }
 
@@ -155,7 +191,16 @@ namespace BloonLibrary
         }
 
         
-        public async Task StartGameAsync()
+
+        public async Task PlaceBloonAsync(PlaceBloonRequest request)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("PlaceBloon", request);
+            }
+        }
+        
+        public async Task JoinGameAsync(string username)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {

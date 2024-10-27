@@ -13,7 +13,7 @@ namespace BloonsProject
             FirerateUpgradeCost = 75;
             RangeUpgradeCost = 75;
             TimeSinceLastShot = 0;
-            ProjectileBitmap = new Bitmap("Dart", "../../BloonsLibrary/Resources/Resources/Spike.png");
+            ProjectileBitmap = new Bitmap("Dart", "C:/DesignPatterns/BloonsLibrary/Resources/Spike.png");
             ProjectileSpeed = 0.3;
             ProjectileSize = 1.5;
             ProjectileLength = 48;

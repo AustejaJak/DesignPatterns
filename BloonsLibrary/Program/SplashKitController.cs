@@ -7,7 +7,6 @@ namespace BloonsProject
 {
     public class SplashKitController : IProgramController
     {
-        private readonly BloonController _bloonController;
         private readonly Stopwatch _bloonStopWatch = new Stopwatch();
         private readonly GameController _gameController = new GameController();
         private readonly GameState _gameState = GameState.GetGameStateInstance();
@@ -22,13 +21,14 @@ namespace BloonsProject
 
         private GameClient _gameClient;
         private readonly TowerController _towerController;
+        private readonly BloonController _bloonController;
 
         public SplashKitController(Map map, GameClient gameClient)
         {
             _map = map;
             _gameClient = gameClient;
             _towerController = new TowerController(_gameClient);
-            _bloonController = new BloonController(_gameClient);
+            _bloonController = new BloonController( _gameClient);
             _window = new Window("Bloons", 1135, 550);
             _renderer = new Renderer(_window, _map, _gameClient);
         }

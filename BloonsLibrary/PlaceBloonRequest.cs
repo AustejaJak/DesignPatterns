@@ -2,8 +2,8 @@
 
 namespace BloonLibrary
 { 
-        public record PlaceBloonRequest(string BloonType, NetworkPoint2D Position);
-        
-        public record SynchronizeBloon(string BloonType, NetworkPoint2D Position);
-        
+        public record PlaceBloonRequest(int Health, string Name, Color Color, float VelocityX, float VelocityY);
+
+        public record SynchronizeBloon(int Health, string Name, Color Color, float VelocityX, float VelocityY);
+
 }

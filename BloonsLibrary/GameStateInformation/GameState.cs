@@ -99,5 +99,10 @@ namespace BloonsProject
             }
         }
         
+        public void AddBloon(Bloon bloon)
+        {
+            Bloons.Add(bloon);
+        }
+        
     }
 }

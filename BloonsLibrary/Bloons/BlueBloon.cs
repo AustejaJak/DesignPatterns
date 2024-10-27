@@ -7,5 +7,7 @@ namespace BloonsProject
         public BlueBloon() : base(2, "Blue Balloon", Color.Blue, 3, 3)
         {
         }
+        
+        public static string Name => "Blue Balloon";
     }
 }
