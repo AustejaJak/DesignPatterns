@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d"
         Title="PauseWindow" Height="233" Width="400">
-    <Grid Margin="0,0,0,-154">
+    <Grid Margin="0,0,0,-32">
         <Grid.Background>
             <LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
                 <GradientStop Color="#FFF30B0B" Offset="0" />
@@ -13,12 +13,12 @@
             </LinearGradientBrush>
         </Grid.Background>
         <Label x:Name="label" Content="GAME OVER" HorizontalAlignment="Center" Height="56" VerticalAlignment="Top" Width="192" FontSize="30" FontStretch="Expanded" FontStyle="Normal" FontWeight="ExtraBold" Foreground="Black" />
-        <Button x:Name="ExitButton" Content="Exit" HorizontalAlignment="Left" Height="50" Margin="31,146,0,0" VerticalAlignment="Top" Width="141" FontSize="20" FontWeight="Bold" Click="OnExitButtonClick" />
-        <Button x:Name="PlayAgainButton" Content="Play again" HorizontalAlignment="Left" Height="50" Margin="225,146,0,0" VerticalAlignment="Top" Width="140" FontSize="20" FontWeight="Bold" Click="PlayAgainButton_OnClickButtonClick" />
+        <Button x:Name="ExitButton" Content="Exit" HorizontalAlignment="Left" Height="50" Margin="16,166,0,0" VerticalAlignment="Top" Width="141" FontSize="20" FontWeight="Bold" Click="OnExitButtonClick" />
+        <Button x:Name="PlayAgainButton" Content="Play again" HorizontalAlignment="Left" Height="50" Margin="225,166,0,0" VerticalAlignment="Top" Width="140" FontSize="20" FontWeight="Bold" Click="PlayAgainButton_OnClickButtonClick" />
         <Label x:Name="RoundSurvivedLabel" Content="You have survived " HorizontalAlignment="Center" Height="56" VerticalAlignment="Top" Width="330" FontSize="23" FontStretch="Expanded" FontStyle="Normal" FontWeight="UltraLight" Foreground="Black" Margin="0,53,0,0" HorizontalContentAlignment="Center" ScrollViewer.VerticalScrollBarVisibility="Hidden" Visibility="Hidden" />
-        <Label x:Name="Stats1" Content="Waiting for other player stats..." HorizontalAlignment="Center" Margin="0,203,0,0" VerticalAlignment="Top" Width="380" Foreground="#FFDED2D2" Height="27"/>
-        <Label x:Name="Stats2" Content="Waiting for other player stats..." HorizontalAlignment="Center" Margin="0,235,0,0" VerticalAlignment="Top" Width="380" Foreground="#FFDBC9C9"/>
-        <Label x:Name="Stats3" Content="Waiting for other player stats..." HorizontalAlignment="Left" Margin="10,279,0,0" VerticalAlignment="Top" Width="374" Foreground="#FFEDE7E7"/>
-        <Label x:Name="Stats4" Content="Waiting for other player stats..." HorizontalAlignment="Left" Margin="10,323,0,0" VerticalAlignment="Top" Width="374" Foreground="#FFEDE7E7"/>
+        <Label x:Name="Stats1" Content="Waiting for other player stats..." HorizontalAlignment="Left" Margin="7,55,0,0" VerticalAlignment="Top" Width="383" Foreground="#FFDED2D2" Height="26" FontWeight="Bold"/>
+        <Label x:Name="Stats2" Content="Waiting for other player stats..." HorizontalAlignment="Left" Margin="7,81,0,0" VerticalAlignment="Top" Width="383" Foreground="#FFDBC9C9" FontWeight="Bold"/>
+        <Label x:Name="Stats3" Content="Waiting for other player stats..." HorizontalAlignment="Left" Margin="7,107,0,0" VerticalAlignment="Top" Width="383" Foreground="#FFEDE7E7" FontWeight="Bold"/>
+        <Label x:Name="Stats4" Content="Waiting for other player stats..." HorizontalAlignment="Left" Margin="7,133,0,0" VerticalAlignment="Top" Width="383" Foreground="#FFEDE7E7" FontWeight="Bold"/>
     </Grid>
 </Window>
