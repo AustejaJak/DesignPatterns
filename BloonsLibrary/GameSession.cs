@@ -1,4 +1,6 @@
 using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace BloonsProject
 {
@@ -23,6 +25,11 @@ namespace BloonsProject
             return _instance;
         }
 
+        public bool AllPlayersReady(int requiredPlayers)
+        {
+            return ConnectedPlayers.Count >= requiredPlayers;
+        }
+
         public void AddPlayer(string username)
         {
             if (!ConnectedPlayers.Contains(username))
@@ -31,12 +38,22 @@ namespace BloonsProject
             }
         }
 
+        public List<string> GetPlayers()
+        {
+            return ConnectedPlayers;
+        }
+
         public void RemovePlayer(string username)
         {
             if (ConnectedPlayers.Contains(username))
             {
                 ConnectedPlayers.Remove(username); 
             }
+        }
+        
+        public GameState GetCurrentGameState()
+        {
+            return GameState;
         }
     }
 }

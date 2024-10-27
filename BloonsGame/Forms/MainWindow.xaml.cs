@@ -11,16 +11,18 @@ namespace BloonsGame
     {
         private PauseWindow _pauseWindow;
         private IProgramController _programController;
+
         private GameClient _gameClient;
         private bool _isReady = false;
         private DispatcherTimer _countdownTimer;
         private int _countdownSeconds = 5;
 
-        public MainWindow(GameClient gameClient)
+        public MainWindow(GameClient gameClient, string username)
         {
             InitializeComponent();
             _gameClient = gameClient;
             MapComboBox.Items.Add("The Original");
+
 
             // Subscribe to player list updates
             _gameClient.PlayerListUpdated += UpdatePlayerList;
@@ -28,6 +30,7 @@ namespace BloonsGame
             
             InitializeCountdownTimer();
         }
+
 
         private void InitializeCountdownTimer()
         {
@@ -81,7 +84,7 @@ namespace BloonsGame
 
         public void OpenLossScreen()
         {
-            var loseWindow = new LoseWindow();
+            var loseWindow = new LoseWindow(_gameclient);
             loseWindow.Show();
         }
 
@@ -91,6 +94,7 @@ namespace BloonsGame
             _pauseWindow.Show();
         }
 
+
         private async void ReadyButton_Click(object sender, RoutedEventArgs e)
         {
             if (MapComboBox.SelectedItem == null)
@@ -98,6 +102,7 @@ namespace BloonsGame
                 SelectMapLabelError.Visibility = Visibility.Visible;
                 return;
             }
+
 
             _isReady = !_isReady;
             ReadyButton.Content = _isReady ? "Not Ready" : "Ready";
