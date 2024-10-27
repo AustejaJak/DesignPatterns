@@ -36,6 +36,17 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("AddTower", response);
     }
     
+    public async Task PlaceBloon(PlaceBloonRequest request)
+    {
+        var bloonInstance = BloonFactory.CreateBloonOfType(request.Name);
+
+        var gameSession = GameSession.GetInstance();
+        gameSession.GameState.AddBloon(bloonInstance);
+
+        var response = new SynchronizeBloon(request.Health, request.Name, request.Color, request.VelocityX, request.VelocityY);
+        await Clients.Group("inGame").SendAsync("AddBloon", response);
+    }
+    
     public async Task JoinGame(string username)
     {
         var gameSession = GameSession.GetInstance();
@@ -44,12 +55,7 @@ public class GameHub : Hub
         await Groups.AddToGroupAsync(Context.ConnectionId, "inGame");
         await Clients.Group("inGame").SendAsync("UserJoined", username);
     }
-
-    public override Task OnConnectedAsync()
-    {
-        return base.OnConnectedAsync();
-    }
-
+    
     public override Task OnDisconnectedAsync(Exception exception)
     {
         if (_username != null)

@@ -41,6 +41,13 @@ namespace BloonLibrary
                 gameSession.GameState.AddTower(tower);
             });
             
+            _connection.On<SynchronizeBloon>("AddBloon", (request) =>
+            {
+                var bloon = BloonFactory.CreateBloonOfType(request.Name);
+                var gameSession = GameSession.GetInstance();
+                gameSession.GameState.AddBloon(bloon);
+            });
+            
             _connection.On<string>("UserJoined", (username) =>
             {
                 Console.WriteLine($"{username} has joined the game.");
@@ -71,6 +78,14 @@ namespace BloonLibrary
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
                 await _connection.InvokeAsync("PlaceTower", request);
+            }
+        }
+        
+        public async Task PlaceBloonAsync(PlaceBloonRequest request)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("PlaceBloon", request);
             }
         }
         

@@ -3,17 +3,26 @@ using SplashKitSDK;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using BloonLibrary;
 
 namespace BloonsProject
 {
     public class BloonController
     {
         private readonly GameState _gameState = GameState.GetGameStateInstance(); // Game state singleton.
+        private GameClient _gameClient;
+
+        public BloonController(GameClient gameClient)
+        {
+            _gameClient = gameClient;
+        }
+        
         public int ticksSinceLastSentBloon { get; set; } // Keeps track of the last time a bloon was sent.
 
         public void AddBloon(Bloon bloon) // Adds bloon to the list of bloons in the singleton.
         {
-            _gameState.Bloons.Add(bloon);
+            //_gameState.Bloons.Add(bloon);
+            _ = _gameClient.PlaceBloonAsync(new PlaceBloonRequest(bloon.Health, bloon.Name, bloon.Color, bloon.VelocityX, bloon.VelocityY));
             _gameState.BloonsSpawned[bloon.Color] += 1; // Increments the number of bloons spawned for the specific colour added.
             ticksSinceLastSentBloon = 0; // When a bloon is added, reset the last time a bloon was added to 0.
         }

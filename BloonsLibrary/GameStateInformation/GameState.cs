@@ -41,5 +41,10 @@ namespace BloonsProject
             Towers.Add(tower);
         }
         
+        public void AddBloon(Bloon bloon)
+        {
+            Bloons.Add(bloon);
+        }
+        
     }
 }
