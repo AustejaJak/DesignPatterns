@@ -2,6 +2,7 @@
 using SplashKitSDK;
 using System.Linq;
 using System;
+using System.Collections.Generic;
 
 namespace BloonsProject
 {
@@ -39,14 +40,15 @@ namespace BloonsProject
 
         public void DamageBloons()
         {
+            // Create a list to hold bloons to be removed after processing
+            var bloonsToBeRemoved = new List<Bloon>();
+
             foreach (Projectile projectile in _gameState.ProjectileManager.ProjectilesOnScreen) // For every projectile
             {
-                foreach (Bloon bloon in _gameState.Bloons) // For every bloon
+                foreach (var bloonPair in _gameState.Bloons) // Iterate over the key-value pairs in the ConcurrentDictionary
                 {
-                    var bloonCircle = new Circle() { Center = bloon.Position, Radius = bloon.Radius * projectile.ProjectileShotType.ProjectileSize };
-                    var projectileLocation = new Point2D()
-                    { X = projectile.ProjectileLocation.X + projectile.ProjectileShotType.ProjectileWidth / 2, Y = projectile.ProjectileLocation.Y + projectile.ProjectileShotType.ProjectileLength / 2 };
-                    if (SplashKit.PointInCircle(projectileLocation, bloonCircle)) // If the projectile (including the width of the projectile's bitmap) collides with the bloon.
+                    var bloon = bloonPair.Value; // Get the Bloon object from the pair
+                    var bloonCircle = new Circle()
                     {
                         var oldBloonHealth = bloon.Health; // Then decrease the health of the bloon depending on the damage of the shot type.
                         bloon.TakeDamage(projectile.ProjectileShotType.Damage);
@@ -56,7 +58,14 @@ namespace BloonsProject
                     }
                 }
             }
+
+            // Remove bloons that have zero or less health
+            foreach (var bloon in bloonsToBeRemoved)
+            {
+                _gameState.Bloons.TryRemove(bloon.Name, out _); // Safely remove the bloon from the dictionary
+            }
         }
+
 
         public bool HaveSufficientFundsToPlaceTower(Tower tower) // Determines whether the user has sufficient funds to place a tower.
         {
@@ -77,22 +86,35 @@ namespace BloonsProject
 
         public void ShootBloons(Map map)
         {
-            DamageBloons(); // Damages all bloons in radius of the any projectile.
+            DamageBloons(); // Damages all bloons in radius of any projectile.
             _gameState.ProjectileManager.IncrementAllProjectiles(); // Increments all projectiles
             if (_gameState.Towers.Count <= 0) return; // If there're no towers, return
-            foreach (var tower in _gameState.Towers.Where(t => t.ShotTimer()))
-            {
-                if (!tower.ShotTimer()) continue; // If the tower is on cooldown, continue to the next.
-                var bloonsInTowerRadius = _gameState.Bloons.Where(b =>
-                    SplashKit.PointInCircle(b.Position, SplashKit.CircleAt(tower.Position, tower.Range))).ToList(); // Return all bloons in radius of the tower.
-                if (bloonsInTowerRadius.Count == 0) continue; // If there's no bloons in radius of the tower, continue to the next.
 
-                var bloonToTarget = tower.Targeting.BloonToTarget(bloonsInTowerRadius); // Depending on the tower's targeting, get the bloon to target.
-                var projectileEndPoint = _gameState.ProjectileManager.GetProjectileEndPoint(bloonToTarget, tower); // Extrapolate the distance to attain the endpoint of the projectile utilizing an algorithm.
-                _gameState.ProjectileManager.AddProjectile(tower.Position, projectileEndPoint, tower.ShotType); // Add the projectile to the list of projectiles.
-                tower.ResetTimer(); // Reset tower cooldown.
+            // Use a list to hold the towers that can shoot
+            var towersReadyToShoot = _gameState.Towers.Where(t => t.ShotTimer()).ToList();
+
+            foreach (var tower in towersReadyToShoot)
+            {
+                // If the tower is on cooldown, continue to the next.
+                if (!tower.ShotTimer()) continue;
+
+                // Get all bloons in the tower's range
+                var bloonsInTowerRadius = _gameState.Bloons
+                    .Where(bloon => SplashKit.PointInCircle(bloon.Value.Position, SplashKit.CircleAt(tower.Position, tower.Range)))
+                    .Select(bloon => bloon.Value) // Select the Bloon object from the KeyValuePair
+                    .ToList();
+
+                // If there's no bloons in radius of the tower, continue to the next.
+                if (bloonsInTowerRadius.Count == 0) continue;
+
+                // Get the bloon to target based on tower's targeting logic
+                var bloonToTarget = tower.Targeting.BloonToTarget(bloonsInTowerRadius);
+                var projectileEndPoint = _gameState.ProjectileManager.GetProjectileEndPoint(bloonToTarget, tower); // Calculate the projectile endpoint
+                _gameState.ProjectileManager.AddProjectile(tower.Position, projectileEndPoint, tower.ShotType); // Add the projectile to the list of projectiles
+                tower.ResetTimer(); // Reset tower cooldown
             }
         }
+
 
         public void TickAllTowers()
         {

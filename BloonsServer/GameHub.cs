@@ -19,11 +19,13 @@ using System.Linq;
 
 public class GameHub : Hub
 {
+    private readonly GameState _gameState = GameState.GetGameStateInstance();
     private static List<string> _connectedUsernames = new List<string>();
 
     private static Dictionary<string, bool> _playerReadyStatus = new Dictionary<string, bool>();
     private string _username;
     
+
 
     public async Task SendUsername(string username)
     {
@@ -66,7 +68,41 @@ public class GameHub : Hub
 
         await Clients.Group("inGame").SendAsync("SendGameOverStats", message);
     }
+    
+    public async Task BroadcastBloonStates(BloonStateRequest request)
+    {
+        var gameSession = GameSession.GetInstance();
 
+        // Get all bloon states that match the request's name
+        var bloonStates = gameSession.GameState.GetAllBloonStates()
+            .Where(b => b.Name == request.Name).ToList(); // Use Where to filter and convert to a list
+
+ 
+        if (bloonStates.Count > 0)
+        {
+            foreach (var bloonState in bloonStates) 
+            {
+
+                var networkPosition = new NetworkPoint2D(request.Position.X, request.Position.Y);
+
+
+                var updatedBloonState = new BloonState(
+                    bloonState.Name,
+                    request.Health,
+                    networkPosition,
+                    request.Checkpoint,
+                    request.DistanceTravelled
+                );
+
+                Console.WriteLine($"Broadcasting state for Bloon ID {updatedBloonState.Name}: Position ({updatedBloonState.Position.X}, {updatedBloonState.Position.Y})");
+                await Clients.Group("inGame").SendAsync("UpdateBloonState", updatedBloonState); // Send the updated bloon state
+            }
+        }
+        else
+        {
+            Console.WriteLine($"No bloon states found for ID {request.Name}.");
+        }
+    }
     public async Task PlaceTower(PlaceTowerRequest request)
     {
         var towerInstance = TowerFactory.CreateTowerOfType(request.TowerType, request.Username);
@@ -113,6 +149,8 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("AddBloon", response);
     }
 
+    
+    
     public async Task JoinGame(string username)
 
     {
@@ -163,4 +201,6 @@ public class GameHub : Hub
 
         await Clients.Group("inGame").SendAsync("ReceiveChatMessage", chatMessage);
     }
+}
+    
 }
