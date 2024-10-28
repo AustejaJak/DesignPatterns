@@ -1,6 +1,7 @@
 ﻿using BloonLibrary;
 using SplashKitSDK;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace BloonsProject
 {
@@ -25,15 +26,17 @@ namespace BloonsProject
             SplashKit.DrawText(debugText, Color.Black, tower.Position.X, tower.Position.Y - 20);
         }
 
-        public void RenderBloons(BloonController bloonController, Map map)
+        public async Task RenderBloons(BloonController bloonController, Map map)
         {
-            foreach (var bloon in _gameState.Bloons) // Draws every bloon in the game
+            // Iterate over the values of the ConcurrentDictionary
+            foreach (var bloon in _gameState.Bloons.Values) // Draws every bloon in the game
             {
-                _entityDrawer.DrawBloon(bloon);
-                bloonController.MoveBloon(bloon, map);
+                _entityDrawer.DrawBloon(bloon); // Draw the bloon on the map
+                bloonController.MoveBloon(bloon, map); // Move the bloon according to game logic
+                
             }
         }
-
+        
         public void RenderTowerDebugMode(Tower tower) // Displays debug stats if tower has been right clicked
         {
             if (tower.DebugModeSelected)
