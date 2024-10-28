@@ -88,16 +88,16 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("UpgradeOrSellTower", request);
     }
 
-    public async Task PlaceBloon(PlaceBloonRequest request)
-    {
-        var bloonInstance = BloonFactory.CreateBloon(request.BloonType);
+    //public async Task PlaceBloon(PlaceBloonRequest request)
+    //{
+    //    var bloonInstance = BloonFactory.CreateBloon(request.BloonType);
 
-        var gameSession = GameSession.GetInstance();
-        gameSession.GameState.AddBloon(bloonInstance);
+    //    var gameSession = GameSession.GetInstance();
+    //    gameSession.GameState.AddBloon(bloonInstance);
 
-        var response = new SynchronizeBloon(request.BloonType, NetworkPoint2D.Serialize(bloonInstance.Position));
-        await Clients.Group("inGame").SendAsync("AddBloon", response);
-    }
+    //    var response = new SynchronizeBloon(request.BloonType, NetworkPoint2D.Serialize(bloonInstance.Position));
+    //    await Clients.Group("inGame").SendAsync("AddBloon", response);
+    //}
     
 
     public async Task PlaceBloon(PlaceBloonRequest request)
@@ -110,25 +110,25 @@ public class GameHub : Hub
         var response = new SynchronizeBloon(request.Health, request.Name, request.Color, request.VelocityX, request.VelocityY);
         await Clients.Group("inGame").SendAsync("AddBloon", response);
     }
-    
+
     public async Task JoinGame(string username)
 
     {
         var gameSession = GameSession.GetInstance();
         gameSession.AddPlayer(username);
-        
+
         var playerGroupName = $"PlayerGroup{username}";
         await Groups.AddToGroupAsync(Context.ConnectionId, playerGroupName);
-        
+
         await Clients.Caller.SendAsync("JoinedGroup", playerGroupName);
-        
+
         await Clients.Group(playerGroupName).SendAsync("UserJoined", username);
-    
+
         var gameState = gameSession.GetCurrentGameState();
         await Clients.Caller.SendAsync("ReceiveGameState", gameState);
-        
+
         _readyPlayers.Add(username);
-        
+
         if (gameSession.AllPlayersReady(RequiredPlayers))
         {
             await StartGame();
@@ -137,7 +137,7 @@ public class GameHub : Hub
 
         return false;
     }
-    
+
     public async Task StartGame()
     {
         var gameSession = GameSession.GetInstance();
