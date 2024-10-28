@@ -25,7 +25,6 @@ namespace BloonLibrary
 
     public class GameClient
     {
-        public string Username { get; set; }
         private HubConnection _connection;
 
         public event Action<List<PlayerStatus>> PlayerListUpdated;
@@ -164,8 +163,6 @@ namespace BloonLibrary
             {
                 ChatMessageReceived?.Invoke(message);
             });
-
-
             
             try
             {

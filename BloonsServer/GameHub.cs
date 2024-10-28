@@ -93,15 +93,15 @@ public class GameHub : Hub
                     request.Checkpoint,
                     request.DistanceTravelled
                 );
-
                 Console.WriteLine($"Broadcasting state for Bloon ID {updatedBloonState.Name}: Position ({updatedBloonState.Position.X}, {updatedBloonState.Position.Y})");
-                await Clients.Group("inGame").SendAsync("UpdateBloonState", updatedBloonState); // Send the updated bloon state
+                await Clients.Group("inGame").SendAsync("UpdateBloonState", updatedBloonState);
             }
         }
         else
         {
             Console.WriteLine($"No bloon states found for ID {request.Name}.");
         }
+
     }
     public async Task PlaceTower(PlaceTowerRequest request)
     {
@@ -148,7 +148,6 @@ public class GameHub : Hub
         var response = new SynchronizeBloon(request.Health, request.Name, request.Color, request.VelocityX, request.VelocityY);
         await Clients.Group("inGame").SendAsync("AddBloon", response);
     }
-
     
     
     public async Task JoinGame(string username)
@@ -203,4 +202,4 @@ public class GameHub : Hub
     }
 }
     
-}
+

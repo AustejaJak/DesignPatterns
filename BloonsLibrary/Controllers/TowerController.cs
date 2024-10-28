@@ -40,15 +40,14 @@ namespace BloonsProject
 
         public void DamageBloons()
         {
-            // Create a list to hold bloons to be removed after processing
-            var bloonsToBeRemoved = new List<Bloon>();
-
             foreach (Projectile projectile in _gameState.ProjectileManager.ProjectilesOnScreen) // For every projectile
             {
-                foreach (var bloonPair in _gameState.Bloons) // Iterate over the key-value pairs in the ConcurrentDictionary
+                foreach (Bloon bloon in _gameState.Bloons.Values) // For every bloon
                 {
-                    var bloon = bloonPair.Value; // Get the Bloon object from the pair
-                    var bloonCircle = new Circle()
+                    var bloonCircle = new Circle() { Center = bloon.Position, Radius = bloon.Radius * projectile.ProjectileShotType.ProjectileSize };
+                    var projectileLocation = new Point2D()
+                        { X = projectile.ProjectileLocation.X + projectile.ProjectileShotType.ProjectileWidth / 2, Y = projectile.ProjectileLocation.Y + projectile.ProjectileShotType.ProjectileLength / 2 };
+                    if (SplashKit.PointInCircle(projectileLocation, bloonCircle)) // If the projectile (including the width of the projectile's bitmap) collides with the bloon.
                     {
                         var oldBloonHealth = bloon.Health; // Then decrease the health of the bloon depending on the damage of the shot type.
                         bloon.TakeDamage(projectile.ProjectileShotType.Damage);
@@ -57,12 +56,6 @@ namespace BloonsProject
                         
                     }
                 }
-            }
-
-            // Remove bloons that have zero or less health
-            foreach (var bloon in bloonsToBeRemoved)
-            {
-                _gameState.Bloons.TryRemove(bloon.Name, out _); // Safely remove the bloon from the dictionary
             }
         }
 

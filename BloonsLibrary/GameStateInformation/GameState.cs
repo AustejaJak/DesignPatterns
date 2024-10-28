@@ -57,15 +57,6 @@ namespace BloonsProject
             Bloons.TryAdd(bloon.Name, bloon);
         }
         
-        public Bloon GetBloon(string bloonType)
-        {
-            return Bloons.FirstOrDefault(b => b.Name == bloonType);
-        }
-        
-        public List<Bloon> GetAllBloons()
-        {
-            return Bloons.ToList();
-        }
 
         public void upgradeOrSellTower(Point2D point, string option, int upgradeCount)
         {
