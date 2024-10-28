@@ -1,4 +1,5 @@
-﻿using SplashKitSDK;
+﻿using System;
+using SplashKitSDK;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -41,8 +42,7 @@ namespace BloonsProject
                 _gameState.Bloons.TryRemove(bloon.Name, out _); // Safely remove the bloon from the dictionary
             }
         }
-
-
+        
         public void SetRound(Map map, int round) // Sets the bloons to be spawned for the round and resets the bloons spawned.
         {
             _gameState.BloonsToBeSpawned = map.BloonsPerRound(round);
@@ -52,6 +52,9 @@ namespace BloonsProject
                 [Color.Blue] = 0,
                 [Color.Green] = 0
             };
+            
+            Console.WriteLine($"Round {round}: Red: {_gameState.BloonsToBeSpawned[Color.Red]}, Blue: {_gameState.BloonsToBeSpawned[Color.Blue]}, Green: {_gameState.BloonsToBeSpawned[Color.Green]}");
+        
         }
     }
 }

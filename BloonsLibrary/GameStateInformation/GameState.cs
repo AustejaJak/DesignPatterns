@@ -49,7 +49,6 @@ namespace BloonsProject
         public void AddBloon(Bloon bloon)
         {
             Bloons.TryAdd(bloon.Name, bloon);
-
         }
         
         public List<BloonState> GetAllBloonStates()

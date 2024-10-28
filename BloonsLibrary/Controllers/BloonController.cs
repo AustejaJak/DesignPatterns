@@ -25,8 +25,8 @@ namespace BloonsProject
 
         public async Task AddBloon(Bloon bloon) // Adds bloon to the list of bloons in the singleton.
         {
-            //_gameState.Bloons.Add(bloon);
             await _gameClient.PlaceBloonAsync(new PlaceBloonRequest(bloon.Health, bloon.Name, bloon.Color, bloon.VelocityX, bloon.VelocityY));
+            _gameState.Bloons.TryAdd(bloon.Name, bloon);
             _gameState.BloonsSpawned[bloon.Color] += 1; // Increments the number of bloons spawned for the specific colour added.
             ticksSinceLastSentBloon = 0; // When a bloon is added, reset the last time a bloon was added to 0.
         }
@@ -39,50 +39,43 @@ namespace BloonsProject
             return amountOfBloons;
         }
 
-
         public void CheckBloonHealth() // Checks the health of all the bloons on the screen.
         {
-            // Create a list to hold bloons to remove and add
-            var bloonsToRemove = new List<string>(); // To track bloon keys to remove
-            var newBloonsToAdd = new List<Bloon>(); // To track new bloons to add
+            var bloonsToRemove = new List<string>(); // List to hold keys of bloons to remove
+            var newBloonsToAdd = new List<Bloon>(); // List to hold new bloons to add
 
-            foreach (var bloon in _gameState.Bloons.Values) // Iterate over values
+            foreach (var b in _gameState.Bloons.Values.ToList()) // Iterate over the bloons
             {
-                if (bloon.Color.ToString() == Color.Green.ToString() && bloon.Health == 2)
+                if (b.Color.Equals(Color.Green) && b.Health == 2) // If a green bloon has 2 health
                 {
-                    // Replace with a new BlueBloon
                     newBloonsToAdd.Add(new BlueBloon
                     {
-                        Position = bloon.Position,
-                        Checkpoint = bloon.Checkpoint,
-                        DistanceTravelled = bloon.DistanceTravelled
+                        Position = b.Position,
+                        Checkpoint = b.Checkpoint,
+                        DistanceTravelled = b.DistanceTravelled
                     });
-                    bloonsToRemove.Add(bloon.Name); // Add key for removal
+                    bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
-
-                if (bloon.Color.ToString() == Color.Blue.ToString() && bloon.Health == 1)
+                else if (b.Color.Equals(Color.Blue) && b.Health == 1) // If a blue bloon has 1 health
                 {
-                    // Replace with a new RedBloon
                     newBloonsToAdd.Add(new RedBloon
                     {
-                        Position = bloon.Position,
-                        Checkpoint = bloon.Checkpoint,
-                        DistanceTravelled = bloon.DistanceTravelled
+                        Position = b.Position,
+                        Checkpoint = b.Checkpoint,
+                        DistanceTravelled = b.DistanceTravelled
                     });
-                    bloonsToRemove.Add(bloon.Name); // Add key for removal
+                    bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
-
-                // If the bloon has no health, remove it
-                if (bloon.Health <= 0)
+                else if (b.Health <= 0) // If the bloon has no health
                 {
-                    bloonsToRemove.Add(bloon.Name); // Add key for removal
+                    bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
             }
 
-            // Remove bloons from the dictionary
+            // Remove the tracked bloons
             foreach (var bloonName in bloonsToRemove)
             {
-                _gameState.Bloons.TryRemove(bloonName, out _);
+                _gameState.Bloons.TryRemove(bloonName, out _); // Correctly remove the bloon
             }
 
             // Add new bloons to the dictionary
@@ -91,8 +84,7 @@ namespace BloonsProject
                 _gameState.Bloons.TryAdd(newBloon.Name, newBloon);
             }
         }
-
-
+        
         public async Task MoveBloon(Bloon bloon, Map map) // Moves the bloon.
         {
             var initialPosition = bloon.Position;
