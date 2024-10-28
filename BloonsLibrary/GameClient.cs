@@ -164,6 +164,34 @@ namespace BloonLibrary
             }
         }
 
+        //public async Task PlaceBloonAsync(PlaceBloonRequest request)
+        //{
+        //    if (_connection != null && _connection.State == HubConnectionState.Connected)
+        //    {
+        //        await _connection.InvokeAsync("PlaceBloon", request);
+        //    }
+        //}
+
+        //public async Task<bool> JoinGameAsync(string username)
+        //{
+        //    if (_connection != null && _connection.State == HubConnectionState.Connected)
+        //    {
+        //        try
+        //        {
+        //            return await _connection.InvokeAsync<bool>("JoinGame", username);
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            Console.WriteLine($"Error while joining game: {ex.Message}");
+        //            return false;
+        //        }
+        //    }
+
+        //    return false;
+        //}
+
+
+
         public async Task PlaceBloonAsync(PlaceBloonRequest request)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
@@ -172,43 +200,15 @@ namespace BloonLibrary
             }
         }
 
-        public async Task<bool> JoinGameAsync(string username)
+        public async Task JoinGameAsync(string username)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
-                try
-                {
-                    return await _connection.InvokeAsync<bool>("JoinGame", username);
-                }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error while joining game: {ex.Message}");
-                    return false;
-                }
+                await _connection.InvokeAsync("JoinGame", username);
             }
-
-            return false;
         }
 
 
-
-        //public async Task PlaceBloonAsync(PlaceBloonRequest request)
-        //{
-        //    if (_connection != null && _connection.State == HubConnectionState.Connected)
-        //    {
-        //        await _connection.InvokeAsync("PlaceBloon", request);
-        //    }
-        //}
-        
-        //public async Task JoinGameAsync(string username)
-        //{
-        //    if (_connection != null && _connection.State == HubConnectionState.Connected)
-        //    {
-        //        await _connection.InvokeAsync("StartGame");
-        //    }
-        //}
-
-        
         public async Task Disconnect()
         {
             if (_connection != null)

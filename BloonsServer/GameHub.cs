@@ -117,25 +117,8 @@ public class GameHub : Hub
         var gameSession = GameSession.GetInstance();
         gameSession.AddPlayer(username);
 
-        var playerGroupName = $"PlayerGroup{username}";
-        await Groups.AddToGroupAsync(Context.ConnectionId, playerGroupName);
-
-        await Clients.Caller.SendAsync("JoinedGroup", playerGroupName);
-
-        await Clients.Group(playerGroupName).SendAsync("UserJoined", username);
-
-        var gameState = gameSession.GetCurrentGameState();
-        await Clients.Caller.SendAsync("ReceiveGameState", gameState);
-
-        _readyPlayers.Add(username);
-
-        if (gameSession.AllPlayersReady(RequiredPlayers))
-        {
-            await StartGame();
-            return true;
-        }
-
-        return false;
+        await Groups.AddToGroupAsync(Context.ConnectionId, "inGame");
+        await Clients.Group("inGame").SendAsync("UserJoined", username);
     }
 
     public async Task StartGame()

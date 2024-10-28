@@ -17,7 +17,7 @@ namespace BloonsGame
         private DispatcherTimer _countdownTimer;
         private int _countdownSeconds = 5;
 
-        public MainWindow(GameClient gameClient, string username)
+        public MainWindow(GameClient gameClient)
         {
             InitializeComponent();
             _gameClient = gameClient;
