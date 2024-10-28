@@ -1,4 +1,6 @@
 ﻿using BloonsProject;
+//using BloonLibrary.Models;
+//using BloonLibrary.Commands;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
@@ -23,6 +25,7 @@ namespace BloonLibrary
         private HubConnection _connection;
 
         public event Action<List<PlayerStatus>> PlayerListUpdated;
+        public event Action<ChatMessage> ChatMessageReceived;
         public event Action AllPlayersReady;
 
         public string Username { get; set; }
@@ -107,6 +110,11 @@ namespace BloonLibrary
                 var gameState = GameState.GetGameStateInstance();
                 gameState.AddGameStats(message);
 
+            });
+
+            _connection.On<ChatMessage>("ReceiveChatMessage", (message) =>
+            {
+                ChatMessageReceived?.Invoke(message);
             });
 
 
@@ -218,5 +226,13 @@ namespace BloonLibrary
                 Console.WriteLine("Disconnected from server.");
             }
         }
+
+        public async Task SendChatMessageAsync(string message)
+    {
+        if (_connection != null && _connection.State == HubConnectionState.Connected)
+        {
+            await _connection.InvokeAsync("SendChatMessage", Username, message);
+        }
+    }
     }
 }

@@ -8,6 +8,8 @@ using BloonLibrary;
 using BloonsProject;
 using System.Timers;
 using SplashKitSDK;
+//using BloonsLibrary.Models;
+//using BloonsLibrary.Commands;
 
 using Timer = System.Timers.Timer;
 
@@ -148,5 +150,17 @@ public class GameHub : Hub
         }
 
         await base.OnDisconnectedAsync(exception);
+    }
+
+    public async Task SendChatMessage(string username, string message)
+    {
+        var chatMessage = new ChatMessage
+        {
+            Username = username,
+            Content = message,
+            Timestamp = DateTime.Now.ToString("HH:mm")
+        };
+
+        await Clients.Group("inGame").SendAsync("ReceiveChatMessage", chatMessage);
     }
 }

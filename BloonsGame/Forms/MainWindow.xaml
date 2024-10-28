@@ -9,8 +9,13 @@
         <Grid.Background>
             <ImageBrush ImageSource = "/Forms/Resources/BloonsHomeScreen.jpg" />
         </Grid.Background>
+        
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="300"/>
+        </Grid.ColumnDefinitions>
 
-        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="280">
+        <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280">
             <Label x:Name="SelectMapLabel" Content="Select Map" Height="50" 
                    FontSize="30" FontWeight="UltraBold" HorizontalAlignment="Center" />
             
@@ -39,5 +44,42 @@
                    FontSize="48" FontWeight="Bold" HorizontalAlignment="Center"
                    Visibility="Collapsed" Foreground="Red"/>
         </StackPanel>
+
+        <!-- Chat Panel -->
+        <Grid Grid.Column="1" Background="#80000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+            <ListView x:Name="ChatListView" Grid.Row="0" Margin="10" Background="Transparent">
+                <ListView.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel>
+                            <TextBlock>
+                                <Run Text="{Binding Timestamp}" Foreground="Gray"/>
+                                <Run Text=" "/>
+                                <Run Text="{Binding Username}" Foreground="Yellow"/>
+                                <Run Text=": "/>
+                                <Run Text="{Binding Content}"/>
+                            </TextBlock>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+
+            <Grid Grid.Row="1" Margin="10">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="MessageTextBox" Grid.Column="0" 
+                         Height="30" Margin="0,0,5,0"
+                         KeyDown="MessageTextBox_KeyDown"/>
+                <Button x:Name="SendButton" Grid.Column="1" 
+                        Content="Send" Width="60" Height="30"
+                        Click="SendButton_Click"/>
+            </Grid>
+        </Grid>
     </Grid>
 </Window>
