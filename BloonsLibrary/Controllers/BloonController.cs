@@ -125,6 +125,7 @@ namespace BloonsProject
                         Width = 4
                     }))
                 bloon.Checkpoint++;
+            
             var bloonStateRequest = new BloonStateRequest(bloon.Name, bloon.Health, NetworkPoint2D.Serialize(bloon.Position), bloon.Checkpoint, bloon.DistanceTravelled);
             await _gameClient.BroadcastBloonStatesAsync(bloonStateRequest);
         }
