@@ -1,9 +1,12 @@
-﻿using SplashKitSDK;
+﻿using System;
+using System.IO;
+using SplashKitSDK;
 
 namespace BloonsProject
 {
     public class DartShot : IShotType
     {
+        private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         public DartShot()
         {
             ShotSpeed = 100;
@@ -13,7 +16,7 @@ namespace BloonsProject
             FirerateUpgradeCost = 75;
             RangeUpgradeCost = 75;
             TimeSinceLastShot = 0;
-            ProjectileBitmap = new Bitmap("Dart", "C:/DesignPatterns/BloonsLibrary/Resources/Spike.png");
+            ProjectileBitmap = new Bitmap("Dart", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Spike.png"));
             ProjectileSpeed = 0.3;
             ProjectileSize = 1.5;
             ProjectileLength = 48;

@@ -18,7 +18,7 @@ namespace BloonsProject
             Name = name;
         }
 
-        public string BloonsMap { get; } // Bitmap directory for map
+        public string BloonsMap { get; set; } // Bitmap directory for map
         public List<VectorExtension> Checkpoints { get; } // Map checkpoint locations
         public int Height { get; } // Height of map
         public int Length { get; } // Length of map

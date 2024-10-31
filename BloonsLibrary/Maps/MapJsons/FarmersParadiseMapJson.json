@@ -1,5 +1,5 @@
 {
-    "BloonsMap": "../../BloonsLibrary/Resources/EmptyCornfieldMap.png",
+    "BloonsMap": "../BloonsLibrary/Resources/EmptyCornfieldMap.png",
     "Name": "Farmers Paradise",
     "Height": 560,
     "Length": 811,

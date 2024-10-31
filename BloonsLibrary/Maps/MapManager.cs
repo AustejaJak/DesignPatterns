@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
@@ -14,16 +15,22 @@ namespace BloonsProject
             if (Maps == null)
             {
                 var listOfMaps = new List<Map>();
-                string mapJsonPath = "../BloonsLibrary/Maps/MapJsons";
-                DirectoryInfo directoryInfo = new DirectoryInfo(mapJsonPath); // Gets the path of the directory of json files
+                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string mapJsonPath = Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Maps\MapJsons");
+                DirectoryInfo directoryInfo = new DirectoryInfo(mapJsonPath);
 
-                foreach (var json in directoryInfo.GetFiles("*.json")) // Iterates through each file
+                foreach (var json in directoryInfo.GetFiles("*.json"))
                 {
                     string jsonString = File.ReadAllText(json.ToString());
-                    listOfMaps.Add(JsonSerializer.Deserialize<Map>(jsonString)); // Deserializes and adds it to list of maps
+                    var map = JsonSerializer.Deserialize<Map>(jsonString);
+    
+                    // Use the path from JSON, making it a full path
+                    map.BloonsMap = Path.GetFullPath(Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\", map.BloonsMap));
+    
+                    listOfMaps.Add(map);
                 }
 
-                Maps = listOfMaps; // Set maps property to the list of maps and returns it
+                Maps = listOfMaps;
                 return listOfMaps;
             }
 

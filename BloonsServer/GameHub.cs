@@ -22,6 +22,8 @@ public class GameHub : Hub
     private readonly GameState _gameState = GameState.GetGameStateInstance();
     private static List<string> _connectedUsernames = new List<string>();
 
+    private static Dictionary<string, string> _playerMaps = new Dictionary<string, string>();
+
     private static Dictionary<string, bool> _playerReadyStatus = new Dictionary<string, bool>();
     private string _username;
     
@@ -39,13 +41,27 @@ public class GameHub : Hub
 
     public async Task SetPlayerReady(string username, bool isReady)
     {
+        // First validate that the player has selected a map
+        if (!_playerMaps.ContainsKey(username))
+        {
+            await Clients.Caller.SendAsync("MapValidationFailed", "Please select a map before getting ready.");
+            return;
+        }
+
+        // Then validate that all players have the same map
+        var distinctMaps = _playerMaps.Values.Distinct().ToList();
+        if (distinctMaps.Count > 1)
+        {
+            await Clients.Caller.SendAsync("MapValidationFailed", "All players must select the same map before getting ready.");
+            return;
+        }
+
         _playerReadyStatus[username] = isReady;
         await UpdatePlayerStatuses();
         
         // Check if all players are ready
         if (_playerReadyStatus.Count >= 2 && _playerReadyStatus.All(p => p.Value))
         {
-            // Start countdown on all clients
             await Clients.Group("inGame").SendAsync("AllPlayersReady");
         }
     }
@@ -57,7 +73,8 @@ public class GameHub : Hub
             Username = username,
             ReadyStatus = _playerReadyStatus.ContainsKey(username) && _playerReadyStatus[username] 
                 ? "Ready" 
-                : "Not Ready"
+                : "Not Ready",
+            SelectedMap = _playerMaps.ContainsKey(username) ? _playerMaps[username] : "No Map"
         }).ToList();
 
         await Clients.Group("inGame").SendAsync("UpdatePlayerList", playerStatuses);
@@ -177,7 +194,6 @@ public class GameHub : Hub
 
     
     public override async Task OnDisconnectedAsync(Exception exception)
-
     {
         if (_username != null)
         {
@@ -200,6 +216,33 @@ public class GameHub : Hub
 
         await Clients.Group("inGame").SendAsync("ReceiveChatMessage", chatMessage);
     }
+
+    public async Task SendSelectedMap(string username, string mapName)
+    {
+        _playerMaps[username] = mapName;
+        await ValidateMapSelection();
+    }
+    
+    private async Task ValidateMapSelection()
+    {
+        // Only validate when we have at least 2 players with map selections
+        if (_playerMaps.Count >= 2)
+        {
+            var distinctMaps = _playerMaps.Values.Distinct().ToList();
+            if (distinctMaps.Count > 1)
+            {
+                // Maps don't match - notify all clients
+                var message = "All players must select the same map before starting the game.";
+                await Clients.Group("inGame").SendAsync("MapValidationFailed", message);
+
+                // Reset ready status for all players
+                foreach (var username in _playerReadyStatus.Keys.ToList())
+                {
+                    _playerReadyStatus[username] = false;
+                }
+                await UpdatePlayerStatuses();
+            }
+        }
+    }
 }
     
-

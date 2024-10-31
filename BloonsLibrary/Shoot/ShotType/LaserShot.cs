@@ -1,9 +1,12 @@
-﻿using SplashKitSDK;
+﻿using System;
+using System.IO;
+using SplashKitSDK;
 
 namespace BloonsProject
 {
     public class LaserShot : IShotType
     {
+        private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         public LaserShot()
         {
             ShotSpeed = 50;
@@ -13,7 +16,7 @@ namespace BloonsProject
             FirerateUpgradeCost = 100;
             RangeUpgradeCost = 150;
             TimeSinceLastShot = 0;
-            ProjectileBitmap = new Bitmap("Laser", "../../BloonsLibrary/Resources/Blast.png");
+            ProjectileBitmap = new Bitmap("Laser",Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Blast.png"));
             ProjectileSpeed = 0.3;
             ProjectileSize = 2;
             ProjectileLength = 40;

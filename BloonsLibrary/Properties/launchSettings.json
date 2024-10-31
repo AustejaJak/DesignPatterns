@@ -2,7 +2,7 @@
   "profiles": {
     "BloonsProject": {
       "commandName": "Project",
-      "workingDirectory": "C:\\BloonsTD\\BloonsLibrary"
+      "workingDirectory": "C:\\Users\\kaspa\\Desktop\\UNI\\4Kursas\\semestras7\\OPP\\DesignPatterns\\BloonsLibrary"
     }
   }
 }
