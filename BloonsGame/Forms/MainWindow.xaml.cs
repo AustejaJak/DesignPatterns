@@ -157,6 +157,7 @@ namespace BloonsGame
             if (MapComboBox.SelectedItem != null)
             {
                 SelectMapLabelError.Visibility = Visibility.Collapsed;
+                MapValidationErrorLabel.Visibility = Visibility.Collapsed; // Hide the error message
                 var selectedMap = MapComboBox.SelectedItem.ToString();
                 _gameClient.SendSelectedMapAsync(selectedMap);
 
@@ -174,12 +175,13 @@ namespace BloonsGame
         {
             Dispatcher.Invoke(() =>
             {
-                MessageBox.Show(message, "Map Selection Error", MessageBoxButton.OK, MessageBoxImage.Warning);
-                
+                MapValidationErrorLabel.Content = message;
+                MapValidationErrorLabel.Visibility = Visibility.Visible;
+
                 // Reset ready status
                 _isReady = false;
                 ReadyButton.Content = "Ready";
-                
+
                 // Make map selection and ready button available again
                 ReadyButton.IsEnabled = true;
                 MapComboBox.IsEnabled = true;

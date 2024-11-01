@@ -24,6 +24,7 @@
             <Label x:Name="SelectMapLabelError" Content="Please select a map" 
                    Height="22" FontSize="9" Foreground="Red" 
                    Visibility="Collapsed" HorizontalAlignment="Center" />
+            <Label x:Name="MapValidationErrorLabel" Content="" Height="22" FontSize="12" Foreground="Red" Visibility="Collapsed" HorizontalAlignment="Center" />
 
             <ListView x:Name="PlayerListView" Height="150" Width="335" Margin="0,20">
                 <ListView.View>
