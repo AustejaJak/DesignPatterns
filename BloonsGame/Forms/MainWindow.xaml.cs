@@ -28,6 +28,7 @@ namespace BloonsGame
             _gameClient = gameClient;
             MapComboBox.Items.Add("The Original");
             MapComboBox.Items.Add("Farmers Paradise");
+            MapComboBox.Items.Add("Ocean Road");
 
             // Initialize chat
             _chatMessages = new ObservableCollection<ChatMessage>();

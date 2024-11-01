@@ -3,12 +3,19 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using BloonLibrary;
+using BloonLibrary.Adapter;
 
 namespace BloonsProject
 {
     public static class MapManager
     {
         private static List<Map> Maps;
+        private static readonly List<IMapFileAdapter> MapFileAdapters = new List<IMapFileAdapter>
+        {
+            new JsonMapFileAdapter(),
+            new XmlMapFileAdapter()
+        };
 
         public static List<Map> GetAllMaps()
         {
@@ -16,18 +23,27 @@ namespace BloonsProject
             {
                 var listOfMaps = new List<Map>();
                 string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-                string mapJsonPath = Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Maps\MapJsons");
-                DirectoryInfo directoryInfo = new DirectoryInfo(mapJsonPath);
+                string mapFilesPath = Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Maps\MapJsons");
+                DirectoryInfo directoryInfo = new DirectoryInfo(mapFilesPath);
 
-                foreach (var json in directoryInfo.GetFiles("*.json"))
+                foreach (var file in directoryInfo.GetFiles())
                 {
-                    string jsonString = File.ReadAllText(json.ToString());
-                    var map = JsonSerializer.Deserialize<Map>(jsonString);
-    
-                    // Use the path from JSON, making it a full path
-                    map.BloonsMap = Path.GetFullPath(Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\", map.BloonsMap));
-    
-                    listOfMaps.Add(map);
+                    // Find the appropriate adapter for the file type
+                    var adapter = MapFileAdapters
+                        .FirstOrDefault(a => a.SupportsFileType(file.Extension));
+
+                    if (adapter != null)
+                    {
+                        try
+                        {
+                            var map = adapter.DeserializeMap(file.FullName);
+                            listOfMaps.Add(map);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error deserializing map file {file.Name}: {ex.Message}");
+                        }
+                    }
                 }
 
                 Maps = listOfMaps;
@@ -37,7 +53,7 @@ namespace BloonsProject
             return Maps;
         }
 
-        public static Map GetMapByName(string mapName) // Gets map from a string.
+        public static Map GetMapByName(string mapName)
         {
             return GetAllMaps().FirstOrDefault(map => map.Name == mapName);
         }
