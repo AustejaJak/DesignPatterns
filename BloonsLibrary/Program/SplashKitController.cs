@@ -47,7 +47,7 @@ namespace BloonsProject
             StartUpGame();
             do
             {
-                SplashKit.RefreshScreen(60);
+                SplashKit.RefreshScreen(50);
                 SplashKit.ProcessEvents();
 
                 if (_isPaused) continue; // If game is paused, stop running the game loop.

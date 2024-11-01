@@ -1,8 +1,9 @@
-﻿using BloonLibrary;
+using BloonLibrary;
 using SplashKitSDK;
 using System.Collections.Generic;
-using System.Linq;
+using System.Collections.Concurrent;
 using System.Text.Json;
+using System.Linq;
 using Color = SplashKitSDK.Color;
 
 namespace BloonsProject
@@ -10,7 +11,7 @@ namespace BloonsProject
     public class GameState // Singleton containing information about the gamestate.
     {
         private static GameState _state;
-        public List<Bloon> Bloons = new List<Bloon>();
+        public ConcurrentDictionary<string, Bloon> Bloons { get; private set; }
         public  List<Tower> Towers = new List<Tower>();
         public Dictionary<Color, int> BloonsSpawned = new Dictionary<Color, int>();
         public Dictionary<Color, int> BloonsToBeSpawned = new Dictionary<Color, int>();
@@ -22,6 +23,7 @@ namespace BloonsProject
 
         protected GameState()
         {
+            Bloons = new ConcurrentDictionary<string, Bloon>();
         }
 
         public static GameState GetGameStateInstance()
@@ -52,18 +54,9 @@ namespace BloonsProject
 
         public void AddBloon(Bloon bloon)
         {
-            Bloons.Add(bloon);
+            Bloons.TryAdd(bloon.Name, bloon);
         }
         
-        public Bloon GetBloon(string bloonType)
-        {
-            return Bloons.FirstOrDefault(b => b.Name == bloonType);
-        }
-        
-        public List<Bloon> GetAllBloons()
-        {
-            return Bloons.ToList();
-        }
 
         public void upgradeOrSellTower(Point2D point, string option, int upgradeCount)
         {
@@ -104,5 +97,34 @@ namespace BloonsProject
         //    Bloons.Add(bloon);
         //}
         
+        public List<BloonState> GetAllBloonStates()
+        {
+            // Use the .Values property to get all values from the ConcurrentDictionary
+            return Bloons.Values.Select(bloon => new BloonState(
+                bloon.Name,
+                bloon.Health,
+                NetworkPoint2D.Serialize(bloon.Position),
+                bloon.Checkpoint,
+                bloon.DistanceTravelled
+            )).ToList();
+        }
+        
+        public void UpdateBloonState(BloonState state)
+        {
+            // Attempt to retrieve the bloon from the ConcurrentDictionary using the name
+            if (Bloons.TryGetValue(state.Name, out var bloon))
+            {
+                // Update the properties of the bloon with the values from the state
+                bloon.Position = new Point2D()
+                {
+                    X = state.Position.X, // Update with the new position from state
+                    Y = state.Position.Y
+                };
+                bloon.Health = state.Health;
+                bloon.Checkpoint = state.Checkpoint;
+                bloon.DistanceTravelled = state.DistanceTravelled;
+            }
+
+        }
     }
 }

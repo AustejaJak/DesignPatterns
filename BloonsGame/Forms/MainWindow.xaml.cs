@@ -4,6 +4,10 @@ using System;
 using BloonLibrary;
 using System.Collections.Generic;
 using System.Windows.Threading;
+using System.Collections.ObjectModel;
+//using BloonsLibrary.Commands;
+//using BloonsLibrary.Models;
+using System.Windows.Input;
 
 namespace BloonsGame
 {
@@ -11,11 +15,11 @@ namespace BloonsGame
     {
         private PauseWindow _pauseWindow;
         private IProgramController _programController;
-
         private GameClient _gameClient;
         private bool _isReady = false;
         private DispatcherTimer _countdownTimer;
         private int _countdownSeconds = 5;
+        private ObservableCollection<ChatMessage> _chatMessages;
 
         public MainWindow(GameClient gameClient)
         {
@@ -23,12 +27,48 @@ namespace BloonsGame
             _gameClient = gameClient;
             MapComboBox.Items.Add("The Original");
 
+            // Initialize chat
+            _chatMessages = new ObservableCollection<ChatMessage>();
+            ChatListView.ItemsSource = _chatMessages;
 
-            // Subscribe to player list updates
+            // Subscribe to events
             _gameClient.PlayerListUpdated += UpdatePlayerList;
             _gameClient.AllPlayersReady += StartCountdown;
+            _gameClient.ChatMessageReceived += OnChatMessageReceived;
             
             InitializeCountdownTimer();
+        }
+
+        private void OnChatMessageReceived(ChatMessage message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                _chatMessages.Add(message);
+                ChatListView.ScrollIntoView(ChatListView.Items[ChatListView.Items.Count - 1]);
+            });
+        }
+
+        private void SendButton_Click(object sender, RoutedEventArgs e)
+        {
+            SendMessage();
+        }
+
+        private void MessageTextBox_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                SendMessage();
+            }
+        }
+
+        private void SendMessage()
+        {
+            if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
+            {
+                var command = new SendMessageCommand(_gameClient, MessageTextBox.Text);
+                command.Execute();
+                MessageTextBox.Clear();
+            }
         }
 
 

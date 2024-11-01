@@ -6,7 +6,10 @@ using System.Linq;
 
 using System.Threading.Tasks;
 
+using System.Threading.Tasks;
 using BloonLibrary;
+using BloonsProject;
+using Microsoft.AspNetCore.SignalR;
 
 namespace BloonsProject
 {
@@ -15,6 +18,7 @@ namespace BloonsProject
         private readonly GameState _gameState = GameState.GetGameStateInstance(); // Game state singleton.
 
         private GameClient _gameClient;
+        private readonly object _broadcastLock = new object();
 
         public BloonController(GameClient gameClient)
         {
@@ -23,50 +27,71 @@ namespace BloonsProject
         
         public int ticksSinceLastSentBloon { get; set; } // Keeps track of the last time a bloon was sent.
 
-        public void AddBloon(Bloon bloon) // Adds bloon to the list of bloons in the singleton.
+        public async Task AddBloon(Bloon bloon) // Adds bloon to the list of bloons in the singleton.
         {
-            //_gameState.Bloons.Add(bloon);
-
-            _ = _gameClient.PlaceBloonAsync(new PlaceBloonRequest(bloon.Health, bloon.Name, bloon.Color, bloon.VelocityX, bloon.VelocityY));
+            await _gameClient.PlaceBloonAsync(new PlaceBloonRequest(bloon.Health, bloon.Name, bloon.Color, bloon.VelocityX, bloon.VelocityY));
+            _gameState.Bloons.TryAdd(bloon.Name, bloon);
             _gameState.BloonsSpawned[bloon.Color] += 1; // Increments the number of bloons spawned for the specific colour added.
             ticksSinceLastSentBloon = 0; // When a bloon is added, reset the last time a bloon was added to 0.
         }
 
         public int BloonsOnScreen(Window window) // Returns the number of bloons on the screen.
         {
-            var amountOfBloons = _gameState.Bloons.Count(b =>
-                b.Position.X >= 0 && b.Position.X < window.Width && b.Position.Y >= 0 && b.Position.Y < window.Height);
+            var amountOfBloons = _gameState.Bloons.Values.Count(bloon =>
+                bloon.Position.X >= 0 && bloon.Position.X < window.Width && 
+                bloon.Position.Y >= 0 && bloon.Position.Y < window.Height);
             return amountOfBloons;
         }
 
         public void CheckBloonHealth() // Checks the health of all the bloons on the screen.
         {
-            foreach (var b in _gameState.Bloons.ToList())
-            {
-                if (b.Color.ToString() == Color.Green.ToString() && b.Health == 2) // If a green bloon has 2 health, then remove it and replace it with a blue bloon.
-                { // Pass over the information of the bloon to the newly created one.
-                    _gameState.Bloons.Add(new BlueBloon { Position = b.Position, Checkpoint = b.Checkpoint, DistanceTravelled = b.DistanceTravelled });
-                    _gameState.Bloons.Remove(b);
-                    //_gameState.Player.BloonsKilled++;
-                }
+            var bloonsToRemove = new List<string>(); // List to hold keys of bloons to remove
+            var newBloonsToAdd = new List<Bloon>(); // List to hold new bloons to add
 
-                if (b.Color.ToString() == Color.Blue.ToString() && b.Health == 1) // If a blue bloon has 1 health, then remove it and replace it with a red bloon.
-                { // Pass over the information of the bloon to the newly created one.
-                    _gameState.Bloons.Add(new RedBloon { Position = b.Position, Checkpoint = b.Checkpoint, DistanceTravelled = b.DistanceTravelled });
-                    _gameState.Bloons.Remove(b);
-                    //_gameState.Player.BloonsKilled++;
+            foreach (var b in _gameState.Bloons.Values.ToList()) // Iterate over the bloons
+            {
+                if (b.Color.Equals(Color.Green) && b.Health == 2) // If a green bloon has 2 health
+                {
+                    newBloonsToAdd.Add(new BlueBloon
+                    {
+                        Position = b.Position,
+                        Checkpoint = b.Checkpoint,
+                        DistanceTravelled = b.DistanceTravelled
+                    });
+                    bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
-                // if the bloon has no health, rmeove it.
-                if (b.Health <= 0) 
-                { 
-                    _gameState.Bloons.Remove(b);
-                    //_gameState.Player.BloonsKilled++;
+                else if (b.Color.Equals(Color.Blue) && b.Health == 1) // If a blue bloon has 1 health
+                {
+                    newBloonsToAdd.Add(new RedBloon
+                    {
+                        Position = b.Position,
+                        Checkpoint = b.Checkpoint,
+                        DistanceTravelled = b.DistanceTravelled
+                    });
+                    bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
+                }
+                else if (b.Health <= 0) // If the bloon has no health
+                {
+                    bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
             }
-        }
 
-        public void MoveBloon(Bloon bloon, Map map) // Moves the bloon.
+            // Remove the tracked bloons
+            foreach (var bloonName in bloonsToRemove)
+            {
+                _gameState.Bloons.TryRemove(bloonName, out _); // Correctly remove the bloon
+            }
+
+            // Add new bloons to the dictionary
+            foreach (var newBloon in newBloonsToAdd)
+            {
+                _gameState.Bloons.TryAdd(newBloon.Name, newBloon);
+            }
+        }
+        
+        public async Task MoveBloon(Bloon bloon, Map map) // Moves the bloon.
         {
+            var initialPosition = bloon.Position;
             if (bloon.Position.X <= map.Checkpoints[bloon.Checkpoint].X) // Move to the direction of the checkpoint.
             {
                 bloon.MoveBloonInDirection(Direction.Right);
@@ -91,14 +116,18 @@ namespace BloonsProject
                 bloon.DistanceTravelled += bloon.VelocityY;
             }
 
-            if (SplashKit.PointInRectangle(bloon.Position, new Rectangle // If the bloon reaches a checkpoint, increment it's checkpoint property.
-            {
-                X = map.Checkpoints[bloon.Checkpoint].X - 4, // Within a distance of 4 of the checkpoint.
-                Y = map.Checkpoints[bloon.Checkpoint].Y - 4,
-                Height = 4,
-                Width = 4
-            }))
+            if (SplashKit.PointInRectangle(bloon.Position,
+                    new Rectangle // If the bloon reaches a checkpoint, increment it's checkpoint property.
+                    {
+                        X = map.Checkpoints[bloon.Checkpoint].X - 4, // Within a distance of 4 of the checkpoint.
+                        Y = map.Checkpoints[bloon.Checkpoint].Y - 4,
+                        Height = 4,
+                        Width = 4
+                    }))
                 bloon.Checkpoint++;
+            
+            var bloonStateRequest = new BloonStateRequest(bloon.Name, bloon.Health, NetworkPoint2D.Serialize(bloon.Position), bloon.Checkpoint, bloon.DistanceTravelled);
+            await _gameClient.BroadcastBloonStatesAsync(bloonStateRequest);
         }
 
         public async void ProcessBloons(Player player, Map map)
