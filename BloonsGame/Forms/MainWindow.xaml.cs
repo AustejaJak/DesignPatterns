@@ -148,5 +148,29 @@ namespace BloonsGame
             ReadyButton.Content = _isReady ? "Not Ready" : "Ready";
             await _gameClient.SetPlayerReadyAsync(_isReady);
         }
+
+        private void TowerFirerateUpgradeMessageCheckbox_Copy_Checked(object sender, RoutedEventArgs e)
+        {
+            if (TowerFirerateUpgradeMessageCheckbox_Copy.IsChecked == true)
+            {
+                _gameClient.SubscribeFromTowerFirerateUpgradeMessagesAsync();
+            }
+            else
+            {
+                _gameClient.UnsubscribeFromTowerFirerateUpgradeMessagesAsync();
+            }
+        }
+
+        private void TowerRangeUpgradeMessageCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+           if (TowerRangeUpgradeMessageCheckbox.IsChecked == true)
+            {
+                _gameClient.SubscribeFromTowerRangeUpgradeMessagesAsync();
+            }
+            else
+            {
+                _gameClient.UnsubscribeFromTowerRangeUpgradeMessagesAsync();
+            }
+        }
     }
 }

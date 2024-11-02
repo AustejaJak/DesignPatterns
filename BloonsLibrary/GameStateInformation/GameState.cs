@@ -18,6 +18,7 @@ namespace BloonsProject
         public  Player Player = new Player();
         public  ProjectileManager ProjectileManager = new ProjectileManager();
         public List<string> OtherPlayerStats = new List<string>();
+        public Queue<string> TowerEventMessages = new Queue<string>();
 
         private static readonly object Locker = new object();
 

@@ -47,12 +47,19 @@ namespace BloonsProject
             StartUpGame();
             do
             {
+                string message = "";
+                _gameState.TowerEventMessages.TryDequeue(out message);
+                if (message != null)
+                {
+                    _renderer.QueueMessage(message);
+                }
                 SplashKit.RefreshScreen(50);
                 SplashKit.ProcessEvents();
 
                 if (_isPaused) continue; // If game is paused, stop running the game loop.
 
                 DrawBloonsGame(); // Renders everything
+                _renderer.RenderMessages();
                 GameEvents(); // Checks game events
 
                 if (SplashKit.MouseClicked(MouseButton.LeftButton)) // If a left click is made, iterate through events relating to the selection of a tower.

@@ -143,7 +143,7 @@ namespace BloonsProject
                     _gameState.Player.Money -= tower.ShotType.RangeUpgradeCost; // Deduct money from player.
                     tower.SellPrice += 0.7 * tower.ShotType.RangeUpgradeCost; // Add 70% of the price put into the upgrade to the sell price
                     tower.ShotType.RangeUpgradeCount++;
-                    _ = GameClient.UpgradeOrSellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
+                    _ = GameClient.UpgradeTowerRangeAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
                     break;
 
                 case "Upgrade Firerate":
@@ -154,14 +154,14 @@ namespace BloonsProject
                     _gameState.Player.Money -= tower.ShotType.FirerateUpgradeCost;
                     tower.ShotType.FirerateUpgradeCount++;
                     tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
-                    _ = GameClient.UpgradeOrSellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
+                    _ = GameClient.UpgradeTowerFireRateAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
                     break;
 
                 case "Sell":
                     towerOptions.SelectedInGui = "none";
                     _gameState.Player.Money += tower.SellPrice; // Removes tower and provides player with said tower's sell price.
                     _gameState.Towers.Remove(tower);
-                    _ = GameClient.UpgradeOrSellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, 0));
+                    _ = GameClient.SellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, 0));
                     break;
             }
         }
