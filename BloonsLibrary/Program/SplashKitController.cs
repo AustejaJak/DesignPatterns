@@ -2,6 +2,7 @@
 using SplashKitSDK;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 
 namespace BloonsProject
 {
@@ -12,11 +13,11 @@ namespace BloonsProject
         private readonly GameState _gameState = GameState.GetGameStateInstance();
         private readonly Map _map;
         private readonly MapController _mapController = new MapController();
-        private readonly Renderer _renderer;
         private readonly TowerTargetingGuiOptions _targetOptions = new TowerTargetingGuiOptions();
         private readonly TowerGuiOptions _towerOptions = new TowerGuiOptions();
         private readonly TowerPlacerGuiOptions _towerPlacer = new TowerPlacerGuiOptions();
         private readonly Window _window;
+        private readonly RenderingFacade _renderingFacade;  // Replace Renderer with RenderingFacade
         private bool _isPaused;
 
         private GameClient _gameClient;
@@ -28,13 +29,12 @@ namespace BloonsProject
             _map = map;
             _gameClient = gameClient;
             _towerController = new TowerController(_gameClient);
-            _bloonController = new BloonController( _gameClient);
+            _bloonController = new BloonController(_gameClient);
             _window = new Window("Bloons", 1135, 550);
-            _renderer = new Renderer(_window, _map, _gameClient);
+            _renderingFacade = new RenderingFacade(_window, _map, _gameClient);  // Initialize facade instead of Renderer
         }
 
         public event Action LoseEventHandler;
-
         public event Action PauseEventHandler;
 
         public void SetIsGameRunningTo(bool isRunning)
@@ -42,17 +42,18 @@ namespace BloonsProject
             _isPaused = isRunning;
         }
 
-        public void Start()
+        public async void Start()  // Made async to handle async rendering
         {
             StartUpGame();
             do
             {
-                SplashKit.RefreshScreen(50);
-                SplashKit.ProcessEvents();
+                if (_isPaused)
+                {
+                    SplashKit.ProcessEvents();
+                    continue;
+                } // If game is paused, stop running the game loop.
 
-                if (_isPaused) continue; // If game is paused, stop running the game loop.
-
-                DrawBloonsGame(); // Renders everything
+                await DrawBloonsGame(); // Renders everything
                 GameEvents(); // Checks game events
 
                 if (SplashKit.MouseClicked(MouseButton.LeftButton)) // If a left click is made, iterate through events relating to the selection of a tower.
@@ -65,21 +66,28 @@ namespace BloonsProject
                     SelectedDebugTowerEvents();
                 }
 
-                if (SplashKit.KeyTyped(KeyCode.PKey)) // If p is pressed, pause.
+                if (SplashKit.KeyTyped(KeyCode.PKey))
                 {
                     PauseEventHandler?.Invoke(); // Communicate to WPF project to display the pause screen.
                     SetIsGameRunningTo(true);
                 }
+
+                _renderingFacade.RefreshDisplay();  // Refresh the display using the facade
+                SplashKit.ProcessEvents();
+                
             } while (!SplashKit.WindowCloseRequested("Bloons"));
         }
 
-        private void DrawBloonsGame() // Renders the game
+        private async Task DrawBloonsGame() // Simplified rendering using facade
         {
-            _renderer.RenderMap();
-            _renderer.RenderGuiTowerOptions(_towerPlacer, _towerController, _mapController);
-            _renderer.RenderEntities(_bloonController, _towerController, _towerOptions, _targetOptions);
-            _renderer.RenderSelectedTowerOptions(_towerOptions, _targetOptions);
-            _renderer.RenderCursor();
+            await _renderingFacade.RenderFrame(
+                _bloonController,
+                _towerController,
+                _towerOptions,
+                _targetOptions,
+                _towerPlacer,
+                _mapController
+            );
         }
 
         private void GameEvents() // Checks game events

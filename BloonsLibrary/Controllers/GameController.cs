@@ -8,10 +8,10 @@ namespace BloonsProject
     public class GameController
     {
         private readonly GameState _gameState = GameState.GetGameStateInstance(); // Game State singleton
-
+        
         public bool RequiredBloonsHaveSpawned() // Determines whether the required number of bloons have spawned.
         {
-            return _gameState.BloonsSpawned.Count == _gameState.BloonsToBeSpawned.Count && !_gameState.BloonsSpawned.Except(_gameState.BloonsToBeSpawned).Any();
+            return _gameState.BloonsSpawned.All(kv => kv.Value >= _gameState.BloonsToBeSpawned[kv.Key]);
         }
 
         public bool HaveLivesDepleted() // Determines whether the players lives have depleted
