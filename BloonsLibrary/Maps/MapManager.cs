@@ -1,36 +1,59 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.Json;
+using BloonLibrary;
+using BloonLibrary.Adapter;
 
 namespace BloonsProject
 {
     public static class MapManager
     {
         private static List<Map> Maps;
+        private static readonly List<IMapFileAdapter> MapFileAdapters = new List<IMapFileAdapter>
+        {
+            new JsonMapFileAdapter(),
+            new XmlMapFileAdapter()
+        };
 
         public static List<Map> GetAllMaps()
         {
             if (Maps == null)
             {
                 var listOfMaps = new List<Map>();
-                string mapJsonPath = "../BloonsLibrary/Maps/MapJsons";
-                DirectoryInfo directoryInfo = new DirectoryInfo(mapJsonPath); // Gets the path of the directory of json files
+                string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+                string mapFilesPath = Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Maps\MapJsons");
+                DirectoryInfo directoryInfo = new DirectoryInfo(mapFilesPath);
 
-                foreach (var json in directoryInfo.GetFiles("*.json")) // Iterates through each file
+                foreach (var file in directoryInfo.GetFiles())
                 {
-                    string jsonString = File.ReadAllText(json.ToString());
-                    listOfMaps.Add(JsonSerializer.Deserialize<Map>(jsonString)); // Deserializes and adds it to list of maps
+                    // Find the appropriate adapter for the file type
+                    var adapter = MapFileAdapters
+                        .FirstOrDefault(a => a.SupportsFileType(file.Extension));
+
+                    if (adapter != null)
+                    {
+                        try
+                        {
+                            var map = adapter.DeserializeMap(file.FullName);
+                            listOfMaps.Add(map);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.WriteLine($"Error deserializing map file {file.Name}: {ex.Message}");
+                        }
+                    }
                 }
 
-                Maps = listOfMaps; // Set maps property to the list of maps and returns it
+                Maps = listOfMaps;
                 return listOfMaps;
             }
 
             return Maps;
         }
 
-        public static Map GetMapByName(string mapName) // Gets map from a string.
+        public static Map GetMapByName(string mapName)
         {
             return GetAllMaps().FirstOrDefault(map => map.Name == mapName);
         }

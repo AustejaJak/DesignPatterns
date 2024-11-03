@@ -1,4 +1,8 @@
-﻿using BloonLibrary;
+﻿
+
+using System;
+using System.IO;
+using BloonLibrary;
 using Microsoft.VisualBasic;
 using SplashKitSDK;
 using System;
@@ -15,6 +19,7 @@ namespace BloonsProject
         private readonly Map _map;
         private readonly TowerOptionsRenderer _towerOptionsRenderer = new TowerOptionsRenderer();
         private readonly Window _window;
+        private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
         private Cursor cursor;
         private GameClient _gameClient;
@@ -41,7 +46,7 @@ namespace BloonsProject
             _map = map;
             _gameClient = gameClient;
             _entityRenderer = new EntityRenderer(_gameClient);
-            SplashKit.LoadFont("BloonFont", "../BloonsLibrary/Resources/BloonFont.ttf"); // Load custom font.
+            SplashKit.LoadFont("BloonFont", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\BloonFont.ttf")); // Load custom font.
         }
 
         public void RenderEntities(BloonController bloonController, TowerController towerController, TowerGuiOptions towerOptions, TowerTargetingGuiOptions targetOptions)

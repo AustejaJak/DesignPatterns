@@ -1,9 +1,13 @@
-﻿using SplashKitSDK;
+﻿using System;
+using System.IO;
+using SplashKitSDK;
 
 namespace BloonsProject
 {
     public class SniperShot : IShotType
     {
+        private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
         public SniperShot()
         {
             ShotSpeed = 200;
@@ -18,7 +22,7 @@ namespace BloonsProject
             ProjectileLength = 94;
             ProjectileWidth = 94;
             ProjectileStationaryTime = 100;
-            ProjectileBitmap = new Bitmap("Sniper", "../../BloonsLibrary/Resources/Blade.png");
+            ProjectileBitmap = new Bitmap("Sniper", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Blade.png"));
         }
 
         public Bitmap ProjectileBitmap { get; }

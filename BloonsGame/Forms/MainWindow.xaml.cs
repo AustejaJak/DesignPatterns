@@ -5,6 +5,7 @@ using BloonLibrary;
 using System.Collections.Generic;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
+using System.Windows.Controls;
 //using BloonsLibrary.Commands;
 //using BloonsLibrary.Models;
 using System.Windows.Input;
@@ -26,6 +27,8 @@ namespace BloonsGame
             InitializeComponent();
             _gameClient = gameClient;
             MapComboBox.Items.Add("The Original");
+            MapComboBox.Items.Add("Farmers Paradise");
+            MapComboBox.Items.Add("Ocean Road");
 
             // Initialize chat
             _chatMessages = new ObservableCollection<ChatMessage>();
@@ -35,7 +38,9 @@ namespace BloonsGame
             _gameClient.PlayerListUpdated += UpdatePlayerList;
             _gameClient.AllPlayersReady += StartCountdown;
             _gameClient.ChatMessageReceived += OnChatMessageReceived;
-            
+            MapComboBox.SelectionChanged += MapComboBox_SelectionChanged;
+            _gameClient.MapValidationFailed += OnMapValidationFailed;
+
             InitializeCountdownTimer();
         }
 
@@ -143,11 +148,11 @@ namespace BloonsGame
                 return;
             }
 
-
             _isReady = !_isReady;
             ReadyButton.Content = _isReady ? "Not Ready" : "Ready";
             await _gameClient.SetPlayerReadyAsync(_isReady);
         }
+
 
         private void TowerFirerateUpgradeMessageCheckbox_Copy_Checked(object sender, RoutedEventArgs e)
         {
@@ -171,6 +176,43 @@ namespace BloonsGame
             {
                 _gameClient.UnsubscribeFromTowerRangeUpgradeMessagesAsync();
             }
+        }
+
+        private void MapComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (MapComboBox.SelectedItem != null)
+            {
+                SelectMapLabelError.Visibility = Visibility.Collapsed;
+                MapValidationErrorLabel.Visibility = Visibility.Collapsed; // Hide the error message
+                var selectedMap = MapComboBox.SelectedItem.ToString();
+                _gameClient.SendSelectedMapAsync(selectedMap);
+
+                // Reset ready status when map changes
+                if (_isReady)
+                {
+                    _isReady = false;
+                    ReadyButton.Content = "Ready";
+                    _gameClient.SetPlayerReadyAsync(false);
+                }
+            }
+        }
+
+        private void OnMapValidationFailed(string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                MapValidationErrorLabel.Content = message;
+                MapValidationErrorLabel.Visibility = Visibility.Visible;
+
+                // Reset ready status
+                _isReady = false;
+                ReadyButton.Content = "Ready";
+
+                // Make map selection and ready button available again
+                ReadyButton.IsEnabled = true;
+                MapComboBox.IsEnabled = true;
+            });
+
         }
     }
 }

@@ -15,15 +15,16 @@ namespace BloonsProject
                 [new Point2D { X = 990, Y = 355 }] = "Upgrade Firerate",
                 [new Point2D { X = 920, Y = 455 }] = "Sell"
             };
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory; // current Folder path
             Height = 50; // Dimensions of buttons
             Width = 100;
             SelectedInGui = "none";
             SellTowerBitmap = new Bitmap("Sell", // Bitmaps for buttons.
-                "../BloonsLibrary/Resources/sell tower.png");
+                Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\sellTower.png"));
             UpgradeFirerateBitmap = new Bitmap("Firerrate",
-                "../BloonsLibrary/Resources/firerate upgrade.png");
+                Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\firerateUpgrade.png"));
             UpgradeRangeBitmap = new Bitmap("Range",
-                "../BloonsLibrary/Resources/range upgrade.png");
+                Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\rangeUpgrade.png"));
             ClickableShapeImages = new List<Bitmap>() { UpgradeRangeBitmap, UpgradeFirerateBitmap, SellTowerBitmap }; // List of buttons.
         }
 

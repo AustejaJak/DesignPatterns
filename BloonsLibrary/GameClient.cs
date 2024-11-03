@@ -22,6 +22,7 @@ namespace BloonLibrary
     {
         public string Username { get; set; }
         public string ReadyStatus { get; set; }
+        public string SelectedMap { get; set; }
     }
 
     public class GameClient
@@ -37,6 +38,8 @@ namespace BloonLibrary
         private EntityDrawer _entityDrawer;
         private ConcurrentDictionary<string, Bloon> _bloons; // Use a ConcurrentDictionary
         private readonly object _lockObject = new object();
+        public event Action<string> MapValidationFailed;
+
 
         public GameClient()
         {
@@ -95,6 +98,11 @@ namespace BloonLibrary
                 Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.upgradeOrSellTower(position, request.option, request.upgradeCount);
+            });
+
+            _connection.On<string>("MapValidationFailed", (message) =>
+            {
+                MapValidationFailed?.Invoke(message);
             });
 
             //_connection.On<SynchronizeBloon>("AddBloon", (request) =>
@@ -303,6 +311,8 @@ namespace BloonLibrary
             }
         }
 
+        
+
         //public async Task PlaceBloonAsync(PlaceBloonRequest request)
         //{
         //    if (_connection != null && _connection.State == HubConnectionState.Connected)
@@ -367,11 +377,19 @@ namespace BloonLibrary
         }
 
         public async Task SendChatMessageAsync(string message)
-    {
-        if (_connection != null && _connection.State == HubConnectionState.Connected)
         {
-            await _connection.InvokeAsync("SendChatMessage", Username, message);
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendChatMessage", Username, message);
+            }
         }
-    }
+
+        public async Task SendSelectedMapAsync(string mapName)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendSelectedMap", Username, mapName);
+            }
+        }
     }
 }

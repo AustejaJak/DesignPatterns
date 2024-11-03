@@ -15,7 +15,7 @@
             <ColumnDefinition Width="300"/>
         </Grid.ColumnDefinitions>
 
-        <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="280">
+        <StackPanel Grid.Column="0" HorizontalAlignment="Center" VerticalAlignment="Center" Width="330">
             <Label x:Name="SelectMapLabel" Content="Select Map" Height="50" 
                    FontSize="30" FontWeight="UltraBold" HorizontalAlignment="Center" />
             
@@ -24,16 +24,16 @@
             <Label x:Name="SelectMapLabelError" Content="Please select a map" 
                    Height="22" FontSize="9" Foreground="Red" 
                    Visibility="Collapsed" HorizontalAlignment="Center" />
+            <Label x:Name="MapValidationErrorLabel" Content="" Height="22" FontSize="12" Foreground="Red" Visibility="Collapsed" HorizontalAlignment="Center" />
 
-            <ListView x:Name="PlayerListView" Height="150" Margin="0,20">
-                <ListView.ItemTemplate>
-                    <DataTemplate>
-                        <StackPanel Orientation="Horizontal">
-                            <TextBlock Text="{Binding Username}" Width="150"/>
-                            <TextBlock Text="{Binding ReadyStatus}" Width="100"/>
-                        </StackPanel>
-                    </DataTemplate>
-                </ListView.ItemTemplate>
+            <ListView x:Name="PlayerListView" Height="150" Width="335" Margin="0,20">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="User" DisplayMemberBinding="{Binding Username}" Width="100"/>
+                        <GridViewColumn Header="Status" DisplayMemberBinding="{Binding ReadyStatus}" Width="75"/>
+                        <GridViewColumn Header="Map" DisplayMemberBinding="{Binding SelectedMap}" Width="150"/>
+                    </GridView>
+                </ListView.View>
             </ListView>
 
             <Button x:Name="ReadyButton" Content="Ready" Height="50" 
@@ -46,7 +46,7 @@
         </StackPanel>
 
         <!-- Chat Panel -->
-        <Grid Grid.Column="1" Background="#80000000">
+        <Grid Grid.Column="1" Background="#80000000" Width="300">
             <Grid.RowDefinitions>
                 <RowDefinition Height="*"/>
                 <RowDefinition Height="Auto"/>
@@ -56,7 +56,7 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <StackPanel>
-                            <TextBlock>
+                            <TextBlock Foreground="White" TextWrapping="Wrap" Width="260">
                                 <Run Text="{Binding Timestamp}" Foreground="Gray"/>
                                 <Run Text=" "/>
                                 <Run Text="{Binding Username}" Foreground="Yellow"/>
@@ -75,7 +75,8 @@
                 </Grid.ColumnDefinitions>
                 <TextBox x:Name="MessageTextBox" Grid.Column="0" 
                          Height="30" Margin="0,0,5,0"
-                         KeyDown="MessageTextBox_KeyDown"/>
+                         KeyDown="MessageTextBox_KeyDown"
+                         />
                 <Button x:Name="SendButton" Grid.Column="1" 
                         Content="Send" Width="60" Height="30"
                         Click="SendButton_Click"/>
