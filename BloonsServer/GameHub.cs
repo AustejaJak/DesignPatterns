@@ -30,8 +30,8 @@ public class GameHub : Hub
     private static Dictionary<string, bool> _playerReadyStatus = new Dictionary<string, bool>();
     private string _username;
     private static readonly NotificationService _notificationService = new NotificationService();
-    private readonly TowerFactory _towerFactory = new TowerFactory();
-    private readonly BloonFactory _bloonFactory = new BloonFactory();
+    private readonly StandardBloonTowerFactory _bloonTowerFactory = new StandardBloonTowerFactory();
+    private readonly ExtremeBloonTowerFactory _extremeBloonTowerFactory = new ExtremeBloonTowerFactory();
 
     //private IHubContext<GameHub> _hubContext;
 
@@ -133,7 +133,7 @@ public class GameHub : Hub
     }
     public async Task PlaceTower(PlaceTowerRequest request)
     {
-        var towerInstance = _towerFactory.CreateTowerOfType(request.TowerType, request.Username);
+        var towerInstance = _bloonTowerFactory.CreateTowerOfType(request.TowerType, request.Username);
         towerInstance.Position = new Point2D()
         {
             X = request.Position.X,
@@ -206,11 +206,18 @@ public class GameHub : Hub
 
     public async Task PlaceBloon(PlaceBloonRequest request)
     {
-        var bloonInstance = _bloonFactory.CreateBloonOfType(request.Name);
+        var bloonInstance = _bloonTowerFactory.CreateBloonOfType(request.Name);
+        
 
         var gameSession = GameSession.GetInstance();
-        gameSession.GameState.AddBloon(bloonInstance);
 
+        if (gameSession.GameState.Player.Round > 5)
+        {
+            bloonInstance = _extremeBloonTowerFactory.CreateBloonOfType(request.Name);
+        }
+        
+        gameSession.GameState.AddBloon(bloonInstance);
+        
         var response = new SynchronizeBloon(request.Health, request.Name, request.Color, request.VelocityX, request.VelocityY);
         await Clients.Group("inGame").SendAsync("AddBloon", response);
     }

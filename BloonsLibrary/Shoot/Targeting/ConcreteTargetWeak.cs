@@ -1,7 +1,10 @@
 ﻿namespace BloonsProject
 {
-    public class ConcreteTargetWeak
+    class ConcreteTargetWeak : TargetCreator
     {
-        
+        public override ITarget CreateTarget()
+        {
+            return new TargetWeak();
+        }
     }
 }

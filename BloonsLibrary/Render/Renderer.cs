@@ -32,7 +32,7 @@ namespace BloonsProject
         private string _currentMessage;
         private bool _displayMessage = false;
         private DateTime _lastMessageTime;
-        private readonly TowerFactory _towerFactory = new TowerFactory();
+        private readonly StandardBloonTowerFactory _towerFactory = new StandardBloonTowerFactory();
 
 
         // Call this method to add a message to the queue

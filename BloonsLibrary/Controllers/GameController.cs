@@ -52,8 +52,6 @@ namespace BloonsProject
                 [Color.Blue] = 0,
                 [Color.Green] = 0
             };
-            
-            Console.WriteLine($"Round {round}: Red: {_gameState.BloonsToBeSpawned[Color.Red]}, Blue: {_gameState.BloonsToBeSpawned[Color.Blue]}, Green: {_gameState.BloonsToBeSpawned[Color.Green]}");
         
         }
     }

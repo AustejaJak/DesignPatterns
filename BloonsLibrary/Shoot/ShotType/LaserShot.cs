@@ -7,7 +7,19 @@ namespace BloonsProject
     public class LaserShot : IShotType
     {
         private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        public LaserShot()
+        public LaserShot(
+            double shotSpeed,
+            int damage,
+            double projectileStationaryTime,
+            double projectileLength,
+            double projectileWidth,
+            int firerateUpgradeCost,
+            int rangeUpgradeCost,
+            double projectileSpeed,
+            double projectileSize,
+            Bitmap projectileBitmap
+            
+            )
         {
             ShotSpeed = 50;
             Damage = 1;

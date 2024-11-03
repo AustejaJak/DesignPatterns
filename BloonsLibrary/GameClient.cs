@@ -39,8 +39,8 @@ namespace BloonLibrary
         private ConcurrentDictionary<string, Bloon> _bloons; // Use a ConcurrentDictionary
         private readonly object _lockObject = new object();
         public event Action<string> MapValidationFailed;
-        private readonly TowerFactory _towerFactory = new TowerFactory();
-        private readonly BloonFactory _bloonFactory = new BloonFactory();
+        private readonly StandardBloonTowerFactory _standardTowerBloonFactory = new StandardBloonTowerFactory();
+        private readonly ExtremeBloonTowerFactory _extremeTowerBloonFactory = new ExtremeBloonTowerFactory();
 
 
         public GameClient()
@@ -61,7 +61,7 @@ namespace BloonLibrary
 
             _connection.On<SynchronizeTower>("AddTower", (request) =>
             {
-                var tower = _towerFactory.CreateTowerOfType(request.TowerType, request.PlayerName);
+                var tower = _standardTowerBloonFactory.CreateTowerOfType(request.TowerType, request.PlayerName);
                 tower.Position = new Point2D()
                 {
                     X = request.Position.X,
@@ -122,7 +122,7 @@ namespace BloonLibrary
 
             _connection.On<SynchronizeBloon>("AddBloon", (request) =>
             {
-                var bloon = _bloonFactory.CreateBloonOfType(request.Name);
+                var bloon = _standardTowerBloonFactory.CreateBloonOfType(request.Name);
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.AddBloon(bloon);
             });

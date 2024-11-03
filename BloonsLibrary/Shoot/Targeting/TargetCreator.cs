@@ -1,7 +1,7 @@
 ﻿namespace BloonsProject
 {
-    public class TargetCreator
+    public abstract class TargetCreator
     {
-        
+        public abstract ITarget CreateTarget();
     }
 }

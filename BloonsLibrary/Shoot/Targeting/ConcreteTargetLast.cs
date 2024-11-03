@@ -1,7 +1,10 @@
 ﻿namespace BloonsProject
 {
-    public class ConcreteTargetLast
+    class ConcreteTargetLast : TargetCreator
     {
-        
+        public override ITarget CreateTarget()
+        {
+            return new TargetLast();
+        }
     }
 }

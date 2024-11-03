@@ -23,7 +23,7 @@ namespace BloonsProject
         private GameClient _gameClient;
         private readonly TowerController _towerController;
         private readonly BloonController _bloonController;
-        private readonly TowerFactory _towerFactory = new TowerFactory();
+        private readonly StandardBloonTowerFactory _towerFactory = new StandardBloonTowerFactory();
 
         public SplashKitController(Map map, GameClient gameClient)
         {

@@ -4,10 +4,21 @@ using SplashKitSDK;
 
 namespace BloonsProject
 {
-    public class DartShotBuilder : IIShotBuilder
+    public class DartShot : IShotType
     {
         private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-        public DartShotBuilder()
+        public DartShot(
+            double shotSpeed,
+            int damage,
+            double projectileStationaryTime,
+            double projectileLength,
+            double projectileWidth,
+            int firerateUpgradeCost,
+            int rangeUpgradeCost,
+            double projectileSpeed,
+            double projectileSize,
+            Bitmap projectileBitmap
+            )
         {
             ShotSpeed = 100;
             Damage = 1;
