@@ -48,19 +48,7 @@ namespace BloonsProject
             do
             {
 
-                string message = "";
-                _gameState.TowerEventMessages.TryDequeue(out message);
-                if (message != null)
-                {
-                    _renderer.QueueMessage(message);
-                }
-                if (_gameState.InvalidTowerEventMessage != null)
-                {
-                    _renderer.RenderMessagesRight(_gameState.InvalidTowerEventMessage);
-                    _gameState.InvalidTowerEventMessage = null;
-                }
-                _renderer.UpdateMessageDisplay();
-                _renderer.RenderMessages();
+                
                 if (_isPaused)
                 {
                     SplashKit.ProcessEvents();
@@ -68,6 +56,20 @@ namespace BloonsProject
                 } // If game is paused, stop running the game loop.
 
                 await DrawBloonsGame(); // Renders everything
+
+                string message = "";
+                _gameState.TowerEventMessages.TryDequeue(out message);
+                if (message != null)
+                {
+                    _renderingFacade.QueueMessage(message);
+                }
+                if (_gameState.InvalidTowerEventMessage != null)
+                {
+                    _renderingFacade.RenderInvalidTowerActionMessages(_gameState.InvalidTowerEventMessage);
+                    _gameState.InvalidTowerEventMessage = null;
+                }
+                _renderingFacade.UpdateMessageDisplay();
+                _renderingFacade.RenderTowerUpgradeMessages();
 
                 GameEvents(); // Checks game events
 
