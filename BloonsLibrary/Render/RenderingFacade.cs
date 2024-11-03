@@ -1,5 +1,7 @@
 ﻿using BloonLibrary;
 using SplashKitSDK;
+using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace BloonsProject
@@ -16,6 +18,15 @@ namespace BloonsProject
         private readonly Window _window;
         private readonly Map _map;
         private readonly GameClient _gameClient;
+
+        //private Queue<string> _messageQueue = new();
+        //private DateTime _messageDisplayStartTime;
+        //private bool _isDisplayingMessage = false;
+        //private const int MessageDuration = 5;
+        //private string TowerActionMessage;
+        //private string _currentInvalidTowerMessage;
+        //private bool _displayInvalidTowerMessage = false;
+        //private DateTime _lastInvalidTowerMessageTime;
 
         public RenderingFacade(Window window, Map map, GameClient gameClient)
         {
@@ -102,6 +113,26 @@ namespace BloonsProject
         public void RefreshDisplay()
         {
             _window.Refresh(60);
+        }
+
+        public void QueueMessage(string message)
+        {
+            _renderer.QueueMessage(message);
+        }
+
+        public void RenderTowerUpgradeMessages()
+        {
+            _renderer.RenderMessages();
+        }
+
+        public void RenderInvalidTowerActionMessages(string message)
+        {
+            _renderer.RenderMessagesRight(message);
+        }
+
+        public void UpdateMessageDisplay()
+        {
+            _renderer.UpdateMessageDisplay();
         }
     }
 }
