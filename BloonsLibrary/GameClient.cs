@@ -14,6 +14,7 @@ using SplashKitSDK;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using System.Collections.Concurrent;
+using BloonLibrary.Controllers.Bridge;
 
 namespace BloonLibrary
 {
@@ -63,6 +64,16 @@ namespace BloonLibrary
                 };
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.AddTower(tower);
+                if (tower.Username == Username)
+                {
+                    MyTowerControl towercontrol = new MyTowerControl(tower, this);
+                    gameSession.GameState.TowerControlls.Add(towercontrol);
+                }
+                else
+                {
+                    OtherPlayerTowerControl towercontrol = new OtherPlayerTowerControl(tower, this);
+                    gameSession.GameState.TowerControlls.Add(towercontrol);
+                }
             });
 
             _connection.On<UpgradeOrSellTowerRequest>("UpgradeTowerRange", (request) =>

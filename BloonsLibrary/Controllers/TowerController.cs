@@ -24,14 +24,29 @@ namespace BloonsProject
             _gameState.Player.Money -= tower.Cost; // Then remove cost of the tower from the player's money.
         }
 
+        //public void ChangeTowerTargeting(TowerTargetingGuiOptions targetOptions, TowerController towerController)
+        //{
+        //    foreach (var tower in _gameState.Towers.ToList())
+        //    {
+        //        foreach (var targetOption in targetOptions.TargetingButtonLocations.Values.Where( //Depending on the targeting option that has been selected in the gui
+        //            targetOption => targetOptions.SelectedInGui == targetOption && tower.Selected))
+        //        {
+        //            towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
+        //        }
+        //    }
+
+        //    targetOptions.SelectedInGui = TowerTargeting.Unselected; // Change to unselected to ensure if another tower is selected, it won't automatically apply the targeting of the previous tower.
+        //}
+
         public void ChangeTowerTargeting(TowerTargetingGuiOptions targetOptions, TowerController towerController)
         {
-            foreach (var tower in _gameState.Towers.ToList())
+            foreach (var towercontroll in _gameState.TowerControlls.ToList())
             {
                 foreach (var targetOption in targetOptions.TargetingButtonLocations.Values.Where( //Depending on the targeting option that has been selected in the gui
-                    targetOption => targetOptions.SelectedInGui == targetOption && tower.Selected))
+                    targetOption => targetOptions.SelectedInGui == targetOption && towercontroll.IsTowerSelected()))
                 {
-                    towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
+                    //towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
+                    towercontroll.SetTowerTargeting(targetOptions);
                 }
             }
 
@@ -117,14 +132,29 @@ namespace BloonsProject
             }
         }
 
+        //public void UpgradeOrSellSelectedTower(TowerController towerController, TowerGuiOptions towerOptions)
+        //{
+        //    foreach (var tower in _gameState.Towers.ToList())
+        //    {
+        //        foreach (var towerOption in towerOptions.UpgradeOptionsInGui.Values.Where( // Obtains the selected tower and the option (upgrade, sell) that's currently selected in the gui
+        //            towerOption => towerOptions.SelectedInGui == towerOption && tower.Selected))
+        //        {
+        //            towerController.UpgradeOrSellTower(tower, towerOption, towerOptions); // Apply the selected option to the selected tower
+        //        }
+        //    }
+
+        //    towerOptions.SelectedInGui = "none"; // Reset the selected option so it doesn't apply to all future bloons.
+        //}
+
         public void UpgradeOrSellSelectedTower(TowerController towerController, TowerGuiOptions towerOptions)
         {
-            foreach (var tower in _gameState.Towers.ToList())
+            foreach (var towercontroll in _gameState.TowerControlls.ToList())
             {
                 foreach (var towerOption in towerOptions.UpgradeOptionsInGui.Values.Where( // Obtains the selected tower and the option (upgrade, sell) that's currently selected in the gui
-                    towerOption => towerOptions.SelectedInGui == towerOption && tower.Selected))
+                    towerOption => towerOptions.SelectedInGui == towerOption && towercontroll.IsTowerSelected()))
                 {
-                    towerController.UpgradeOrSellTower(tower, towerOption, towerOptions); // Apply the selected option to the selected tower
+                    //towerController.UpgradeOrSellTower(tower, towerOption, towerOptions); // Apply the selected option to the selected tower
+                    towercontroll.UpgradeOrSellTower(towerOption, towerOptions);
                 }
             }
 

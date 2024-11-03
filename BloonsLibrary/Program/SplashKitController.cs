@@ -53,6 +53,12 @@ namespace BloonsProject
                 {
                     _renderer.QueueMessage(message);
                 }
+                if (_gameState.InvalidTowerEventMessage != null)
+                {
+                    _renderer.RenderMessagesRight(_gameState.InvalidTowerEventMessage);
+                    _gameState.InvalidTowerEventMessage = null;
+                }
+                _renderer.UpdateMessageDisplay();
                 SplashKit.RefreshScreen(50);
                 SplashKit.ProcessEvents();
 

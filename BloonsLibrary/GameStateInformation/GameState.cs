@@ -5,6 +5,7 @@ using System.Collections.Concurrent;
 using System.Text.Json;
 using System.Linq;
 using Color = SplashKitSDK.Color;
+using BloonLibrary.Controllers.Bridge;
 
 namespace BloonsProject
 {
@@ -19,6 +20,8 @@ namespace BloonsProject
         public  ProjectileManager ProjectileManager = new ProjectileManager();
         public List<string> OtherPlayerStats = new List<string>();
         public Queue<string> TowerEventMessages = new Queue<string>();
+        public List<TowerContols> TowerControlls = new List<TowerContols>();
+        public string InvalidTowerEventMessage;
 
         private static readonly object Locker = new object();
 
@@ -66,7 +69,7 @@ namespace BloonsProject
             {
                 if (tower.Position.Equals(point))
                 {
-                    
+
                     switch (option) // Depending on the option, either upgrade or sell tower.
                     {
                         case "Upgrade Range":
@@ -79,13 +82,21 @@ namespace BloonsProject
                         case "Upgrade Firerate":
                             if (tower.ShotType.FirerateUpgradeCount == 3 || tower.ShotType.FirerateUpgradeCount == upgradeCount) break; // Repeat for firerate
                             tower.ShotType.ShotSpeed -= 10;
-                            
+
                             tower.ShotType.FirerateUpgradeCount++;
                             tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
                             break;
 
                         case "Sell":
                             Towers.Remove(tower);
+                            foreach (TowerContols t in TowerControlls)
+                            {
+                                if (t.GetTower() == null || t.GetTower() == tower)
+                                {
+                                    TowerControlls.Remove(t);
+                                    break;
+                                }
+                            }
                             break;
                     }
                     return;

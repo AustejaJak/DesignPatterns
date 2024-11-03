@@ -5,7 +5,7 @@
         public Player()
         {
             Lives = 30;
-            Money = 200;
+            Money = 2000;
             Round = 1;
         }
 
