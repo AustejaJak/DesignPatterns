@@ -23,6 +23,7 @@ namespace BloonsProject
         private GameClient _gameClient;
         private readonly TowerController _towerController;
         private readonly BloonController _bloonController;
+        private readonly TowerFactory _towerFactory = new TowerFactory();
 
         public SplashKitController(Map map, GameClient gameClient)
         {
@@ -143,7 +144,7 @@ namespace BloonsProject
             if (_mapController.CanPlaceTowerOnMap(SplashKit.MousePosition(), _map))
             {
                 if (_towerPlacer.SelectedInGui == "none") return;
-                var tower = TowerFactory.CreateTowerOfType(_towerPlacer.SelectedInGui, _gameClient.Username);
+                var tower = _towerFactory.CreateTowerOfType(_towerPlacer.SelectedInGui, _gameClient.Username);
                 _towerController.AddTower(tower);
                 _towerPlacer.SelectedInGui = "none";
             }

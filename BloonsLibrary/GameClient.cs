@@ -39,6 +39,8 @@ namespace BloonLibrary
         private ConcurrentDictionary<string, Bloon> _bloons; // Use a ConcurrentDictionary
         private readonly object _lockObject = new object();
         public event Action<string> MapValidationFailed;
+        private readonly TowerFactory _towerFactory = new TowerFactory();
+        private readonly BloonFactory _bloonFactory = new BloonFactory();
 
 
         public GameClient()
@@ -59,7 +61,7 @@ namespace BloonLibrary
 
             _connection.On<SynchronizeTower>("AddTower", (request) =>
             {
-                var tower = TowerFactory.CreateTowerOfType(request.TowerType, request.PlayerName);
+                var tower = _towerFactory.CreateTowerOfType(request.TowerType, request.PlayerName);
                 tower.Position = new Point2D()
                 {
                     X = request.Position.X,
@@ -120,7 +122,7 @@ namespace BloonLibrary
 
             _connection.On<SynchronizeBloon>("AddBloon", (request) =>
             {
-                var bloon = BloonFactory.CreateBloonOfType(request.Name);
+                var bloon = _bloonFactory.CreateBloonOfType(request.Name);
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.AddBloon(bloon);
             });
@@ -151,12 +153,6 @@ namespace BloonLibrary
                         bloon.Health = request.Health;
                         bloon.Checkpoint = request.Checkpoint;
                         bloon.DistanceTravelled = request.DistanceTravelled;
-
-                        Console.WriteLine($"Updated Bloon {bloon.Name}: Position ({bloon.Position.X}, {bloon.Position.Y}), Health: {bloon.Health}, Checkpoint: {bloon.Checkpoint}, Distance Travelled: {bloon.DistanceTravelled}");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"Bloon {request.Name} not found during update.");
                     }
                 }
             });
@@ -360,7 +356,6 @@ namespace BloonLibrary
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
-                Console.WriteLine("Attempting to broadcast bloon states...");
                 await _connection.InvokeAsync("BroadcastBloonStates", request);
             }
         }

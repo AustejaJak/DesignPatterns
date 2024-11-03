@@ -1,7 +1,10 @@
-﻿namespace BloonLibrary
+﻿using BloonsProject;
+
+namespace BloonLibrary
 {
-    public class IBloonTowerFactory
+    public interface IBloonTowerFactory
     {
-        
+        Tower CreateTowerOfType(string towerType, string username);
+        Bloon CreateBloonOfType(string bloonType);
     }
 }

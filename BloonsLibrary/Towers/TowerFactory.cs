@@ -1,10 +1,11 @@
 ﻿using System;
+using BloonLibrary;
 
 namespace BloonsProject
 {
-    public static class TowerFactory
+    public class TowerFactory : IBloonTowerFactory
     {
-        public static Tower CreateTowerOfType(string tower, string username)
+        public Tower CreateTowerOfType(string tower, string username)
         {
             if (tower == DartTower.Name) return new DartTower(username);
 
@@ -13,6 +14,10 @@ namespace BloonsProject
             if (tower == SniperTower.Name) return new SniperTower(username);
 
             throw new Exception("You are trying to create a tower type that does not exist.");
+        }
+        public Bloon CreateBloonOfType(string bloonType)
+        {
+            throw new NotImplementedException("This factory does not create bloons.");
         }
     }
 }

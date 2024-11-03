@@ -32,6 +32,7 @@ namespace BloonsProject
         private string _currentMessage;
         private bool _displayMessage = false;
         private DateTime _lastMessageTime;
+        private readonly TowerFactory _towerFactory = new TowerFactory();
 
 
         // Call this method to add a message to the queue
@@ -70,7 +71,7 @@ namespace BloonsProject
                 _guiRenderer.HighlightTowerInGui(towerPlacer, towerPositionInGui);
 
                 // Create a new tower depending on the selected tower and write tower description in GUI
-                var selectedTower = TowerFactory.CreateTowerOfType(towerPlacer.SelectedInGui, _gameClient.Username);
+                var selectedTower = _towerFactory.CreateTowerOfType(towerPlacer.SelectedInGui, _gameClient.Username);
                 _guiRenderer.WriteTowerDescription(towerPlacer, selectedTower);
 
                 // If you have enough money, selecting tower will draw the tower at your mouses location to place.

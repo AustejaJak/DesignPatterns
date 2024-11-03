@@ -30,6 +30,8 @@ public class GameHub : Hub
     private static Dictionary<string, bool> _playerReadyStatus = new Dictionary<string, bool>();
     private string _username;
     private static readonly NotificationService _notificationService = new NotificationService();
+    private readonly TowerFactory _towerFactory = new TowerFactory();
+    private readonly BloonFactory _bloonFactory = new BloonFactory();
 
     //private IHubContext<GameHub> _hubContext;
 
@@ -125,19 +127,13 @@ public class GameHub : Hub
                     request.Checkpoint,
                     request.DistanceTravelled
                 );
-                Console.WriteLine($"Broadcasting state for Bloon ID {updatedBloonState.Name}: Position ({updatedBloonState.Position.X}, {updatedBloonState.Position.Y})");
                 await Clients.Group("inGame").SendAsync("UpdateBloonState", updatedBloonState);
             }
         }
-        else
-        {
-            Console.WriteLine($"No bloon states found for ID {request.Name}.");
-        }
-
     }
     public async Task PlaceTower(PlaceTowerRequest request)
     {
-        var towerInstance = TowerFactory.CreateTowerOfType(request.TowerType, request.Username);
+        var towerInstance = _towerFactory.CreateTowerOfType(request.TowerType, request.Username);
         towerInstance.Position = new Point2D()
         {
             X = request.Position.X,
@@ -210,7 +206,7 @@ public class GameHub : Hub
 
     public async Task PlaceBloon(PlaceBloonRequest request)
     {
-        var bloonInstance = BloonFactory.CreateBloonOfType(request.Name);
+        var bloonInstance = _bloonFactory.CreateBloonOfType(request.Name);
 
         var gameSession = GameSession.GetInstance();
         gameSession.GameState.AddBloon(bloonInstance);
