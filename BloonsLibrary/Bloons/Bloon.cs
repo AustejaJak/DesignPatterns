@@ -22,6 +22,8 @@ namespace BloonsProject
             DistanceTravelled = 0;
         }
 
+
+
         public int Checkpoint { get; set; } // Last checkpoint passed on the map.
         public Color Color { get; } // Bloons have unique colours.
         public double DistanceTravelled { get; set; } // How far along the map the bloon has travelled
@@ -64,5 +66,8 @@ namespace BloonsProject
             if (damage > Health) Health = damage;
             Health -= damage;
         }
+
+        public abstract Bloon Clone();
+
     }
 }

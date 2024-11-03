@@ -82,5 +82,7 @@
                         Click="SendButton_Click"/>
             </Grid>
         </Grid>
+        <CheckBox x:Name="TowerRangeUpgradeMessageCheckbox" Content="Send inofrmation about tower range upgrades" HorizontalAlignment="Left" Margin="10,583,0,0" VerticalAlignment="Top" IsChecked="True" Click="TowerRangeUpgradeMessageCheckbox_Checked"/>
+        <CheckBox x:Name="TowerFirerateUpgradeMessageCheckbox_Copy" Content="Send inofrmation about tower firerate upgrades" HorizontalAlignment="Left" Margin="10,563,0,0" VerticalAlignment="Top" IsChecked="True" Click="TowerFirerateUpgradeMessageCheckbox_Copy_Checked"/>
     </Grid>
 </Window>

@@ -5,6 +5,8 @@ using System.IO;
 using BloonLibrary;
 using Microsoft.VisualBasic;
 using SplashKitSDK;
+using System;
+using System.Collections.Generic;
 using Color = SplashKitSDK.Color;
 
 namespace BloonsProject
@@ -21,6 +23,22 @@ namespace BloonsProject
 
         private Cursor cursor;
         private GameClient _gameClient;
+
+        private Queue<string> _messageQueue = new();
+        private DateTime _messageDisplayStartTime;
+        private bool _isDisplayingMessage = false;
+        private const int MessageDuration = 5;
+        private string TowerActionMessage;
+        private string _currentMessage;
+        private bool _displayMessage = false;
+        private DateTime _lastMessageTime;
+
+
+        // Call this method to add a message to the queue
+        public void QueueMessage(string message)
+        {
+            _messageQueue.Enqueue(message);
+        }
 
         public Renderer(Window window, Map map, GameClient gameClient)
         {
@@ -81,6 +99,61 @@ namespace BloonsProject
         public void RenderCursor(){
             Cursor cursor = new Cursor(Color.Black);
             _guiRenderer.DrawCursor(cursor);
+        }
+
+        // Call this method within your main render loop
+        public void RenderMessages()
+        {
+            if (!_isDisplayingMessage && _messageQueue.Count > 0)
+            {
+                // Start displaying the next message
+                _isDisplayingMessage = true;
+                _messageDisplayStartTime = DateTime.Now;
+            }
+
+            if (_isDisplayingMessage && _messageQueue.Count > 0)
+            {
+                // Get the current message
+                var currentMessage = _messageQueue.Peek();
+
+                // Check if the message should still be displayed
+                if ((DateTime.Now - _messageDisplayStartTime).TotalSeconds < MessageDuration)
+                {
+                    // Display the message at the top left of the screen
+                    SplashKit.DrawText(currentMessage, Color.White, "BloonFont", 20, 20, 20);
+                }
+                else
+                {
+                    // Remove the message from the queue after 5 seconds
+                    _messageQueue.Dequeue();
+                    _isDisplayingMessage = false; // Ready to display the next message
+                }
+            }
+        }
+
+        public void RenderMessagesRight(string message)
+        {
+            _currentMessage = message;
+            _lastMessageTime = DateTime.Now;
+            _displayMessage = true; // Indicate that there’s a message to display
+        }
+
+        public void UpdateMessageDisplay()
+        {
+            if (_displayMessage && (DateTime.Now - _lastMessageTime).TotalSeconds < 5)
+            {
+                int screenWidth = SplashKit.ScreenWidth();
+                int textWidth = SplashKit.TextWidth(_currentMessage, "BloonFont", 20);
+                int xPosition = screenWidth - textWidth - 20; // 20 px margin from the right
+
+                // Display the message at the top right of the screen
+                SplashKit.DrawText(_currentMessage, Color.White, "BloonFont", 20, xPosition, 20);
+            }
+            else
+            {
+                // Stop displaying the message after 5 seconds
+                _displayMessage = false;
+            }
         }
     }
 }

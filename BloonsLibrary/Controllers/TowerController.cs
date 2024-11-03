@@ -24,14 +24,29 @@ namespace BloonsProject
             _gameState.Player.Money -= tower.Cost; // Then remove cost of the tower from the player's money.
         }
 
+        //public void ChangeTowerTargeting(TowerTargetingGuiOptions targetOptions, TowerController towerController)
+        //{
+        //    foreach (var tower in _gameState.Towers.ToList())
+        //    {
+        //        foreach (var targetOption in targetOptions.TargetingButtonLocations.Values.Where( //Depending on the targeting option that has been selected in the gui
+        //            targetOption => targetOptions.SelectedInGui == targetOption && tower.Selected))
+        //        {
+        //            towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
+        //        }
+        //    }
+
+        //    targetOptions.SelectedInGui = TowerTargeting.Unselected; // Change to unselected to ensure if another tower is selected, it won't automatically apply the targeting of the previous tower.
+        //}
+
         public void ChangeTowerTargeting(TowerTargetingGuiOptions targetOptions, TowerController towerController)
         {
-            foreach (var tower in _gameState.Towers.ToList())
+            foreach (var towercontroll in _gameState.TowerControlls.ToList())
             {
                 foreach (var targetOption in targetOptions.TargetingButtonLocations.Values.Where( //Depending on the targeting option that has been selected in the gui
-                    targetOption => targetOptions.SelectedInGui == targetOption && tower.Selected))
+                    targetOption => targetOptions.SelectedInGui == targetOption && towercontroll.IsTowerSelected()))
                 {
-                    towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
+                    //towerController.SetTowerTargeting(tower, targetOptions); // Set the targeting option of the tower accordingly.
+                    towercontroll.SetTowerTargeting(targetOptions);
                 }
             }
 
@@ -117,14 +132,29 @@ namespace BloonsProject
             }
         }
 
+        //public void UpgradeOrSellSelectedTower(TowerController towerController, TowerGuiOptions towerOptions)
+        //{
+        //    foreach (var tower in _gameState.Towers.ToList())
+        //    {
+        //        foreach (var towerOption in towerOptions.UpgradeOptionsInGui.Values.Where( // Obtains the selected tower and the option (upgrade, sell) that's currently selected in the gui
+        //            towerOption => towerOptions.SelectedInGui == towerOption && tower.Selected))
+        //        {
+        //            towerController.UpgradeOrSellTower(tower, towerOption, towerOptions); // Apply the selected option to the selected tower
+        //        }
+        //    }
+
+        //    towerOptions.SelectedInGui = "none"; // Reset the selected option so it doesn't apply to all future bloons.
+        //}
+
         public void UpgradeOrSellSelectedTower(TowerController towerController, TowerGuiOptions towerOptions)
         {
-            foreach (var tower in _gameState.Towers.ToList())
+            foreach (var towercontroll in _gameState.TowerControlls.ToList())
             {
                 foreach (var towerOption in towerOptions.UpgradeOptionsInGui.Values.Where( // Obtains the selected tower and the option (upgrade, sell) that's currently selected in the gui
-                    towerOption => towerOptions.SelectedInGui == towerOption && tower.Selected))
+                    towerOption => towerOptions.SelectedInGui == towerOption && towercontroll.IsTowerSelected()))
                 {
-                    towerController.UpgradeOrSellTower(tower, towerOption, towerOptions); // Apply the selected option to the selected tower
+                    //towerController.UpgradeOrSellTower(tower, towerOption, towerOptions); // Apply the selected option to the selected tower
+                    towercontroll.UpgradeOrSellTower(towerOption, towerOptions);
                 }
             }
 
@@ -143,7 +173,7 @@ namespace BloonsProject
                     _gameState.Player.Money -= tower.ShotType.RangeUpgradeCost; // Deduct money from player.
                     tower.SellPrice += 0.7 * tower.ShotType.RangeUpgradeCost; // Add 70% of the price put into the upgrade to the sell price
                     tower.ShotType.RangeUpgradeCount++;
-                    _ = GameClient.UpgradeOrSellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
+                    _ = GameClient.UpgradeTowerRangeAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
                     break;
 
                 case "Upgrade Firerate":
@@ -154,14 +184,14 @@ namespace BloonsProject
                     _gameState.Player.Money -= tower.ShotType.FirerateUpgradeCost;
                     tower.ShotType.FirerateUpgradeCount++;
                     tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
-                    _ = GameClient.UpgradeOrSellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
+                    _ = GameClient.UpgradeTowerFireRateAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
                     break;
 
                 case "Sell":
                     towerOptions.SelectedInGui = "none";
                     _gameState.Player.Money += tower.SellPrice; // Removes tower and provides player with said tower's sell price.
                     _gameState.Towers.Remove(tower);
-                    _ = GameClient.UpgradeOrSellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, 0));
+                    _ = GameClient.SellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, 0));
                     break;
             }
         }

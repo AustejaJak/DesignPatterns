@@ -15,6 +15,9 @@ using Timer = System.Timers.Timer;
 
 
 using System.Linq;
+using BloonsServer.Observer;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.AspNetCore.SignalR.Client;
 
 
 public class GameHub : Hub
@@ -26,15 +29,27 @@ public class GameHub : Hub
 
     private static Dictionary<string, bool> _playerReadyStatus = new Dictionary<string, bool>();
     private string _username;
-    
+    private static readonly NotificationService _notificationService = new NotificationService();
 
+    //private IHubContext<GameHub> _hubContext;
+
+
+    //public GameHub(IHubContext<GameHub> hubContext)
+    //{
+    //    // Manually create an instance of NotificationService using hubContext
+    //    _hubContext = hubContext;
+    //}
 
     public async Task SendUsername(string username)
     {
+
         _connectedUsernames.Add(username);
         _username = username;
         _playerReadyStatus[username] = false;
-
+        ITowerEventListener listener1 = new RangeUpgradeListener(Context.ConnectionId, Clients);
+        ITowerEventListener listener2 = new FireRateUpgradeListener(Context.ConnectionId, Clients);
+        _notificationService.Subscribe(TowerEvent.Range, listener1);
+        _notificationService.Subscribe(TowerEvent.FireRate, listener2);
         await Clients.Group("inGame").SendAsync("SendUsername", username);
         await UpdatePlayerStatuses();
     }
@@ -135,12 +150,50 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("AddTower", response);
     }
 
-    public async Task UpgradeOrSellTower(UpgradeOrSellTowerRequest request)
+    public async Task UpgradeTowerFireRate(UpgradeOrSellTowerRequest request, string senderUsername)
     {
         //Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
         //var gameSession = GameSession.GetInstance();
         //gameSession.GameState.upgradeTowerRange(position, request.option, request.upgradeCount);
-        await Clients.Group("inGame").SendAsync("UpgradeOrSellTower", request);
+        await _notificationService.Notify(TowerEvent.FireRate, senderUsername);
+        await Clients.Group("inGame").SendAsync("UpgradeTowerFireRate", request);
+    }
+
+    public async Task UpgradeTowerRange(UpgradeOrSellTowerRequest request, string senderUsername)
+    {
+        //Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
+        //var gameSession = GameSession.GetInstance();
+        //gameSession.GameState.upgradeTowerRange(position, request.option, request.upgradeCount);
+        await _notificationService.Notify(TowerEvent.Range, senderUsername);
+        await Clients.Group("inGame").SendAsync("UpgradeTowerRange", request);
+    }
+
+    public async Task SellTower(UpgradeOrSellTowerRequest request)
+    {
+        
+        await Clients.Group("inGame").SendAsync("SellTower", request);
+    }
+
+    public async Task UnsubscribeFromTowerRangeUpgradeMessages()
+    {
+        _notificationService.Unsubscribe(TowerEvent.Range, Context.ConnectionId);
+    }
+
+    public async Task SubscribeFromTowerRangeUpgradeMessages()
+    {
+        ITowerEventListener listener1 = new RangeUpgradeListener(Context.ConnectionId, Clients);
+        _notificationService.Subscribe(TowerEvent.Range, listener1);
+    }
+
+    public async Task UnsubscribeFromTowerFirerateUpgradeMessages()
+    {
+        _notificationService.Unsubscribe(TowerEvent.FireRate, Context.ConnectionId);
+    }
+
+    public async Task SubscribeFromTowerFirerateUpgradeMessages()
+    {
+        ITowerEventListener listener2 = new FireRateUpgradeListener(Context.ConnectionId, Clients);
+        _notificationService.Subscribe(TowerEvent.FireRate, listener2);
     }
 
     //public async Task PlaceBloon(PlaceBloonRequest request)
@@ -153,7 +206,7 @@ public class GameHub : Hub
     //    var response = new SynchronizeBloon(request.BloonType, NetworkPoint2D.Serialize(bloonInstance.Position));
     //    await Clients.Group("inGame").SendAsync("AddBloon", response);
     //}
-    
+
 
     public async Task PlaceBloon(PlaceBloonRequest request)
     {

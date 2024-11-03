@@ -153,6 +153,31 @@ namespace BloonsGame
             await _gameClient.SetPlayerReadyAsync(_isReady);
         }
 
+
+        private void TowerFirerateUpgradeMessageCheckbox_Copy_Checked(object sender, RoutedEventArgs e)
+        {
+            if (TowerFirerateUpgradeMessageCheckbox_Copy.IsChecked == true)
+            {
+                _gameClient.SubscribeFromTowerFirerateUpgradeMessagesAsync();
+            }
+            else
+            {
+                _gameClient.UnsubscribeFromTowerFirerateUpgradeMessagesAsync();
+            }
+        }
+
+        private void TowerRangeUpgradeMessageCheckbox_Checked(object sender, RoutedEventArgs e)
+        {
+           if (TowerRangeUpgradeMessageCheckbox.IsChecked == true)
+            {
+                _gameClient.SubscribeFromTowerRangeUpgradeMessagesAsync();
+            }
+            else
+            {
+                _gameClient.UnsubscribeFromTowerRangeUpgradeMessagesAsync();
+            }
+        }
+
         private void MapComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (MapComboBox.SelectedItem != null)
@@ -187,6 +212,7 @@ namespace BloonsGame
                 ReadyButton.IsEnabled = true;
                 MapComboBox.IsEnabled = true;
             });
+
         }
     }
 }

@@ -14,6 +14,7 @@ using SplashKitSDK;
 using System.Timers;
 using Timer = System.Timers.Timer;
 using System.Collections.Concurrent;
+using BloonLibrary.Controllers.Bridge;
 
 namespace BloonLibrary
 {
@@ -66,9 +67,33 @@ namespace BloonLibrary
                 };
                 var gameSession = GameSession.GetInstance();
                 gameSession.GameState.AddTower(tower);
+                if (tower.Username == Username)
+                {
+                    MyTowerControl towercontrol = new MyTowerControl(tower, this);
+                    gameSession.GameState.TowerControlls.Add(towercontrol);
+                }
+                else
+                {
+                    OtherPlayerTowerControl towercontrol = new OtherPlayerTowerControl(tower, this);
+                    gameSession.GameState.TowerControlls.Add(towercontrol);
+                }
             });
 
-            _connection.On<UpgradeOrSellTowerRequest>("UpgradeOrSellTower", (request) =>
+            _connection.On<UpgradeOrSellTowerRequest>("UpgradeTowerRange", (request) =>
+            {
+                Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
+                var gameSession = GameSession.GetInstance();
+                gameSession.GameState.upgradeOrSellTower(position, request.option, request.upgradeCount);
+            });
+
+            _connection.On<UpgradeOrSellTowerRequest>("UpgradeTowerFireRate", (request) =>
+            {
+                Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
+                var gameSession = GameSession.GetInstance();
+                gameSession.GameState.upgradeOrSellTower(position, request.option, request.upgradeCount);
+            });
+
+            _connection.On<UpgradeOrSellTowerRequest>("SellTower", (request) =>
             {
                 Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
                 var gameSession = GameSession.GetInstance();
@@ -91,7 +116,7 @@ namespace BloonLibrary
             //    var gameSession = GameSession.GetInstance();
             //    gameSession.GameState.AddBloon(bloon);
             //});
-            
+
 
             _connection.On<SynchronizeBloon>("AddBloon", (request) =>
             {
@@ -171,7 +196,19 @@ namespace BloonLibrary
             {
                 ChatMessageReceived?.Invoke(message);
             });
-            
+
+            _connection.On<string>("RangeUpgradeMessage", (message) =>
+            {
+                var gameState = GameState.GetGameStateInstance();
+                gameState.TowerEventMessages.Enqueue(message);
+            });
+
+            _connection.On<string>("FireRateUpgradeMessage", (message) =>
+            {
+                var gameState = GameState.GetGameStateInstance();
+                gameState.TowerEventMessages.Enqueue(message);
+            });
+
             try
             {
                 await _connection.StartAsync();
@@ -218,11 +255,59 @@ namespace BloonLibrary
             }
         }
 
-        public async Task UpgradeOrSellTowerAsync(UpgradeOrSellTowerRequest request)
+        public async Task UpgradeTowerRangeAsync(UpgradeOrSellTowerRequest request)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
-                await _connection.InvokeAsync("UpgradeOrSellTower", request);
+                await _connection.InvokeAsync("UpgradeTowerRange", request, Username);
+            }
+        }
+
+        public async Task UpgradeTowerFireRateAsync(UpgradeOrSellTowerRequest request)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("UpgradeTowerFireRate", request, Username);
+            }
+        }
+
+        public async Task UnsubscribeFromTowerRangeUpgradeMessagesAsync()
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("UnsubscribeFromTowerRangeUpgradeMessages");
+            }
+        }
+
+        public async Task SubscribeFromTowerRangeUpgradeMessagesAsync()
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SubscribeFromTowerRangeUpgradeMessages");
+            }
+        }
+
+        public async Task UnsubscribeFromTowerFirerateUpgradeMessagesAsync()
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("UnsubscribeFromTowerFirerateUpgradeMessages");
+            }
+        }
+
+        public async Task SubscribeFromTowerFirerateUpgradeMessagesAsync()
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SubscribeFromTowerFirerateUpgradeMessages");
+            }
+        }
+
+        public async Task SellTowerAsync(UpgradeOrSellTowerRequest request)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SellTower", request);
             }
         }
 
