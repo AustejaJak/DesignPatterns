@@ -52,13 +52,9 @@ namespace BloonsProject
             {
                 if (b.Color.Equals(Color.Green) && b.Health == 2) // If a green bloon has 2 health
                 {
-                    //newBloonsToAdd.Add(new BlueBloon
-                    //{
-                    //    Position = b.Position,
-                    //    Checkpoint = b.Checkpoint,
-                    //    DistanceTravelled = b.DistanceTravelled
-                    //});
-                    newBloonsToAdd.Add(b.Clone());
+                    
+                    Bloon bloon = b.CloneToType(typeof(BlueBloon));
+                    newBloonsToAdd.Add(bloon);
                     bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
                 else if (b.Color.Equals(Color.Blue) && b.Health == 1) // If a blue bloon has 1 health
@@ -69,7 +65,8 @@ namespace BloonsProject
                     //    Checkpoint = b.Checkpoint,
                     //    DistanceTravelled = b.DistanceTravelled
                     //});
-                    newBloonsToAdd.Add(b.Clone());
+                    newBloonsToAdd.Add(b.CloneToType(typeof(RedBloon)));
+                    //newBloonsToAdd.Add(b.Clone());
                     bloonsToRemove.Add(b.Name); // Track the bloon's name for removal
                 }
                 else if (b.Health <= 0) // If the bloon has no health

@@ -8,7 +8,7 @@ namespace BloonsProject
         {
         }
 
-        public BlueBloon(BlueBloon bloon) : base(2, "Blue Balloon", Color.Blue, 3, 3)
+        public BlueBloon(Bloon bloon) : base(2, "Blue Balloon", Color.Blue, 3, 3)
         {
             this.Position = bloon.Position;
             this.Checkpoint = bloon.Checkpoint;
@@ -18,9 +18,9 @@ namespace BloonsProject
 
         public static string Name => "Blue Balloon";
 
-        public override Bloon Clone()
-        {
-            return new BlueBloon(this);
-        }
+        //public override Bloon Clone()
+        //{
+        //    return new BlueBloon(this);
+        //}
     }
 }

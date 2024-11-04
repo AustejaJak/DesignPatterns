@@ -157,9 +157,6 @@ public class GameHub : Hub
 
     public async Task UpgradeTowerRange(UpgradeOrSellTowerRequest request, string senderUsername)
     {
-        //Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
-        //var gameSession = GameSession.GetInstance();
-        //gameSession.GameState.upgradeTowerRange(position, request.option, request.upgradeCount);
         await _notificationService.Notify(TowerEvent.Range, senderUsername);
         await Clients.Group("inGame").SendAsync("UpgradeTowerRange", request);
     }
