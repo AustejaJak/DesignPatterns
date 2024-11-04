@@ -51,14 +51,16 @@ namespace BloonLibrary.Controllers.Bridge
 
         public override void SetTowerTargeting(TowerTargetingGuiOptions targetOptions) // Changes the targeting of the tower depending on the target option inputted (enum)
         {
-            tower.Targeting = targetOptions.SelectedInGui switch
+            TargetCreator targetCreator = targetOptions.SelectedInGui switch
             {
-                TowerTargeting.First => new TargetFirst(),
-                TowerTargeting.Last => new TargetLast(),
-                TowerTargeting.Strong => new TargetStrong(),
-                TowerTargeting.Weak => new TargetWeak(),
-                _ => tower.Targeting
+                TowerTargeting.First => new ConcreteTargetFirst(),
+                TowerTargeting.Last => new ConcreteTargetLast(),
+                TowerTargeting.Strong => new ConcreteTargetStrong(),
+                TowerTargeting.Weak => new ConcreteTargetWeak(),
+                _ => throw new ArgumentException("Invalid targeting strategy type"),
             };
+            
+            tower.Targeting = targetCreator.CreateTarget();
         }
 
     }

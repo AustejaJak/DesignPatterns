@@ -25,7 +25,8 @@ namespace BloonsProject
             DebugModeSelected = false;
             ShotType = shotType;
             Range = range;
-            Targeting = new TargetFirst(); // Set targeting to target first by default.
+            var targetCreator = new ConcreteTargetFirst();
+            Targeting = targetCreator.CreateTarget(); 
         }
 
         public int Cost { get; }
