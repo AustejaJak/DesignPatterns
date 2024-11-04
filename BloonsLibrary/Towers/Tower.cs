@@ -1,6 +1,7 @@
 ﻿using SplashKitSDK;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System;
 
 namespace BloonsProject
 {
@@ -12,9 +13,14 @@ namespace BloonsProject
 
         public string Username {get;  set;}
 
+        private ITowerDecorator _decorator;
+        private Bitmap _originalBitmap;
+
+        private Bitmap _towerBitmap;
+
         public Tower(string name, string username, int cost, string description, Bitmap towerBitmap, IShotType shotType, int range)
         {
-            TowerBitmap = towerBitmap;
+            _originalBitmap = towerBitmap;
             Username = username;
             Selected = false;
             Cost = cost;
@@ -26,7 +32,37 @@ namespace BloonsProject
             ShotType = shotType;
             Range = range;
             var targetCreator = new ConcreteTargetFirst();
-            Targeting = targetCreator.CreateTarget(); 
+            Targeting = targetCreator.CreateTarget();
+            _decorator = new BaseTowerDecorator(this);
+        }
+
+        public Bitmap TowerBitmap 
+        { 
+            get => GetCurrentBitmap();
+        }
+
+        public Bitmap GetCurrentBitmap()
+        {
+            return _decorator.GetTowerBitmap();
+        }
+
+        public Bitmap GetOriginalBitmap()
+        {
+            return _originalBitmap;
+        }
+
+        public void UpdateDecorator()
+        {
+            Console.WriteLine("updating decorator");
+            // Only update appearance for fire rate upgrades
+            if (ShotType.FirerateUpgradeCount > 0)
+            {
+                _decorator = new FireRateDecorator(this);
+            }
+            else
+            {
+                _decorator = new BaseTowerDecorator(this);
+            }
         }
 
         public int Cost { get; }
@@ -48,7 +84,7 @@ namespace BloonsProject
         public double SellPrice { get; set; } // The price as which the player can sell the tower for.
         public IShotType ShotType { get; } // The projectile this tower uses.
         public ITarget Targeting { get; set; } // The targeting this tower is set to.
-        public Bitmap TowerBitmap { get; } // The bitmap corresponding to the tower.
+        //public Bitmap TowerBitmap { get; } // The bitmap corresponding to the tower.
 
         public void ResetTimer() // Resets the tower's cooldown.
         {

@@ -19,6 +19,7 @@ namespace BloonsProject
         {
             foreach (var tower in _gameState.Towers.ToList().Where(t => t.Selected)) // For every selected tower, render all of its options in the GUI.
             {
+                var currentBitmap = tower.TowerBitmap;
                 RenderTowerOptions(towerOptions, tower);
                 RenderTowerTargetingOptions(targetOptions, tower);
             }

@@ -8,14 +8,13 @@ namespace BloonsProject
     {
         private static string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-        // Inside DartTower constructor
         public DartTower(string username) : base(
             "Dart Monkey", 
             username, 
             120, 
             "The Regular Tower", 
             new Bitmap("DartTower", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Dart.png")), 
-            new DartShotBuilder()  // Use the builder here
+            new DartShotBuilder()
                 .SetBitmap("Dart", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Spike.png"))
                 .Build(), 
             100)

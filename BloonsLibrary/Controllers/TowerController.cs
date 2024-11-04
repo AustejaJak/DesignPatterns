@@ -163,27 +163,31 @@ namespace BloonsProject
 
         public void UpgradeOrSellTower(Tower tower, string option, TowerGuiOptions towerOptions)
         {
+            Console.WriteLine("Upgrading or selling tower");
             switch (option) // Depending on the option, either upgrade or sell tower.
             {
                 case "Upgrade Range":
-                    if (tower.ShotType.RangeUpgradeCount == 3) break; // Can't upgrade more than 3 times
-                    if (_gameState.Player.Money < tower.ShotType.RangeUpgradeCost) break; // Can't upgrade if player doesn't possess the money.
-                    tower.Range += 50; // Increase range by 50.
-                    towerOptions.SelectedInGui = "none"; // Unselect the option in the gui.
-                    _gameState.Player.Money -= tower.ShotType.RangeUpgradeCost; // Deduct money from player.
-                    tower.SellPrice += 0.7 * tower.ShotType.RangeUpgradeCost; // Add 70% of the price put into the upgrade to the sell price
+                    if (tower.ShotType.RangeUpgradeCount == 3) break;
+                    if (_gameState.Player.Money < tower.ShotType.RangeUpgradeCost) break;
+                    tower.Range += 50;
+                    towerOptions.SelectedInGui = "none";
+                    _gameState.Player.Money -= tower.ShotType.RangeUpgradeCost;
+                    tower.SellPrice += 0.7 * tower.ShotType.RangeUpgradeCost;
                     tower.ShotType.RangeUpgradeCount++;
+                    //tower.UpdateDecorator(); // Update the tower's appearance
                     _ = GameClient.UpgradeTowerRangeAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
                     break;
 
                 case "Upgrade Firerate":
-                    if (tower.ShotType.FirerateUpgradeCount == 3) break; // Repeat for firerate
+                    if (tower.ShotType.FirerateUpgradeCount == 3) break;
                     if (_gameState.Player.Money < tower.ShotType.FirerateUpgradeCost) break;
                     tower.ShotType.ShotSpeed -= 10;
                     towerOptions.SelectedInGui = "none";
                     _gameState.Player.Money -= tower.ShotType.FirerateUpgradeCost;
                     tower.ShotType.FirerateUpgradeCount++;
                     tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
+                    tower.UpdateDecorator(); // Update the tower's appearance
+                    Console.WriteLine("Upgrading fire rate");
                     _ = GameClient.UpgradeTowerFireRateAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
                     break;
 
