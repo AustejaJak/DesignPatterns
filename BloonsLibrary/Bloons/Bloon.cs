@@ -1,9 +1,11 @@
-﻿using SplashKitSDK;
+﻿using BloonLibrary.Bloons;
+using SplashKitSDK;
+using System;
 using System.Diagnostics;
 
 namespace BloonsProject
 {
-    public abstract class Bloon
+    public abstract class Bloon : IBloonPrototype
     {
         private Point2D _position;
         public string Name;
@@ -67,7 +69,16 @@ namespace BloonsProject
             Health -= damage;
         }
 
-        public abstract Bloon Clone();
+        public virtual Bloon CloneToType(Type targetType)
+        {
+            Bloon clone = (Bloon)Activator.CreateInstance(targetType);
+
+            clone.Position = this.Position;
+            clone.Checkpoint = this.Checkpoint;
+            clone.DistanceTravelled = this.DistanceTravelled;
+
+            return clone;
+        }
 
     }
 }
