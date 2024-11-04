@@ -18,9 +18,9 @@ namespace BloonsProject
 
         public static string Name => "Orange Balloon";
 
-        public override Bloon Clone()
-        {
-            return new OrangeBloon(this);
-        }
+        //public override Bloon Clone()
+        //{
+        //    return new OrangeBloon(this);
+        //}
     }
 }
