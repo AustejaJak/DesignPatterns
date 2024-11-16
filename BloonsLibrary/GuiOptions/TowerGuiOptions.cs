@@ -5,50 +5,55 @@ using System.IO;
 
 namespace BloonsProject
 {
-    public class TowerGuiOptions
+    // Concrete implementation for Tower GUI Options
+    public class TowerGuiOptions : GuiOptionsBase
     {
+        public Dictionary<Point2D, string> UpgradeOptionsInGui { get; }
+        public string SelectedInGui { get; set; }
+        public Bitmap SellTowerBitmap { get; }
+        public Bitmap UpgradeFirerateBitmap { get; }
+        public Bitmap UpgradeRangeBitmap { get; }
+        public List<Bitmap> ClickableShapeImages { get; set; }
+
         public TowerGuiOptions()
         {
-            UpgradeOptionsInGui = new Dictionary<Point2D, string> // Location of upgrade buttons.
+            Height = 50;
+            Width = 100;
+            SelectedInGui = "none";
+            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
+
+            UpgradeOptionsInGui = new Dictionary<Point2D, string>
             {
                 [new Point2D { X = 850, Y = 355 }] = "Upgrade Range",
                 [new Point2D { X = 990, Y = 355 }] = "Upgrade Firerate",
                 [new Point2D { X = 920, Y = 455 }] = "Sell"
             };
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory; // current Folder path
-            Height = 50; // Dimensions of buttons
-            Width = 100;
-            SelectedInGui = "none";
-            SellTowerBitmap = new Bitmap("Sell", // Bitmaps for buttons.
+
+            SellTowerBitmap = new Bitmap("Sell", 
                 Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\sellTower.png"));
             UpgradeFirerateBitmap = new Bitmap("Firerrate",
                 Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\firerateUpgrade.png"));
             UpgradeRangeBitmap = new Bitmap("Range",
                 Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\rangeUpgrade.png"));
-            ClickableShapeImages = new List<Bitmap>() { UpgradeRangeBitmap, UpgradeFirerateBitmap, SellTowerBitmap }; // List of buttons.
+            ClickableShapeImages = new List<Bitmap>() { UpgradeRangeBitmap, UpgradeFirerateBitmap, SellTowerBitmap };
         }
 
-        public List<Bitmap> ClickableShapeImages { get; set; }
-        public int Height { get; }
-        public string SelectedInGui { get; set; }
-        public Bitmap SellTowerBitmap { get; }
-        public Bitmap UpgradeFirerateBitmap { get; }
-        public Dictionary<Point2D, string> UpgradeOptionsInGui { get; }
-        public Bitmap UpgradeRangeBitmap { get; }
-        public int Width { get; }
-
-        public void ClickShape(Point2D pt) // Selects a button if mouse press location is within the button's dimensions
+        protected override IEnumerable<(Point2D Position, object Value)> GetClickableOptions()
         {
-            foreach (var (position, towerOption) in UpgradeOptionsInGui)
+            foreach (var option in UpgradeOptionsInGui)
             {
-                if (pt.X >= position.X && pt.X <= Width + position.X && pt.Y >= position.Y &&
-                    pt.Y <= position.Y + Height)
-                {
-                    SelectedInGui = towerOption; // Sets SelectedInGui to the selected button.
-                    break;
-                }
-                SelectedInGui = "none";
+                yield return (option.Key, option.Value);
             }
+        }
+
+        protected override void UpdateSelection(object value)
+        {
+            SelectedInGui = (string)value;
+        }
+
+        protected override void HandleInvalidClick()
+        {
+            SelectedInGui = "none";
         }
     }
 }
