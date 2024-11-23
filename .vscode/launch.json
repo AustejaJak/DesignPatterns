@@ -2,6 +2,17 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "BloonsServer",
+            "type": "coreclr",
+            "request": "launch",
+            "preLaunchTask": "build",
+            "program": "${workspaceFolder}/BloonsServer/bin/Debug/net5.0-windows/BloonsServer.dll",
+            "args": [],
+            "cwd": "${workspaceFolder}/Server",
+            "stopAtEntry": false,
+            "console": "integratedTerminal"
+        },
+        {
             "name": ".NET Core Launch GameClient 1",
             "type": "coreclr",
             "request": "launch",
@@ -9,7 +20,7 @@
             "program": "${workspaceFolder}/BloonsGame/bin/Debug/net5.0-windows/BloonsGame.dll",
             "args": [],
             "cwd": "${workspaceFolder}/BloonsGame",
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
@@ -20,7 +31,7 @@
             "program": "${workspaceFolder}/BloonsGame/bin/Debug/net5.0-windows/BloonsGame.dll",
             "args": [],
             "cwd": "${workspaceFolder}/BloonsGame",
-            "console": "internalConsole",
+            "console": "integratedTerminal",
             "stopAtEntry": false
         },
         {
@@ -28,5 +39,12 @@
             "type": "coreclr",
             "request": "attach"
         }
+    ],
+    "compounds": [
+    {
+        "name": "Server and Clients",
+        "configurations": ["Server", ".NET Core Launch GameClient 1", ".NET Core Launch GameClient 2"]
+    }
     ]
 }
+

@@ -36,6 +36,8 @@ namespace BloonLibrary.Controllers.Bridge
                     _gameState.Player.Money -= tower.ShotType.FirerateUpgradeCost;
                     tower.ShotType.FirerateUpgradeCount++;
                     tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
+                    tower.UpdateDecorator(); // Update the tower's appearance
+                    Console.WriteLine("Upgrading fire rate");
                     _ = _gameClient.UpgradeTowerFireRateAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
                     break;
 
