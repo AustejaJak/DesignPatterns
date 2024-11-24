@@ -17,12 +17,22 @@ namespace BloonsProject
 
         public void RenderSelectedTowerOptions(TowerGuiOptions towerOptions, TowerTargetingGuiOptions targetOptions)
         {
-            foreach (var tower in _gameState.Towers.ToList().Where(t => t.Selected)) // For every selected tower, render all of its options in the GUI.
+            var TowerIterator = _gameState.Towers.CreateIterator();
+            while (TowerIterator.MoveNext())
             {
-                var currentBitmap = tower.TowerBitmap;
-                RenderTowerOptions(towerOptions, tower);
-                RenderTowerTargetingOptions(targetOptions, tower);
+                if (TowerIterator.Current.Selected)
+                {
+                    var currentBitmap = TowerIterator.Current.TowerBitmap;
+                    RenderTowerOptions(towerOptions, TowerIterator.Current);
+                    RenderTowerTargetingOptions(targetOptions, TowerIterator.Current);
+                }
             }
+            //foreach (var tower in _gameState.Towers.ToList().Where(t => t.Selected)) // For every selected tower, render all of its options in the GUI.
+            //{
+            //    var currentBitmap = tower.TowerBitmap;
+            //    RenderTowerOptions(towerOptions, tower);
+            //    RenderTowerTargetingOptions(targetOptions, tower);
+            //}
         }
 
         public void RenderTowerOptions(TowerGuiOptions towerOptions, Tower tower)

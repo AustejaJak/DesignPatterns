@@ -6,6 +6,7 @@ using System.Text.Json;
 using System.Linq;
 using Color = SplashKitSDK.Color;
 using BloonLibrary.Controllers.Bridge;
+using BloonLibrary.Iterator;
 
 namespace BloonsProject
 {
@@ -13,14 +14,16 @@ namespace BloonsProject
     {
         private static GameState _state;
         public ConcurrentDictionary<string, Bloon> Bloons { get; private set; }
-        public  List<Tower> Towers = new List<Tower>();
+        public ListAggregate<Tower> Towers = new ListAggregate<Tower>();
         public Dictionary<Color, int> BloonsSpawned = new Dictionary<Color, int>();
         public Dictionary<Color, int> BloonsToBeSpawned = new Dictionary<Color, int>();
         public  Player Player = new Player();
         public  ProjectileManager ProjectileManager = new ProjectileManager();
         public List<string> OtherPlayerStats = new List<string>();
-        public Queue<string> TowerEventMessages = new Queue<string>();
-        public List<TowerContols> TowerControlls = new List<TowerContols>();
+        //public Queue<string> TowerEventMessages = new Queue<string>();
+        public QueueAggregate<string> TowerEventMessages = new QueueAggregate<string>();
+        //public List<TowerContols> TowerControlls = new List<TowerContols>();
+        public ListAggregate<TowerContols> TowerControlls = new ListAggregate<TowerContols>();
         public string InvalidTowerEventMessage;
 
         private static readonly object Locker = new object();
@@ -48,7 +51,7 @@ namespace BloonsProject
         
         public void AddTower(Tower tower)
         {
-            Towers.Add(tower);
+            Towers.AddItem(tower);
         }
 
         public void AddGameStats(string message)
@@ -64,39 +67,41 @@ namespace BloonsProject
 
         public void upgradeOrSellTower(Point2D point, string option, int upgradeCount)
         {
-            if (Towers.Count == 0) return;
-            foreach (var tower in Towers)
+            var TowerIterator = Towers.CreateIterator();
+            while (TowerIterator.MoveNext())
             {
-                if (tower.Position.Equals(point))
+                if (TowerIterator.Current.Position.Equals(point))
                 {
 
                     switch (option) // Depending on the option, either upgrade or sell tower.
                     {
                         case "Upgrade Range":
-                            if (tower.ShotType.RangeUpgradeCount == 3 || tower.ShotType.RangeUpgradeCount == upgradeCount) break; // Can't upgrade more than 3 times
-                            tower.Range += 50; // Increase range by 50.
-                            tower.SellPrice += 0.7 * tower.ShotType.RangeUpgradeCost; // Add 70% of the price put into the upgrade to the sell price
-                            tower.ShotType.RangeUpgradeCount++;
+                            if (TowerIterator.Current.ShotType.RangeUpgradeCount == 3 || TowerIterator.Current.ShotType.RangeUpgradeCount == upgradeCount) break; // Can't upgrade more than 3 times
+                            TowerIterator.Current.Range += 50; // Increase range by 50.
+                            TowerIterator.Current.SellPrice += 0.7 * TowerIterator.Current.ShotType.RangeUpgradeCost; // Add 70% of the price put into the upgrade to the sell price
+                            TowerIterator.Current.ShotType.RangeUpgradeCount++;
                             break;
 
                         case "Upgrade Firerate":
-                            if (tower.ShotType.FirerateUpgradeCount == 3 || tower.ShotType.FirerateUpgradeCount == upgradeCount) break; // Repeat for firerate
-                            tower.ShotType.ShotSpeed -= 10;
+                            if (TowerIterator.Current.ShotType.FirerateUpgradeCount == 3 || TowerIterator.Current.ShotType.FirerateUpgradeCount == upgradeCount) break; // Repeat for firerate
+                            TowerIterator.Current.ShotType.ShotSpeed -= 10;
 
-                            tower.ShotType.FirerateUpgradeCount++;
-                            tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
+                            TowerIterator.Current.ShotType.FirerateUpgradeCount++;
+                            TowerIterator.Current.SellPrice += 0.7 * TowerIterator.Current.ShotType.FirerateUpgradeCost;
                             break;
 
                         case "Sell":
-                            Towers.Remove(tower);
-                            foreach (TowerContols t in TowerControlls)
+                            
+                            var ControllsIterator = TowerControlls.CreateIterator();
+                            while (ControllsIterator.MoveNext())
                             {
-                                if (t.GetTower() == null || t.GetTower() == tower)
+                                if (ControllsIterator.Current.GetTower() == null || ControllsIterator.Current.GetTower() == TowerIterator.Current)
                                 {
-                                    TowerControlls.Remove(t);
+                                    TowerControlls.RemoveItem(ControllsIterator.Current);
                                     break;
                                 }
                             }
+                            Towers.RemoveItem(TowerIterator.Current);
                             break;
                     }
                     return;

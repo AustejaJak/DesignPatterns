@@ -45,8 +45,8 @@ namespace BloonLibrary.Controllers.Bridge
                     towerOptions.SelectedInGui = "none";
                     _gameState.Player.Money += tower.SellPrice; // Removes tower and provides player with said tower's sell price.
                     _ = _gameClient.SellTowerAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, 0));
-                    _gameState.Towers.Remove(tower);
-                    _gameState.TowerControlls.Remove(this);
+                    _gameState.Towers.RemoveItem(tower);
+                    _gameState.TowerControlls.RemoveItem(this);
                     break;
             }
         }
