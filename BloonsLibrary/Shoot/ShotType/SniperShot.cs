@@ -8,7 +8,18 @@ namespace BloonsProject
     {
         private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
-        public SniperShot()
+        public SniperShot(
+            double shotSpeed,
+            int damage,
+            double projectileStationaryTime,
+            double projectileLength,
+            double projectileWidth,
+            int firerateUpgradeCost,
+            int rangeUpgradeCost,
+            double projectileSpeed,
+            double projectileSize,
+            Bitmap projectileBitmap
+        )
         {
             ShotSpeed = 200;
             Damage = 3;
@@ -17,12 +28,12 @@ namespace BloonsProject
             FirerateUpgradeCost = 50;
             RangeUpgradeCost = 50;
             TimeSinceLastShot = 0;
+            ProjectileBitmap = projectileBitmap;
             ProjectileSpeed = 0.1;
             ProjectileSize = 2;
             ProjectileLength = 94;
             ProjectileWidth = 94;
             ProjectileStationaryTime = 100;
-            ProjectileBitmap = new Bitmap("Sniper", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Blade.png"));
         }
 
         public Bitmap ProjectileBitmap { get; }

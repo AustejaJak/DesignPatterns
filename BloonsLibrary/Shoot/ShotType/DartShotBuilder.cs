@@ -13,7 +13,8 @@ namespace BloonsProject
         private int _rangeUpgradeCost;
         private double _projectileSpeed;
         private double _projectileSize;
-        private Bitmap _projectileBitmap;
+        private string _bitmapName;
+        private string _bitmapPath;
 
         public DartShotBuilder()
         {
@@ -70,12 +71,18 @@ namespace BloonsProject
 
         public IShotBuilder SetBitmap(string name, string path)
         {
-            _projectileBitmap = new Bitmap(name, path);
+            _bitmapName = name;
+            _bitmapPath = path;
             return this;
         }
 
         public IShotType Build()
         {
+            // Get the bitmap from FlyweightFactory instead of creating a new instance
+            Bitmap projectileBitmap = _bitmapName != null && _bitmapPath != null
+                ? FlyweightFactory.GetBitmap(_bitmapName, _bitmapPath)
+                : null;
+
             return new DartShot(
                 _shotSpeed,
                 _damage,
@@ -86,7 +93,7 @@ namespace BloonsProject
                 _rangeUpgradeCost,
                 _projectileSpeed,
                 _projectileSize,
-                _projectileBitmap
+                projectileBitmap
             );
         }
     }

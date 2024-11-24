@@ -1,10 +1,8 @@
-﻿using System;
-using System.IO;
-using SplashKitSDK;
+﻿using SplashKitSDK;
 
 namespace BloonsProject
 {
-    public class LaserShotBuilder : IShotBuilder
+    public class SniperShotBuilder : IShotBuilder
     {
         private double _shotSpeed;
         private int _damage;
@@ -18,18 +16,18 @@ namespace BloonsProject
         private string _bitmapName;
         private string _bitmapPath;
         
-        public LaserShotBuilder()
+        public SniperShotBuilder()
         {
-            _shotSpeed = 50;
-            _damage = 1;
-            _projectileStationaryTime = 0;
-            _firerateUpgradeCost = 100;
-            _rangeUpgradeCost = 150;
-            _projectileSpeed = 0.3;
+            // Set default values
+            _shotSpeed = 200;
+            _damage = 3;
+            _projectileStationaryTime = 100;
+            _projectileLength = 94;
+            _projectileWidth = 94;
+            _firerateUpgradeCost = 50;
+            _rangeUpgradeCost = 50;
+            _projectileSpeed = 0.1;
             _projectileSize = 2;
-            _projectileLength = 40;
-            _projectileWidth = 40;
-            _projectileStationaryTime = 0;
         }
 
         public IShotBuilder SetShotSpeed(double speed)
@@ -85,8 +83,7 @@ namespace BloonsProject
                 ? FlyweightFactory.GetBitmap(_bitmapName, _bitmapPath)
                 : null;
 
-            
-            return new LaserShot(
+            return new SniperShot(
                 _shotSpeed,
                 _damage,
                 _projectileStationaryTime,

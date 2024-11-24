@@ -7,7 +7,6 @@ namespace BloonsProject
     public class BaseTowerDecorator : ITowerDecorator
     {
         protected Tower _tower;
-        protected static string baseDirectory = AppContext.BaseDirectory;
 
         public BaseTowerDecorator(Tower tower)
         {

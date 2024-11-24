@@ -6,21 +6,35 @@ namespace BloonsProject
 {
     public class LaserTower : Tower
     {
-        private static string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
-
         public LaserTower(string username) : base(
             "Laser Monkey", 
             username, 
             400, 
             "Did someone say rapidfire?", 
-            new Bitmap("LaserTower", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Laser.png")), 
-            new LaserShotBuilder().Build(), 
+            FlyweightFactory.GetBitmap("LaserTower", TowerResources.LaserTower.MainSprite),
+            new LaserShotBuilder()
+                .SetBitmap("Laser", TowerResources.LaserTower.ProjectileSprite)
+                .Build(), 
             300)
         { }
 
         public static string Name => "Laser Monkey";
 
-        public static Bitmap Portrait => new Bitmap("Laser Portrait",
-            Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\LaserSelect.png"));
+        private static Bitmap _portraitBitmap;
+
+        public static Bitmap Portrait
+        {
+            get
+            {
+                if (_portraitBitmap == null)
+                {
+                    _portraitBitmap = FlyweightFactory.GetBitmap(
+                        "Laser Portrait",
+                        TowerResources.LaserTower.PortraitSprite
+                    );
+                }
+                return _portraitBitmap;
+            }
+        }
     }
 }

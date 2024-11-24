@@ -20,7 +20,6 @@ namespace BloonsProject
             Height = 50;
             Width = 100;
             SelectedInGui = "none";
-            string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
 
             UpgradeOptionsInGui = new Dictionary<Point2D, string>
             {
@@ -29,12 +28,10 @@ namespace BloonsProject
                 [new Point2D { X = 920, Y = 455 }] = "Sell"
             };
 
-            SellTowerBitmap = new Bitmap("Sell", 
-                Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\sellTower.png"));
-            UpgradeFirerateBitmap = new Bitmap("Firerrate",
-                Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\firerateUpgrade.png"));
-            UpgradeRangeBitmap = new Bitmap("Range",
-                Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\rangeUpgrade.png"));
+            SellTowerBitmap = FlyweightFactory.GetBitmap("Sell", TowerResources.SellIcon);
+            UpgradeFirerateBitmap = FlyweightFactory.GetBitmap("Firerate", TowerResources.UpgradeFirerate);
+            UpgradeRangeBitmap = FlyweightFactory.GetBitmap("Range", TowerResources.UpgradeRange);
+            
             ClickableShapeImages = new List<Bitmap>() { UpgradeRangeBitmap, UpgradeFirerateBitmap, SellTowerBitmap };
         }
 

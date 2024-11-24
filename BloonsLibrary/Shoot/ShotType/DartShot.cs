@@ -6,7 +6,6 @@ namespace BloonsProject
 {
     public class DartShot : IShotType
     {
-        private readonly string baseDirectory = AppDomain.CurrentDomain.BaseDirectory;
         public DartShot(
             double shotSpeed,
             int damage,
@@ -27,7 +26,7 @@ namespace BloonsProject
             FirerateUpgradeCost = 75;
             RangeUpgradeCost = 75;
             TimeSinceLastShot = 0;
-            ProjectileBitmap = new Bitmap("Dart", Path.Combine(baseDirectory, @"..\..\..\..\BloonsLibrary\Resources\Spike.png"));
+            ProjectileBitmap = projectileBitmap;
             ProjectileSpeed = 0.3;
             ProjectileSize = 1.5;
             ProjectileLength = 48;
