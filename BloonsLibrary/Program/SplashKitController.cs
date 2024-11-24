@@ -16,6 +16,8 @@ namespace BloonsProject
         private readonly TowerTargetingGuiOptions _targetOptions = new TowerTargetingGuiOptions();
         private readonly TowerGuiOptions _towerOptions = new TowerGuiOptions();
         private readonly TowerPlacerGuiOptions _towerPlacer = new TowerPlacerGuiOptions();
+        public TowerPlacerGuiOptions TowerPlacerGuiOptions => _towerPlacer;
+
         private readonly Window _window;
         private readonly RenderingFacade _renderingFacade;  // Replace Renderer with RenderingFacade
         private bool _isPaused;
@@ -150,9 +152,9 @@ namespace BloonsProject
             }
             else if (!_mapController.CanPlaceTowerOnMap(SplashKit.MousePosition(), _map))
             {
-                _towerPlacer.ClickShape(SplashKit.MousePosition());
-                _towerOptions.ClickShape(SplashKit.MousePosition());
-                _targetOptions.ClickShape(SplashKit.MousePosition());
+                _towerPlacer.HandleClick(SplashKit.MousePosition());
+                _towerOptions.HandleClick(SplashKit.MousePosition());
+                _targetOptions.HandleClick(SplashKit.MousePosition());
             }
         }
 

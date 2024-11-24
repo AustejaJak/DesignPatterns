@@ -4,53 +4,50 @@ using System.Collections.Generic;
 
 namespace BloonsProject
 {
-    public class TowerPlacerGuiOptions
+    // Concrete implementation for Tower Placer GUI Options
+    public class TowerPlacerGuiOptions : GuiOptionsBase
     {
+        public Dictionary<Point2D, string> ClickableShapes { get; }
+        public string SelectedInGui { get; set; }
+
         public TowerPlacerGuiOptions()
         {
+            Height = 112;
+            Width = 82;
+            SelectedInGui = "none";
+            
             ClickableShapes = new Dictionary<Point2D, string>
             {
                 [new Point2D { X = 845, Y = 200 }] = DartTower.Name,
                 [new Point2D { X = 935, Y = 200 }] = LaserTower.Name,
                 [new Point2D { X = 1025, Y = 200 }] = SniperTower.Name
             };
-            Height = 112; // Dimensions of towers to select from in GUI.
-            Width = 82;
-            SelectedInGui = "none";
         }
 
-        public Dictionary<Point2D, string> ClickableShapes { get; } // Tower location and names
-        public int Height { get; }
-        public string SelectedInGui { get; set; }
-        public int Width { get; }
-
-        public Bitmap ClickableShapeImage(string towerName) // Bitmaps for each tower
+        public Bitmap ClickableShapeImage(string towerName)
         {
             if (towerName == DartTower.Name) return DartTower.Portrait;
-
             if (towerName == LaserTower.Name) return LaserTower.Portrait;
-
             if (towerName == SniperTower.Name) return SniperTower.Portrait;
             throw new Exception();
         }
 
-        public void ClickShape(Point2D pt) // Selects a tower if mouse press location is within the tower's dimensions
+        protected override IEnumerable<(Point2D Position, object Value)> GetClickableOptions()
         {
-            foreach (var (position, towerName) in ClickableShapes)
+            foreach (var shape in ClickableShapes)
             {
-                if (
-                    pt.X >= position.X &&
-                    pt.X <= Width + position.X &&
-                    pt.Y >= position.Y &&
-                    pt.Y <= position.Y + Height
-                )
-                {
-                    SelectedInGui = towerName;
-                    break;
-                }
-
-                SelectedInGui = "none";
+                yield return (shape.Key, shape.Value);
             }
+        }
+
+        protected override void UpdateSelection(object value)
+        {
+            SelectedInGui = (string)value;
+        }
+
+        protected override void HandleInvalidClick()
+        {
+            SelectedInGui = "none";
         }
     }
 }
