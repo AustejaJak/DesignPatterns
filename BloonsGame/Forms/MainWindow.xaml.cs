@@ -6,9 +6,8 @@ using System.Collections.Generic;
 using System.Windows.Threading;
 using System.Collections.ObjectModel;
 using System.Windows.Controls;
-//using BloonsLibrary.Commands;
-//using BloonsLibrary.Models;
 using System.Windows.Input;
+using System.Linq;
 
 namespace BloonsGame
 {
@@ -22,6 +21,11 @@ namespace BloonsGame
         private int _countdownSeconds = 5;
         private ObservableCollection<ChatMessage> _chatMessages;
 
+        private CommandParser _commandParser;
+        private Context _chatContext;
+
+        private DispatcherTimer _infoMessageTimer;
+
         public MainWindow(GameClient gameClient)
         {
             InitializeComponent();
@@ -30,18 +34,37 @@ namespace BloonsGame
             MapComboBox.Items.Add("Farmers Paradise");
             MapComboBox.Items.Add("Ocean Road");
 
-            // Initialize chat
+            // Initialize chat components
             _chatMessages = new ObservableCollection<ChatMessage>();
             ChatListView.ItemsSource = _chatMessages;
+            _commandParser = new CommandParser();
+
+            // Initialize info message timer
+            _infoMessageTimer = new DispatcherTimer();
+            _infoMessageTimer.Interval = TimeSpan.FromSeconds(5);
+            _infoMessageTimer.Tick += InfoMessageTimer_Tick;
 
             // Subscribe to events
             _gameClient.PlayerListUpdated += UpdatePlayerList;
             _gameClient.AllPlayersReady += StartCountdown;
             _gameClient.ChatMessageReceived += OnChatMessageReceived;
+            _gameClient.PrivateMessageReceived += OnPrivateMessageReceived;
+            _gameClient.InfoMessageReceived += OnInfoMessageReceived;
+            _gameClient.MessageDeleted += OnMessageDeleted; // Added subscription for message deletion
             MapComboBox.SelectionChanged += MapComboBox_SelectionChanged;
             _gameClient.MapValidationFailed += OnMapValidationFailed;
 
             InitializeCountdownTimer();
+        }
+
+        private async void SendMessage()
+        {
+            if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
+            {
+                _chatContext = new Context(_gameClient, _gameClient.Username, MessageTextBox.Text);
+                await _commandParser.ParseAndExecute(_chatContext);
+                MessageTextBox.Clear();
+            }
         }
 
         private void OnChatMessageReceived(ChatMessage message)
@@ -50,6 +73,50 @@ namespace BloonsGame
             {
                 _chatMessages.Add(message);
                 ChatListView.ScrollIntoView(ChatListView.Items[ChatListView.Items.Count - 1]);
+            });
+        }
+
+        private void OnPrivateMessageReceived(ChatMessage message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // Display the message in InfoTextBlock
+                InfoTextBlock.Text = message.Content;
+                _infoMessageTimer.Stop(); // Reset the timer
+                _infoMessageTimer.Start();
+            });
+        }
+
+        private void OnInfoMessageReceived(string message)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                // Display the message in InfoTextBlock
+                InfoTextBlock.Text = message;
+                _infoMessageTimer.Stop(); // Reset the timer
+                _infoMessageTimer.Start();
+            });
+        }
+
+        private void InfoMessageTimer_Tick(object sender, EventArgs e)
+        {
+            InfoTextBlock.Text = "";
+            _infoMessageTimer.Stop();
+        }
+
+        private void OnMessageDeleted(string messageId)
+        {
+            Dispatcher.Invoke(() =>
+            {
+                var messageToDelete = _chatMessages.FirstOrDefault(msg => msg.MessageId == messageId);
+                if (messageToDelete != null)
+                {
+                    _chatMessages.Remove(messageToDelete);
+                }
+                // Display info message
+                InfoTextBlock.Text = "Message deleted";
+                _infoMessageTimer.Stop();
+                _infoMessageTimer.Start();
             });
         }
 
@@ -65,17 +132,6 @@ namespace BloonsGame
                 SendMessage();
             }
         }
-
-        private void SendMessage()
-        {
-            if (!string.IsNullOrWhiteSpace(MessageTextBox.Text))
-            {
-                var command = new SendMessageCommand(_gameClient, MessageTextBox.Text);
-                command.Execute();
-                MessageTextBox.Clear();
-            }
-        }
-
 
         private void InitializeCountdownTimer()
         {
@@ -139,7 +195,6 @@ namespace BloonsGame
             _pauseWindow.Show();
         }
 
-
         private async void ReadyButton_Click(object sender, RoutedEventArgs e)
         {
             if (MapComboBox.SelectedItem == null)
@@ -152,7 +207,6 @@ namespace BloonsGame
             ReadyButton.Content = _isReady ? "Not Ready" : "Ready";
             await _gameClient.SetPlayerReadyAsync(_isReady);
         }
-
 
         private void TowerFirerateUpgradeMessageCheckbox_Copy_Checked(object sender, RoutedEventArgs e)
         {
@@ -168,7 +222,7 @@ namespace BloonsGame
 
         private void TowerRangeUpgradeMessageCheckbox_Checked(object sender, RoutedEventArgs e)
         {
-           if (TowerRangeUpgradeMessageCheckbox.IsChecked == true)
+            if (TowerRangeUpgradeMessageCheckbox.IsChecked == true)
             {
                 _gameClient.SubscribeFromTowerRangeUpgradeMessagesAsync();
             }
@@ -212,7 +266,6 @@ namespace BloonsGame
                 ReadyButton.IsEnabled = true;
                 MapComboBox.IsEnabled = true;
             });
-
         }
     }
 }

@@ -1,18 +1,11 @@
 ﻿using BloonsProject;
-//using BloonLibrary.Models;
-//using BloonLibrary.Commands;
 using Microsoft.AspNetCore.SignalR.Client;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows;
-using System.Threading;
-using System.Net.Mime;
-using System.Text.Json;
 using System.Threading.Tasks;
 using SplashKitSDK;
-using System.Timers;
-using Timer = System.Timers.Timer;
 using System.Collections.Concurrent;
 using BloonLibrary.Controllers.Bridge;
 
@@ -28,9 +21,12 @@ namespace BloonLibrary
     public class GameClient
     {
         private HubConnection _connection;
+        public event Action<string> MessageDeleted;
 
         public event Action<List<PlayerStatus>> PlayerListUpdated;
         public event Action<ChatMessage> ChatMessageReceived;
+        public event Action<ChatMessage> PrivateMessageReceived;
+        public event Action<string> InfoMessageReceived;
         public event Action AllPlayersReady;
 
         public string Username { get; set; }
@@ -41,7 +37,6 @@ namespace BloonLibrary
         public event Action<string> MapValidationFailed;
         private readonly StandardBloonTowerFactory _standardTowerBloonFactory = new StandardBloonTowerFactory();
         private readonly ExtremeBloonTowerFactory _extremeTowerBloonFactory = new ExtremeBloonTowerFactory();
-
 
         public GameClient()
         {
@@ -107,19 +102,6 @@ namespace BloonLibrary
                 MapValidationFailed?.Invoke(message);
             });
 
-            //_connection.On<SynchronizeBloon>("AddBloon", (request) =>
-            //{
-            //    var bloon = BloonFactory.CreateBloon(request.BloonType);
-            //    bloon.Position = new Point2D()
-            //    {
-            //        X = request.Position.X,
-            //        Y = request.Position.Y
-            //    };
-            //    var gameSession = GameSession.GetInstance();
-            //    gameSession.GameState.AddBloon(bloon);
-            //});
-
-
             _connection.On<SynchronizeBloon>("AddBloon", (request) =>
             {
                 var bloon = _standardTowerBloonFactory.CreateBloonOfType(request.Name);
@@ -127,24 +109,20 @@ namespace BloonLibrary
                 gameSession.GameState.AddBloon(bloon);
             });
             
-
             _connection.On<BloonState>("UpdateBloonState", (request) =>
             {
                 var gameSession = GameSession.GetInstance();
 
                 lock (_lockObject)
                 {
-                    // Ensure the collection is not null
                     if (gameSession.GameState.Bloons == null)
                     {
                         Console.WriteLine("Bloons collection is null.");
                         return;
                     }
 
-                    // Use TryGetValue to safely retrieve the bloon
                     if (gameSession.GameState.Bloons.TryGetValue(request.Name, out var bloon))
                     {
-                        // Update the properties of the bloon with the values from the request
                         bloon.Position = new Point2D()
                         {
                             X = request.Position.X,
@@ -193,6 +171,21 @@ namespace BloonLibrary
                 ChatMessageReceived?.Invoke(message);
             });
 
+            _connection.On<ChatMessage>("ReceivePrivateMessage", (message) =>
+            {
+                PrivateMessageReceived?.Invoke(message);
+            });
+
+            _connection.On<string>("ReceiveInfoMessage", (message) =>
+            {
+                InfoMessageReceived?.Invoke(message);
+            });
+
+            _connection.On<string>("MessageDeleted", (messageId) =>
+            {
+                MessageDeleted?.Invoke(messageId);
+            });
+
             _connection.On<string>("RangeUpgradeMessage", (message) =>
             {
                 var gameState = GameState.GetGameStateInstance();
@@ -224,7 +217,6 @@ namespace BloonLibrary
                 await _connection.InvokeAsync("SendUsername", username);
             }
         }
-
 
         public async Task SendGameOverStats(string message)
         {
@@ -307,36 +299,6 @@ namespace BloonLibrary
             }
         }
 
-        
-
-        //public async Task PlaceBloonAsync(PlaceBloonRequest request)
-        //{
-        //    if (_connection != null && _connection.State == HubConnectionState.Connected)
-        //    {
-        //        await _connection.InvokeAsync("PlaceBloon", request);
-        //    }
-        //}
-
-        //public async Task<bool> JoinGameAsync(string username)
-        //{
-        //    if (_connection != null && _connection.State == HubConnectionState.Connected)
-        //    {
-        //        try
-        //        {
-        //            return await _connection.InvokeAsync<bool>("JoinGame", username);
-        //        }
-        //        catch (Exception ex)
-        //        {
-        //            Console.WriteLine($"Error while joining game: {ex.Message}");
-        //            return false;
-        //        }
-        //    }
-
-        //    return false;
-        //}
-
-
-
         public async Task PlaceBloonAsync(PlaceBloonRequest request)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
@@ -360,7 +322,6 @@ namespace BloonLibrary
             }
         }
 
-
         public async Task Disconnect()
         {
             if (_connection != null)
@@ -371,19 +332,43 @@ namespace BloonLibrary
             }
         }
 
-        public async Task SendChatMessageAsync(string message)
-        {
-            if (_connection != null && _connection.State == HubConnectionState.Connected)
-            {
-                await _connection.InvokeAsync("SendChatMessage", Username, message);
-            }
-        }
-
         public async Task SendSelectedMapAsync(string mapName)
         {
             if (_connection != null && _connection.State == HubConnectionState.Connected)
             {
                 await _connection.InvokeAsync("SendSelectedMap", Username, mapName);
+            }
+        }
+
+        public async Task SendPrivateMessageAsync(string targetUsername, string message)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendPrivateMessage", Username, targetUsername, message);
+            }
+        }
+
+        public async Task SendChatMessageAsync(string message, string messageId)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendChatMessage", Username, message, messageId);
+            }
+        }
+
+        public async Task DeleteMessageAsync(string messageId)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("DeleteMessage", Username, messageId);
+            }
+        }
+
+        public async Task SendInfoMessageAsync(string message)
+        {
+            if (_connection != null && _connection.State == HubConnectionState.Connected)
+            {
+                await _connection.InvokeAsync("SendInfoMessage", Username, message);
             }
         }
     }
