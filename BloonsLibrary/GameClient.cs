@@ -67,12 +67,12 @@ namespace BloonLibrary
                 if (tower.Username == Username)
                 {
                     MyTowerControl towercontrol = new MyTowerControl(tower, this);
-                    gameSession.GameState.TowerControlls.Add(towercontrol);
+                    gameSession.GameState.TowerControlls.AddItem(towercontrol);
                 }
                 else
                 {
                     OtherPlayerTowerControl towercontrol = new OtherPlayerTowerControl(tower, this);
-                    gameSession.GameState.TowerControlls.Add(towercontrol);
+                    gameSession.GameState.TowerControlls.AddItem(towercontrol);
                 }
             });
 
@@ -189,13 +189,13 @@ namespace BloonLibrary
             _connection.On<string>("RangeUpgradeMessage", (message) =>
             {
                 var gameState = GameState.GetGameStateInstance();
-                gameState.TowerEventMessages.Enqueue(message);
+                gameState.TowerEventMessages.EnqueueItem(message);
             });
 
             _connection.On<string>("FireRateUpgradeMessage", (message) =>
             {
                 var gameState = GameState.GetGameStateInstance();
-                gameState.TowerEventMessages.Enqueue(message);
+                gameState.TowerEventMessages.EnqueueItem(message);
             });
 
             try

@@ -25,13 +25,13 @@ namespace BloonsProject
                 )
                     return false; // Then tower can't be placed
             }
-
-            foreach (var tower in _gameState.Towers) //If the tower to be placed is within another tower, return false.
+            var TowerIterator = _gameState.Towers.CreateIterator();
+            while (TowerIterator.MoveNext()) //If the tower to be placed is within another tower, return false.
                 if (SplashKit.PointInRectangle(location,
                     new Rectangle
                     {
-                        X = tower.Position.X - Tower.Length,
-                        Y = tower.Position.Y - Tower.Length,
+                        X = TowerIterator.Current.Position.X - Tower.Length,
+                        Y = TowerIterator.Current.Position.Y - Tower.Length,
                         Height = 2 * Tower.Length,
                         Width = 2 * Tower.Length
                     }))
@@ -58,22 +58,23 @@ namespace BloonsProject
             })))
                 return;
 
-            foreach (var tower in _gameState.Towers) // If the tower left clicks another tower, select that tower.
+            var TowerIterator = _gameState.Towers.CreateIterator();
+            while (TowerIterator.MoveNext()) // If the tower left clicks another tower, select that tower.
             {
                 var towerRectangle = new Rectangle
                 {
-                    X = tower.Position.X,
-                    Y = tower.Position.Y,
+                    X = TowerIterator.Current.Position.X,
+                    Y = TowerIterator.Current.Position.Y,
                     Height = Tower.Length,
                     Width = Tower.Length
                 };
                 if (clickType == MouseClickType.left)
                 {
-                    tower.Selected = SplashKit.PointInRectangle(location, towerRectangle);
+                    TowerIterator.Current.Selected = SplashKit.PointInRectangle(location, towerRectangle);
                 }
                 else
                 {
-                    tower.DebugModeSelected = SplashKit.PointInRectangle(location, towerRectangle); // If the tower is right clicked, turn debug mode on (display cooldown)
+                    TowerIterator.Current.DebugModeSelected = SplashKit.PointInRectangle(location, towerRectangle); // If the tower is right clicked, turn debug mode on (display cooldown)
                 }
             }
         }

@@ -47,6 +47,7 @@ namespace BloonsProject
 
         public async void Start()  // Made async to handle async rendering
         {
+            var MessageIterator = _gameState.TowerEventMessages.CreateIterator();
             StartUpGame();
             do
             {
@@ -60,12 +61,17 @@ namespace BloonsProject
 
                 await DrawBloonsGame(); // Renders everything
 
-                string message = "";
-                _gameState.TowerEventMessages.TryDequeue(out message);
-                if (message != null)
+                //string message = "";
+                
+                while (MessageIterator.MoveNext())
                 {
-                    _renderingFacade.QueueMessage(message);
+                    _renderingFacade.QueueMessage(MessageIterator.Current);
                 }
+                //_gameState.TowerEventMessages.TryDequeueItem(out message);
+                //if (message != null)
+                //{
+                //    _renderingFacade.QueueMessage(message);
+                //}
                 if (_gameState.InvalidTowerEventMessage != null)
                 {
                     _renderingFacade.RenderInvalidTowerActionMessages(_gameState.InvalidTowerEventMessage);

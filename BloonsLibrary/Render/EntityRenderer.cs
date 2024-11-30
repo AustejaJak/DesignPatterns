@@ -51,13 +51,13 @@ namespace BloonsProject
         }
 
         public void RenderTowers(TowerController towerController) // Renders all towers, their range and determines whether to display their debug mode.
-        {
-            foreach (var tower in _gameState.Towers.ToList())
+        { var TowerIterator = _gameState.Towers.CreateIterator();
+            while (TowerIterator.MoveNext())
             {
-                _entityDrawer.DrawTower(tower);
-                RenderTowerDebugMode(tower);
-                if (!tower.Selected) continue;
-                _entityDrawer.DrawTowerRange(tower);
+                _entityDrawer.DrawTower(TowerIterator.Current);
+                RenderTowerDebugMode(TowerIterator.Current);
+                if (!TowerIterator.Current.Selected) continue;
+                _entityDrawer.DrawTowerRange(TowerIterator.Current);
             }
         }
     }
