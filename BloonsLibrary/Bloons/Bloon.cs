@@ -5,7 +5,7 @@ using System.Diagnostics;
 
 namespace BloonsProject
 {
-    public abstract class Bloon : IBloonPrototype
+    public abstract class Bloon : IBloon
     {
         private Point2D _position;
         public string Name;
@@ -68,15 +68,15 @@ namespace BloonsProject
             if (damage > Health) Health = damage;
             Health -= damage;
         }
-
+        
         public virtual Bloon CloneToType(Type targetType)
         {
             Bloon clone = (Bloon)Activator.CreateInstance(targetType);
-
+        
             clone.Position = this.Position;
             clone.Checkpoint = this.Checkpoint;
             clone.DistanceTravelled = this.DistanceTravelled;
-
+        
             return clone;
         }
 

@@ -3,27 +3,19 @@ using System;
 using System.Collections.Generic;
 using System.Text.Json;
 using System.Threading.Tasks;
-using System.Timers;
 using BloonLibrary;
 using BloonsProject;
-using System.Timers;
 using SplashKitSDK;
-//using BloonsLibrary.Models;
-//using BloonsLibrary.Commands;
-
-using Timer = System.Timers.Timer;
-
-
 using System.Linq;
 using BloonsServer.Observer;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.AspNetCore.SignalR.Client;
 
-
 public class GameHub : Hub
 {
     private readonly GameState _gameState = GameState.GetGameStateInstance();
     private static List<string> _connectedUsernames = new List<string>();
+    private static readonly Dictionary<string, string> _userConnectionMap = new Dictionary<string, string>();
 
     private static Dictionary<string, string> _playerMaps = new Dictionary<string, string>();
 
@@ -33,25 +25,18 @@ public class GameHub : Hub
     private readonly StandardBloonTowerFactory _bloonTowerFactory = new StandardBloonTowerFactory();
     private readonly ExtremeBloonTowerFactory _extremeBloonTowerFactory = new ExtremeBloonTowerFactory();
 
-    //private IHubContext<GameHub> _hubContext;
-
-
-    //public GameHub(IHubContext<GameHub> hubContext)
-    //{
-    //    // Manually create an instance of NotificationService using hubContext
-    //    _hubContext = hubContext;
-    //}
-
     public async Task SendUsername(string username)
     {
-
         _connectedUsernames.Add(username);
         _username = username;
+        _userConnectionMap[username] = Context.ConnectionId; // Add to the map
         _playerReadyStatus[username] = false;
+
         ITowerEventListener listener1 = new RangeUpgradeListener(Context.ConnectionId, Clients);
         ITowerEventListener listener2 = new FireRateUpgradeListener(Context.ConnectionId, Clients);
         _notificationService.Subscribe(TowerEvent.Range, listener1);
         _notificationService.Subscribe(TowerEvent.FireRate, listener2);
+
         await Clients.Group("inGame").SendAsync("SendUsername", username);
         await UpdatePlayerStatuses();
     }
@@ -99,7 +84,6 @@ public class GameHub : Hub
 
     public async Task SendGameOverStats(string message)
     {
-
         await Clients.Group("inGame").SendAsync("SendGameOverStats", message);
     }
     
@@ -107,18 +91,14 @@ public class GameHub : Hub
     {
         var gameSession = GameSession.GetInstance();
 
-        // Get all bloon states that match the request's name
         var bloonStates = gameSession.GameState.GetAllBloonStates()
-            .Where(b => b.Name == request.Name).ToList(); // Use Where to filter and convert to a list
+            .Where(b => b.Name == request.Name).ToList();
 
- 
         if (bloonStates.Count > 0)
         {
             foreach (var bloonState in bloonStates) 
             {
-
                 var networkPosition = new NetworkPoint2D(request.Position.X, request.Position.Y);
-
 
                 var updatedBloonState = new BloonState(
                     bloonState.Name,
@@ -148,9 +128,6 @@ public class GameHub : Hub
 
     public async Task UpgradeTowerFireRate(UpgradeOrSellTowerRequest request, string senderUsername)
     {
-        //Point2D position = new Point2D() { X = request.Position.X, Y = request.Position.Y };
-        //var gameSession = GameSession.GetInstance();
-        //gameSession.GameState.upgradeTowerRange(position, request.option, request.upgradeCount);
         await _notificationService.Notify(TowerEvent.FireRate, senderUsername);
         await Clients.Group("inGame").SendAsync("UpgradeTowerFireRate", request);
     }
@@ -163,7 +140,6 @@ public class GameHub : Hub
 
     public async Task SellTower(UpgradeOrSellTowerRequest request)
     {
-        
         await Clients.Group("inGame").SendAsync("SellTower", request);
     }
 
@@ -189,23 +165,10 @@ public class GameHub : Hub
         _notificationService.Subscribe(TowerEvent.FireRate, listener2);
     }
 
-    //public async Task PlaceBloon(PlaceBloonRequest request)
-    //{
-    //    var bloonInstance = BloonFactory.CreateBloon(request.BloonType);
-
-    //    var gameSession = GameSession.GetInstance();
-    //    gameSession.GameState.AddBloon(bloonInstance);
-
-    //    var response = new SynchronizeBloon(request.BloonType, NetworkPoint2D.Serialize(bloonInstance.Position));
-    //    await Clients.Group("inGame").SendAsync("AddBloon", response);
-    //}
-
-
     public async Task PlaceBloon(PlaceBloonRequest request)
     {
         var bloonInstance = _bloonTowerFactory.CreateBloonOfType(request.Name);
         
-
         var gameSession = GameSession.GetInstance();
 
         if (gameSession.GameState.Player.Round > 5)
@@ -219,9 +182,7 @@ public class GameHub : Hub
         await Clients.Group("inGame").SendAsync("AddBloon", response);
     }
     
-    
     public async Task JoinGame(string username)
-
     {
         var gameSession = GameSession.GetInstance();
         gameSession.AddPlayer(username);
@@ -244,7 +205,6 @@ public class GameHub : Hub
         
         await Clients.Group("inGame").SendAsync("GameStarted");
     }
-
     
     public override async Task OnDisconnectedAsync(Exception exception)
     {
@@ -252,22 +212,21 @@ public class GameHub : Hub
         {
             _connectedUsernames.Remove(_username);
             _playerReadyStatus.Remove(_username);
+            _userConnectionMap.Remove(_username); // Remove from the map
             await UpdatePlayerStatuses();
         }
 
         await base.OnDisconnectedAsync(exception);
     }
 
-    public async Task SendChatMessage(string username, string message)
+    private string GetConnectionIdByUsername(string username)
     {
-        var chatMessage = new ChatMessage
+        if (_userConnectionMap.TryGetValue(username, out var connectionId))
         {
-            Username = username,
-            Content = message,
-            Timestamp = DateTime.Now.ToString("HH:mm")
-        };
+            return connectionId;
+        }
 
-        await Clients.Group("inGame").SendAsync("ReceiveChatMessage", chatMessage);
+        return null; // Return null if the username is not found
     }
 
     public async Task SendSelectedMap(string username, string mapName)
@@ -297,5 +256,55 @@ public class GameHub : Hub
             }
         }
     }
+
+    public async Task SendChatMessage(string username, string message, string messageId)
+    {
+        var chatMessage = new ChatMessage
+        {
+            Username = username,
+            Content = message,
+            Timestamp = DateTime.Now.ToString("HH:mm"),
+            MessageId = messageId
+        };
+
+        await Clients.Group("inGame").SendAsync("ReceiveChatMessage", chatMessage);
+    }
+
+    public async Task DeleteMessage(string username, string messageId)
+    {
+        // Notify all clients to remove the message with the specified ID
+        await Clients.Group("inGame").SendAsync("MessageDeleted", messageId);
+    }
+
+    public async Task SendPrivateMessage(string senderUsername, string targetUsername, string message)
+    {
+        var senderConnectionId = GetConnectionIdByUsername(senderUsername);
+        var targetConnectionId = GetConnectionIdByUsername(targetUsername);
+
+        var chatMessage = new ChatMessage
+        {
+            Username = senderUsername,
+            Content = $"[PM] {message}",
+            Timestamp = DateTime.Now.ToString("HH:mm")
+        };
+
+        if (!string.IsNullOrEmpty(targetConnectionId))
+        {
+            // Send the private message to both sender and recipient
+            await Clients.Client(senderConnectionId).SendAsync("ReceiveChatMessage", chatMessage);
+            await Clients.Client(targetConnectionId).SendAsync("ReceiveChatMessage", chatMessage);
+        }
+        else
+        {
+            // Notify sender that the target user was not found
+            await SendInfoMessage(senderUsername, $"User {targetUsername} not found.");
+        }
+    }
+
+    public async Task SendInfoMessage(string username, string message)
+    {
+        var connectionId = GetConnectionIdByUsername(username);
+
+        await Clients.Client(connectionId).SendAsync("ReceiveInfoMessage", message);
+    }
 }
-    
