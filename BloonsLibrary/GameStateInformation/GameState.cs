@@ -85,7 +85,7 @@ namespace BloonsProject
                         case "Upgrade Firerate":
                             if (TowerIterator.Current.ShotType.FirerateUpgradeCount == 3 || TowerIterator.Current.ShotType.FirerateUpgradeCount == upgradeCount) break; // Repeat for firerate
                             TowerIterator.Current.ShotType.ShotSpeed -= 10;
-
+                            TowerIterator.Current.UpdateDecorator();
                             TowerIterator.Current.ShotType.FirerateUpgradeCount++;
                             TowerIterator.Current.SellPrice += 0.7 * TowerIterator.Current.ShotType.FirerateUpgradeCost;
                             break;
