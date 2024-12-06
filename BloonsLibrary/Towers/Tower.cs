@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System;
+using BloonLibrary.VisitorImplementation;
 
 namespace BloonsProject
 {
@@ -31,8 +32,9 @@ namespace BloonsProject
             DebugModeSelected = false;
             ShotType = shotType;
             Range = range;
-            var targetCreator = new ConcreteTargetFirst();
-            Targeting = targetCreator.CreateTarget();
+            _targetingVisitor = new FirstTargetingVisitor(); // Default targeting
+            // var targetCreator = new ConcreteTargetFirst();
+            // Targeting = targetCreator.CreateTarget();
             _decorator = new BaseTowerDecorator(this);
         }
 
@@ -83,8 +85,12 @@ namespace BloonsProject
         public bool Selected { get; set; } // Whether the user has selected the tower via left click.
         public double SellPrice { get; set; } // The price as which the player can sell the tower for.
         public IShotType ShotType { get; } // The projectile this tower uses.
-        public ITarget Targeting { get; set; } // The targeting this tower is set to.
+        // public ITarget Targeting { get; set; } // The targeting this tower is set to.
+        private ITargetingVisitor _targetingVisitor;
         //public Bitmap TowerBitmap { get; } // The bitmap corresponding to the tower.
+         private TowerTargeting _currentTargeting = TowerTargeting.First;
+        public TowerTargeting CurrentTargeting => _currentTargeting;
+
 
         public void ResetTimer() // Resets the tower's cooldown.
         {
@@ -99,6 +105,26 @@ namespace BloonsProject
         public void ShotTimerTick() // Increments tower's cooldown towards being ready to shoot.
         {
             ShotType.TimeSinceLastShot++;
+        }
+        
+        // Add method to get targeted bloon using visitor
+        public Bloon GetTargetBloon(List<Bloon> bloonsInRange)
+        {
+            return _targetingVisitor.VisitBloons(bloonsInRange);
+        }
+
+        // Add method to set targeting strategy
+        public void SetTargeting(TowerTargeting targeting)
+        {
+            _currentTargeting = targeting;
+            _targetingVisitor = targeting switch
+            {
+                TowerTargeting.First => new FirstTargetingVisitor(),
+                TowerTargeting.Last => new LastTargetingVisitor(),
+                TowerTargeting.Strong => new StrongTargetingVisitor(),
+                TowerTargeting.Weak => new WeakTargetingVisitor(),
+                _ => _targetingVisitor
+            };
         }
     }
 }
