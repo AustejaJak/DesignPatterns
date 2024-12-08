@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+using BloonsGame.Forms;
 
 namespace BloonsGame
 {
@@ -26,10 +27,13 @@ namespace BloonsGame
 
         private DispatcherTimer _infoMessageTimer;
 
-        public MainWindow(GameClient gameClient)
+        private UserController _userController;
+
+        public MainWindow(GameClient gameClient, UserController userController)
         {
             InitializeComponent();
             _gameClient = gameClient;
+            _userController = userController;
             MapComboBox.Items.Add("The Original");
             MapComboBox.Items.Add("Farmers Paradise");
             MapComboBox.Items.Add("Ocean Road");
@@ -266,6 +270,14 @@ namespace BloonsGame
                 ReadyButton.IsEnabled = true;
                 MapComboBox.IsEnabled = true;
             });
+        }
+
+        private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            var ChangePasswordWindow = new ChangePasswordWindow(_gameClient, _userController);
+            ChangePasswordWindow.Show();
+
+            this.Close();
         }
     }
 }

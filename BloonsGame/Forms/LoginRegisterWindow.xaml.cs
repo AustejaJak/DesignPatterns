@@ -56,6 +56,7 @@ namespace BloonsGame
                     if (existingUser.Password == password)
                     {
                         MessageBox.Show("Login successful!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
+                        _userController.AddPassword(password);
                         await _gameclient.SendUsernameAsync(existingUser.Username);
                         _gameclient.JoinGameAsync(existingUser.Username);
                         OpenMainWindow(_gameclient);
@@ -74,6 +75,7 @@ namespace BloonsGame
                     };
 
                     _userController.CreateUser(newUser);
+                    _userController.AddPassword(password);
                     MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     await _gameclient.SendUsernameAsync(newUser.Username);
                     _gameclient.JoinGameAsync(newUser.Username);
@@ -83,7 +85,7 @@ namespace BloonsGame
         }
         private void OpenMainWindow(GameClient gameclient)
         {
-            var mainWindow = new MainWindow(gameclient);
+            var mainWindow = new MainWindow(gameclient, _userController);
             mainWindow.Show();
 
             this.Close();
