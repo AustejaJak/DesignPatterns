@@ -23,11 +23,13 @@ namespace BloonsGame.Forms
     {
         private UserController _userController;
         private GameClient _gameclient;
-        public ChangePasswordWindow(GameClient gameClient, UserController userController)
+        private MainWindow _mainWindow;
+        public ChangePasswordWindow(GameClient gameClient, UserController userController, MainWindow mainWindow)
         {
             var dbcontect = new GameDbContext();
             _userController = userController;
             _gameclient = gameClient;
+            _mainWindow = mainWindow;
             InitializeComponent();
         }
 
@@ -56,16 +58,16 @@ namespace BloonsGame.Forms
                 return;
             }
             MessageBox.Show("Password Changed!", "Password changed Successfully", MessageBoxButton.OK, MessageBoxImage.Information);
-            var mainWindow = new MainWindow(_gameclient, _userController);
-            mainWindow.Show();
+            //var mainWindow = new MainWindow(_gameclient, _userController);
+            _mainWindow.Show();
 
             this.Close();
         }
 
         private void GoBackButton_Click(object sender, RoutedEventArgs e)
         {
-            var mainWindow = new MainWindow(_gameclient, _userController);
-            mainWindow.Show();
+            //var mainWindow = new MainWindow(_gameclient, _userController);
+            _mainWindow.Show();
 
             this.Close();
         }
@@ -81,8 +83,8 @@ namespace BloonsGame.Forms
                 MessageBox.Show("No previous password found!", "No previous password found", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             
-            var mainWindow = new MainWindow(_gameclient, _userController);
-            mainWindow.Show();
+            //var mainWindow = new MainWindow(_gameclient, _userController);
+            _mainWindow.Show();
 
             this.Close();
         }

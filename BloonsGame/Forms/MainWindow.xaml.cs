@@ -40,7 +40,6 @@ namespace BloonsGame
         private IGameUIState _currentState;
 
         public MainWindow(GameClient gameClient, UserController userController)
-
         {
             InitializeComponent();
             _gameClient = gameClient;
@@ -292,10 +291,10 @@ namespace BloonsGame
 
         private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            var ChangePasswordWindow = new ChangePasswordWindow(_gameClient, _userController);
+            var ChangePasswordWindow = new ChangePasswordWindow(_gameClient, _userController, this);
             ChangePasswordWindow.Show();
 
-            this.Close();
+            this.Hide();
         }
 
         private void OnAllPlayersReady()
