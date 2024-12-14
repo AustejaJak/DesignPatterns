@@ -8,7 +8,11 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+
 using BloonsGame.Forms;
+
+using BloonsGame.States;
+
 
 namespace BloonsGame
 {
@@ -27,9 +31,16 @@ namespace BloonsGame
 
         private DispatcherTimer _infoMessageTimer;
 
+
         private UserController _userController;
 
+        
+
+        // The current UI state of the MainWindow
+        private IGameUIState _currentState;
+
         public MainWindow(GameClient gameClient, UserController userController)
+
         {
             InitializeComponent();
             _gameClient = gameClient;
@@ -50,15 +61,18 @@ namespace BloonsGame
 
             // Subscribe to events
             _gameClient.PlayerListUpdated += UpdatePlayerList;
-            _gameClient.AllPlayersReady += StartCountdown;
+            _gameClient.AllPlayersReady += OnAllPlayersReady; // Use the state pattern
             _gameClient.ChatMessageReceived += OnChatMessageReceived;
             _gameClient.PrivateMessageReceived += OnPrivateMessageReceived;
             _gameClient.InfoMessageReceived += OnInfoMessageReceived;
-            _gameClient.MessageDeleted += OnMessageDeleted; // Added subscription for message deletion
+            _gameClient.MessageDeleted += OnMessageDeleted;
             MapComboBox.SelectionChanged += MapComboBox_SelectionChanged;
             _gameClient.MapValidationFailed += OnMapValidationFailed;
 
             InitializeCountdownTimer();
+
+            // Initialize the UI in the LobbyState
+            _currentState = new LobbyState(this, _gameClient);
         }
 
         private async void SendMessage()
@@ -152,11 +166,13 @@ namespace BloonsGame
             if (_countdownSeconds <= 0)
             {
                 _countdownTimer.Stop();
+                // Transition to InGameState now that the game is started
+                _currentState = new InGameState(this, _gameClient);
                 StartGame();
             }
         }
 
-        private void StartCountdown()
+        public void StartCountdown()
         {
             Dispatcher.Invoke(() =>
             {
@@ -179,6 +195,7 @@ namespace BloonsGame
             _programController.LoseEventHandler += OpenLossScreen;
             _programController.Start();
         }
+
         private void UpdatePlayerList(List<PlayerStatus> players)
         {
             Dispatcher.Invoke(() =>
@@ -272,6 +289,7 @@ namespace BloonsGame
             });
         }
 
+
         private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
             var ChangePasswordWindow = new ChangePasswordWindow(_gameClient, _userController);
@@ -279,5 +297,19 @@ namespace BloonsGame
 
             this.Close();
         }
+
+        private void OnAllPlayersReady()
+        {
+            // Delegate the handling to the current state
+            _currentState.HandleAllPlayersReady();
+        }
+
+        public void ChangeState(IGameUIState newState)
+        {
+            System.Diagnostics.Debug.WriteLine($"[State Change] Transitioning to: {newState.GetType().Name}");
+            _currentState = newState;
+        }
+
+
     }
 }
