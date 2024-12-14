@@ -11,7 +11,6 @@ public class User : Player{
         return new PasswordMemento(Password);
     }
 
-    // Restore the password from a memento
     public void RestorePasswordFromMemento(PasswordMemento memento)
     {
         Password = memento.GetPassword();

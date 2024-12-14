@@ -35,9 +35,12 @@ namespace BloonLibrary{
         }
 
         public void CreateUser(User user){
-            _dbContext.Users.Add(user);
-            _dbContext.SaveChanges();
-            CurrentUser = user;
+            using (var dbContext = new GameDbContext())
+            {
+                dbContext.Users.Add(user);
+                dbContext.SaveChanges();
+                CurrentUser = user;
+            }
         }
 
         public User GetUserByUsername(string username){
