@@ -64,9 +64,19 @@ namespace BloonLibrary.Controllers.Bridge
             //        break;
             //}
         }
-        public override void SetTowerTargeting(TowerTargetingGuiOptions targetOptions)
+
+        public override void SetTowerTargeting(TowerTargetingGuiOptions targetOptions) // Changes the targeting of the tower depending on the target option inputted (enum)
         {
-            tower.SetTargeting(targetOptions.SelectedInGui); // Use the new visitor-based targeting method
+            TargetCreator targetCreator = targetOptions.SelectedInGui switch
+            {
+                TowerTargeting.First => new ConcreteTargetFirst(),
+                TowerTargeting.Last => new ConcreteTargetLast(),
+                TowerTargeting.Strong => new ConcreteTargetStrong(),
+                TowerTargeting.Weak => new ConcreteTargetWeak(),
+                _ => throw new ArgumentException("Invalid targeting strategy type"),
+            };
+            
+            tower.Targeting = targetCreator.CreateTarget();
         }
 
     }

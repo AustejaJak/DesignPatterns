@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BloonLibrary.VisitorImplementation;
 
 namespace BloonLibrary.ChainOfResponsibility
 {
@@ -13,12 +14,10 @@ namespace BloonLibrary.ChainOfResponsibility
         {
             if (option == "Upgrade Firerate")
             {
-                tower.ShotType.ShotSpeed -= 10;
+                var visitor = new FirerateUpgradeVisitor();
+                tower.Accept(visitor);
                 towerOptions.SelectedInGui = "none";
                 gameState.Player.Money -= tower.ShotType.FirerateUpgradeCost;
-                tower.ShotType.FirerateUpgradeCount++;
-                tower.SellPrice += 0.7 * tower.ShotType.FirerateUpgradeCost;
-                tower.UpdateDecorator(); // Update the tower's appearance
                 Console.WriteLine("Upgrading fire rate");
                 _ = gameClient.UpgradeTowerFireRateAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.FirerateUpgradeCount));
 
