@@ -19,6 +19,9 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Forms\ChangePasswordWindow.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Forms\LoseWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -27,6 +30,9 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <Page Update="Forms\ChangePasswordWindow.xaml">
+      <SubType>Designer</SubType>
+    </Page>
     <Page Update="Forms\LoseWindow.xaml">
       <SubType>Designer</SubType>
     </Page>

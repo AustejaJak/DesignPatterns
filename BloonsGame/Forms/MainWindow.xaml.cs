@@ -8,7 +8,11 @@ using System.Collections.ObjectModel;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Linq;
+
+using BloonsGame.Forms;
+
 using BloonsGame.States;
+
 
 namespace BloonsGame
 {
@@ -27,13 +31,20 @@ namespace BloonsGame
 
         private DispatcherTimer _infoMessageTimer;
 
+
+        private UserController _userController;
+
+        
+
         // The current UI state of the MainWindow
         private IGameUIState _currentState;
 
-        public MainWindow(GameClient gameClient)
+        public MainWindow(GameClient gameClient, UserController userController)
+
         {
             InitializeComponent();
             _gameClient = gameClient;
+            _userController = userController;
             MapComboBox.Items.Add("The Original");
             MapComboBox.Items.Add("Farmers Paradise");
             MapComboBox.Items.Add("Ocean Road");
@@ -278,6 +289,15 @@ namespace BloonsGame
             });
         }
 
+
+        private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
+        {
+            var ChangePasswordWindow = new ChangePasswordWindow(_gameClient, _userController);
+            ChangePasswordWindow.Show();
+
+            this.Close();
+        }
+
         private void OnAllPlayersReady()
         {
             // Delegate the handling to the current state
@@ -289,6 +309,7 @@ namespace BloonsGame
             System.Diagnostics.Debug.WriteLine($"[State Change] Transitioning to: {newState.GetType().Name}");
             _currentState = newState;
         }
+
 
     }
 }

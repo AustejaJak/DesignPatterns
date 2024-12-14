@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using SplashKitSDK;
 using System.Collections.Concurrent;
 using BloonLibrary.Controllers.Bridge;
+using BloonLibrary.Entities;
 
 namespace BloonLibrary
 {
