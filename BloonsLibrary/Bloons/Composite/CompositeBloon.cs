@@ -3,13 +3,14 @@ using SplashKitSDK;
 using System.Collections.Generic;
 using System.Linq;
 using BloonsProject;
+using BloonLibrary.Iterator;
 
 namespace BloonLibrary.Bloons
 {
     public class CompositeBloon : Bloon
     {
         // Changed from List<IBloon> to List<Bloon> to store only Bloon objects.
-        public List<Bloon> Children = new List<Bloon>();
+        public ListAggregate<Bloon> Children = new ListAggregate<Bloon>();
 
         public CompositeBloon(int health = 1) : base(health, "CompositeBloon", Color.Black, 1, 1)
         {
@@ -18,14 +19,14 @@ namespace BloonLibrary.Bloons
         // Method to add a child bloon to the composite
         public void Add(Bloon bloon)
         {
-            Children.Add(bloon);
+            Children.AddItem(bloon);
             Health += bloon.Health; // Increase composite health by the child's health
         }
 
         // Method to remove a child bloon from the composite
         public void Remove(Bloon bloon)
         {
-            if (Children.Remove(bloon))
+            if (Children.RemoveItem(bloon))
             {
                 // Decrease composite health when removing a bloon
                 Health -= bloon.Health;
@@ -39,29 +40,44 @@ namespace BloonLibrary.Bloons
             base.MoveBloonInDirection(direction);
 
             // Move each child bloon
-            foreach (var bloon in Children)
+            var iterator = Children.CreateIterator();
+            while (iterator.MoveNext())
             {
-                bloon.MoveBloonInDirection(direction);
+                iterator.Current.MoveBloonInDirection(direction);
             }
+            //foreach (var bloon in Children)
+            //{
+            //    bloon.MoveBloonInDirection(direction);
+            //}
         }
 
         // Override the damage-taking method, distributing damage among children
         public override void TakeDamage(int damage)
         {
-            if (Children.Any())
+            if (Children.Count > 0)
             {
                 // Distribute damage equally among children
                 int damagePerChild = damage / Children.Count;
-                foreach (var bloon in Children.ToList())
+
+                var iterator = Children.CreateIterator();
+                while (iterator.MoveNext())
                 {
-                    bloon.TakeDamage(damagePerChild);
-                    
-                    // Remove children that are dead
-                    if (bloon.Health <= 0)
+                    iterator.Current.TakeDamage(damagePerChild);
+                    if (iterator.Current.Health <= 0)
                     {
-                        Remove(bloon);
+                        Remove(iterator.Current);
                     }
                 }
+                //foreach (var bloon in Children.ToList())
+                //{
+                //    bloon.TakeDamage(damagePerChild);
+                    
+                //    // Remove children that are dead
+                //    if (bloon.Health <= 0)
+                //    {
+                //        Remove(bloon);
+                //    }
+                //}
             }
             else
             {
@@ -73,19 +89,27 @@ namespace BloonLibrary.Bloons
         public override Bloon CloneToType(Type targetType)
         {
             CompositeBloon clone = (CompositeBloon)base.CloneToType(targetType);
-            
+
             // Clone each child and add to the new composite bloon
-            foreach (var child in Children)
+
+            var iterator = Children.CreateIterator();
+            while (iterator.MoveNext())
             {
-                clone.Add(child.CloneToType(child.GetType()));
+                clone.Add(iterator.Current.CloneToType(iterator.Current.GetType()));
             }
+            //    foreach (var child in Children)
+            //{
+            //    clone.Add(child.CloneToType(child.GetType()));
+            //}
             
             return clone;
         }
-        
+
         // Read-only list of children
-        public IReadOnlyList<Bloon> GetChildren() => Children.AsReadOnly();
-        
+        //public IReadOnlyList<Bloon> GetChildren() => Children.AsReadOnly();
+
+        public IReadOnlyList<Bloon> GetChildren() => Children.GetReadOnly();
+
         // Property to get the count of children
         public int ChildCount => Children.Count;
         
@@ -99,16 +123,26 @@ namespace BloonLibrary.Bloons
                 var deltaY = value.Y - Position.Y;
                 
                 base.Position = value;
-                
+
                 // Update the position of each child bloon
-                foreach (var child in Children)
+                var iterator = Children.CreateIterator();
+                while (iterator.MoveNext())
                 {
-                    child.Position = new Point2D()
+                    iterator.Current.Position = new Point2D()
                     {
-                        X = child.Position.X + deltaX,
-                        Y = child.Position.Y + deltaY
+                        X = iterator.Current.Position.X + deltaX,
+                        Y = iterator.Current.Position.Y + deltaY
                     };
                 }
+
+                //    foreach (var child in Children)
+                //{
+                //    child.Position = new Point2D()
+                //    {
+                //        X = child.Position.X + deltaX,
+                //        Y = child.Position.Y + deltaY
+                //    };
+                //}
             }
         }
     }

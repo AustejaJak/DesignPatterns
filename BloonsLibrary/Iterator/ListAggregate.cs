@@ -12,7 +12,11 @@ namespace BloonLibrary.Iterator
 
         public void AddItem(T item) => _items.Add(item);
 
-        public void RemoveItem(T item) => _items.Remove(item);
+        public bool RemoveItem(T item) => _items.Remove(item);
+
+        public int Count => _items.Count;
+
+        public IReadOnlyList<T> GetReadOnly() => _items.AsReadOnly();
 
         public IIterator<T> CreateIterator() => new ListIterator<T>(_items);
     }

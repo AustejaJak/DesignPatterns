@@ -2,7 +2,7 @@
   "profiles": {
     "BloonsGame": {
       "commandName": "Project",
-      "workingDirectory": "C:\\DesignPatterns\\BloonsLibrary"
+      "workingDirectory": "C:\\Users\\aleks\\OneDrive\\Documents\\GitHub\\DesignPatterns\\BloonsLibrary"
     },
     "BloonsGame2": {
       "commandName": "Project",
