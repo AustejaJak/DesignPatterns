@@ -66,20 +66,18 @@ namespace BloonsProject
         public void RenderTowerTargetingOptions(TowerTargetingGuiOptions targetOptions, Tower tower)
         {
             foreach (var (targetOptionPositionInGui, optionType) in targetOptions.TargetingButtonLocations)
-    {
-        SplashKit.DrawRectangle(Color.AliceBlue, new Rectangle()
-        {
-            Height = targetOptions.Height,
-            Width = targetOptions.Width,
-            X = targetOptionPositionInGui.X,
-            Y = targetOptionPositionInGui.Y
-        });
-        SplashKit.DrawText(optionType.ToString(), Color.AntiqueWhite, "BloonFont", 15, 
-            targetOptionPositionInGui.X + 7, targetOptionPositionInGui.Y + 2);
-
-        if (tower.CurrentTargeting != optionType) continue;
-        HighlightTargetingOptionInGui(targetOptions, targetOptionPositionInGui);
-    }
+            {
+                SplashKit.DrawRectangle(Color.AliceBlue, new Rectangle() // Render the tower targeting options
+                {
+                    Height = targetOptions.Height,
+                    Width = targetOptions.Width,
+                    X = targetOptionPositionInGui.X,
+                    Y = targetOptionPositionInGui.Y
+                }); // Render the text for each of the targeting options (first, last, strong, weak).
+                SplashKit.DrawText(optionType.ToString(), Color.AntiqueWhite, "BloonFont", 15, targetOptionPositionInGui.X + 7, targetOptionPositionInGui.Y + 2);
+                if (tower.Targeting.TargetType != optionType) continue;
+                HighlightTargetingOptionInGui(targetOptions, targetOptionPositionInGui);
+            }
         }
     }
 }

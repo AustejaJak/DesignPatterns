@@ -33,7 +33,7 @@ namespace BloonLibrary
         public string Username { get; set; }
         
         private EntityDrawer _entityDrawer;
-        private ConcurrentDictionary<string, Bloon> _bloons; // Use a ConcurrentDictionary
+        private ConcurrentDictionary<string, Bloon> _bloons;
         private readonly object _lockObject = new object();
         public event Action<string> MapValidationFailed;
         private readonly StandardBloonTowerFactory _standardTowerBloonFactory = new StandardBloonTowerFactory();
@@ -41,7 +41,7 @@ namespace BloonLibrary
 
         public GameClient()
         {
-            _bloons = new ConcurrentDictionary<string, Bloon>(); // Initialize the dictionary
+            _bloons = new ConcurrentDictionary<string, Bloon>();
         }
 
         public async Task ConnectToServer(string url)

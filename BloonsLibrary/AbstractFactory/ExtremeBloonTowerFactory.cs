@@ -8,8 +8,7 @@ namespace BloonLibrary
         public Bloon CreateBloonOfType(string bloon)
         {
             if (bloon == BlackBloon.Name) return new BlackBloon();
-
-            if (bloon == OrangeBloon.Name) return new OrangeBloon();
+            
 
             if (bloon == YellowBloon.Name) return new YellowBloon();
 

@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using BloonLibrary.VisitorImplementation;
 
 namespace BloonLibrary.ChainOfResponsibility
 {
@@ -13,14 +14,12 @@ namespace BloonLibrary.ChainOfResponsibility
         {
             if (option == "Upgrade Range")
             {
-                tower.Range += 50;
+                var visitor = new RangeUpgradeVisitor();
+                tower.Accept(visitor);
                 towerOptions.SelectedInGui = "none";
                 gameState.Player.Money -= tower.ShotType.RangeUpgradeCost;
-                tower.SellPrice += 0.7 * tower.ShotType.RangeUpgradeCost;
-                tower.ShotType.RangeUpgradeCount++;
-
-                _ = gameClient.UpgradeTowerRangeAsync(
-                    new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
+                Console.WriteLine("Upgrading range");
+                _ = gameClient.UpgradeTowerRangeAsync(new UpgradeOrSellTowerRequest(NetworkPoint2D.Serialize(tower.Position), option, tower.ShotType.RangeUpgradeCount));
             }
             else
             {

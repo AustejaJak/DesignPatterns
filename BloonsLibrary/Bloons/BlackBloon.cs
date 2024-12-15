@@ -4,11 +4,11 @@ namespace BloonsProject
 {
     public class BlackBloon : Bloon
     {
-        public BlackBloon() : base(2, "Black Balloon", Color.Black, 4, 4)
+        public BlackBloon() : base(1, "Black Balloon", Color.Black, 4, 4)
         {
         }
 
-        public BlackBloon(BlackBloon bloon) : base(2, "Black Balloon", Color.Black, 4, 4)
+        public BlackBloon(BlackBloon bloon) : base(1, "Black Balloon", Color.Black, 4, 4)
         {
             this.Position = bloon.Position;
             this.Checkpoint = bloon.Checkpoint;

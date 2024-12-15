@@ -6,7 +6,7 @@ using BloonLibrary.VisitorImplementation;
 
 namespace BloonsProject
 {
-    public abstract class Tower
+    public abstract class Tower: IUpgradeable
     {
         public static int Length = 35; // Each tower has an identical length of 35
         private readonly string _description; // Each tower has a description and name that is never changed.
@@ -32,9 +32,8 @@ namespace BloonsProject
             DebugModeSelected = false;
             ShotType = shotType;
             Range = range;
-            _targetingVisitor = new FirstTargetingVisitor(); // Default targeting
-            // var targetCreator = new ConcreteTargetFirst();
-            // Targeting = targetCreator.CreateTarget();
+            var targetCreator = new ConcreteTargetFirst();
+            Targeting = targetCreator.CreateTarget();
             _decorator = new BaseTowerDecorator(this);
         }
 
@@ -85,12 +84,8 @@ namespace BloonsProject
         public bool Selected { get; set; } // Whether the user has selected the tower via left click.
         public double SellPrice { get; set; } // The price as which the player can sell the tower for.
         public IShotType ShotType { get; } // The projectile this tower uses.
-        // public ITarget Targeting { get; set; } // The targeting this tower is set to.
-        private ITargetingVisitor _targetingVisitor;
+        public ITarget Targeting { get; set; } // The targeting this tower is set to.
         //public Bitmap TowerBitmap { get; } // The bitmap corresponding to the tower.
-         private TowerTargeting _currentTargeting = TowerTargeting.First;
-        public TowerTargeting CurrentTargeting => _currentTargeting;
-
 
         public void ResetTimer() // Resets the tower's cooldown.
         {
@@ -107,24 +102,9 @@ namespace BloonsProject
             ShotType.TimeSinceLastShot++;
         }
         
-        // Add method to get targeted bloon using visitor
-        public Bloon GetTargetBloon(List<Bloon> bloonsInRange)
+        public void Accept(IUpgradeOptionVisitor visitor)
         {
-            return _targetingVisitor.VisitBloons(bloonsInRange);
-        }
-
-        // Add method to set targeting strategy
-        public void SetTargeting(TowerTargeting targeting)
-        {
-            _currentTargeting = targeting;
-            _targetingVisitor = targeting switch
-            {
-                TowerTargeting.First => new FirstTargetingVisitor(),
-                TowerTargeting.Last => new LastTargetingVisitor(),
-                TowerTargeting.Strong => new StrongTargetingVisitor(),
-                TowerTargeting.Weak => new WeakTargetingVisitor(),
-                _ => _targetingVisitor
-            };
+            visitor.Visit(this);
         }
     }
 }

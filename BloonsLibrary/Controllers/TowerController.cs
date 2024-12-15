@@ -81,36 +81,66 @@ namespace BloonsProject
             return _gameState.Player.Money >= tower.Cost;
         }
 
-        public void SetTowerTargeting(Tower tower, TowerTargetingGuiOptions targetOptions)
+        public void SetTowerTargeting(Tower tower, TowerTargetingGuiOptions targetOptions) // Changes the targeting of the tower depending on the target option inputted (enum)
         {
-            tower.SetTargeting(targetOptions.SelectedInGui);
+            tower.Targeting = targetOptions.SelectedInGui switch
+            {
+                TowerTargeting.First => new TargetFirst(),
+                TowerTargeting.Last => new TargetLast(),
+                TowerTargeting.Strong => new TargetStrong(),
+                TowerTargeting.Weak => new TargetWeak(),
+                _ => tower.Targeting
+            };
         }
 
         public void ShootBloons(Map map)
         {
-            DamageBloons();
-            _gameState.ProjectileManager.IncrementAllProjectiles();
-    
+            DamageBloons(); // Damages all bloons in radius of any projectile.
+            _gameState.ProjectileManager.IncrementAllProjectiles(); // Increments all projectiles
+            //if (_gameState.Towers.Count <= 0) return; // If there're no towers, return
+
+            // Use a list to hold the towers that can shoot
+            //var towersReadyToShoot = _gameState.Towers.Where(t => t.ShotTimer()).ToList();
             var TowerIterator = _gameState.Towers.CreateIterator();
             while (TowerIterator.MoveNext()) 
             { 
                 if (TowerIterator.Current.ShotTimer())
                 {
                     var bloonsInTowerRadius = _gameState.Bloons
-                        .Where(bloon => SplashKit.PointInCircle(bloon.Value.Position, 
-                            SplashKit.CircleAt(TowerIterator.Current.Position, TowerIterator.Current.Range)))
-                        .Select(bloon => bloon.Value)
-                        .ToList();
+                    .Where(bloon => SplashKit.PointInCircle(bloon.Value.Position, SplashKit.CircleAt(TowerIterator.Current.Position, TowerIterator.Current.Range)))
+                    .Select(bloon => bloon.Value) // Select the Bloon object from the KeyValuePair
+                    .ToList();
 
+                    // If there's no bloons in radius of the tower, continue to the next.
                     if (bloonsInTowerRadius.Count == 0) continue;
 
-                    // Use the new visitor-based targeting
-                    var bloonToTarget = TowerIterator.Current.GetTargetBloon(bloonsInTowerRadius);
-                    var projectileEndPoint = _gameState.ProjectileManager.GetProjectileEndPoint(bloonToTarget, TowerIterator.Current);
-                    _gameState.ProjectileManager.AddProjectile(TowerIterator.Current.Position, projectileEndPoint, TowerIterator.Current.ShotType);
-                    TowerIterator.Current.ResetTimer();
+                    // Get the bloon to target based on tower's targeting logic
+                    var bloonToTarget = TowerIterator.Current.Targeting.BloonToTarget(bloonsInTowerRadius);
+                    var projectileEndPoint = _gameState.ProjectileManager.GetProjectileEndPoint(bloonToTarget, TowerIterator.Current); // Calculate the projectile endpoint
+                    _gameState.ProjectileManager.AddProjectile(TowerIterator.Current.Position, projectileEndPoint, TowerIterator.Current.ShotType); // Add the projectile to the list of projectiles
+                    TowerIterator.Current.ResetTimer(); // Reset tower cooldown
                 }
             }
+            //foreach (var tower in towersReadyToShoot)
+            //{
+            //    // If the tower is on cooldown, continue to the next.
+            //    if (!tower.ShotTimer()) continue;
+
+            //    // Get all bloons in the tower's range
+            //    var bloonsInTowerRadius = _gameState.Bloons
+            //        .Where(bloon => SplashKit.PointInCircle(bloon.Value.Position, SplashKit.CircleAt(tower.Position, tower.Range)))
+            //        .Select(bloon => bloon.Value) // Select the Bloon object from the KeyValuePair
+            //        .ToList();
+
+            //    // If there's no bloons in radius of the tower, continue to the next.
+            //    if (bloonsInTowerRadius.Count == 0) continue;
+
+            //    // Get the bloon to target based on tower's targeting logic
+            //    var bloonToTarget = tower.Targeting.BloonToTarget(bloonsInTowerRadius);
+            //    var projectileEndPoint = _gameState.ProjectileManager.GetProjectileEndPoint(bloonToTarget, tower); // Calculate the projectile endpoint
+            //    _gameState.ProjectileManager.AddProjectile(tower.Position, projectileEndPoint, tower.ShotType); // Add the projectile to the list of projectiles
+            //    tower.ResetTimer(); // Reset tower cooldown
+            //}
         }
 
 
