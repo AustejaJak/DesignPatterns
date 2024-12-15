@@ -52,11 +52,18 @@ namespace BloonsProject
 
         private async Task AddCompositeBloon(CompositeBloon compositeBloon)
         {
-            foreach (var childBloon in compositeBloon.Children)
+            var iterator = compositeBloon.Children.CreateIterator();
+            while (iterator.MoveNext())
             {
-                _gameState.Bloons.TryAdd(childBloon.Name, childBloon);
-                await AddSingleBloon(childBloon);
+                _gameState.Bloons.TryAdd(iterator.Current.Name, iterator.Current);
+                await AddSingleBloon(iterator.Current);
             }
+
+            //    foreach (var childBloon in compositeBloon.Children)
+            //{
+            //    _gameState.Bloons.TryAdd(childBloon.Name, childBloon);
+            //    await AddSingleBloon(childBloon);
+            //}
         }
 
         public int BloonsOnScreen(Window window) // Returns the number of bloons on the screen.
