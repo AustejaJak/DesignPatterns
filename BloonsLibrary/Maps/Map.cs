@@ -1,4 +1,5 @@
-﻿using BloonLibrary.Extensions;
+﻿using System;
+using BloonLibrary.Extensions;
 using SplashKitSDK;
 using System.Collections.Generic;
 using System.Text.Json.Serialization;
@@ -33,10 +34,19 @@ namespace BloonsProject
             var redBloonAmount = 2 * bloonAmount * (round + 1);
             var blueBloonAmount = bloonAmount * round * round;
             var greenBloonAmount = bloonAmount * (round - 1) * (round - 1) * (round - 1);
+            var orangeBloonAmount = bloonAmount * round * round;
+            var yellowBloonAmount = bloonAmount * round * round;
+            var blackBloonAmount = bloonAmount * round * round;
+            
+            Console.WriteLine($"Round: {round}");
+            Console.WriteLine($"Red: {redBloonAmount}, Blue: {blueBloonAmount}, Green: {greenBloonAmount}, Orange: {orangeBloonAmount}");
 
             currentRound[Color.Red] = redBloonAmount;
             currentRound[Color.Blue] = blueBloonAmount;
             currentRound[Color.Green] = greenBloonAmount;
+            currentRound[Color.Orange] = orangeBloonAmount;
+            currentRound[Color.Yellow] = yellowBloonAmount;
+            currentRound[Color.Black] = blackBloonAmount;
             
             return currentRound;
         }

@@ -50,7 +50,10 @@ namespace BloonsProject
             {
                 [Color.Red] = 0,
                 [Color.Blue] = 0,
-                [Color.Green] = 0
+                [Color.Green] = 0,
+                [Color.Orange] = 0,
+                [Color.Yellow] = 0,
+                [Color.Black] = 0
             };
         
         }

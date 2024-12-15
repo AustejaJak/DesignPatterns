@@ -5,6 +5,7 @@ using System.Diagnostics;
 
 namespace BloonsProject
 {
+    // One Bloon logic
     public abstract class Bloon : IBloon
     {
         private Point2D _position;
@@ -23,9 +24,7 @@ namespace BloonsProject
             Checkpoint = 0;
             DistanceTravelled = 0;
         }
-
-
-
+        
         public int Checkpoint { get; set; } // Last checkpoint passed on the map.
         public Color Color { get; } // Bloons have unique colours.
         public double DistanceTravelled { get; set; } // How far along the map the bloon has travelled
@@ -38,10 +37,10 @@ namespace BloonsProject
         }
 
         public int Radius { get; } //Radius of bloon on map.
-        public float VelocityX { get; } // Magnitute at which bloon's x coordinate changes with each movement.
-        public float VelocityY { get; } // Magnitute at which bloon's y coordinate changes with each movement.
+        public float VelocityX { get; set; } // Magnitute at which bloon's x coordinate changes with each movement.
+        public float VelocityY { get; set; } // Magnitute at which bloon's y coordinate changes with each movement.
 
-        public void MoveBloonInDirection(Direction direction) // Provides a direction (enum) and moves the bloon in that direction
+        public virtual void MoveBloonInDirection(Direction direction) // Provides a direction (enum) and moves the bloon in that direction
         {
             switch (direction)
             {
@@ -63,7 +62,7 @@ namespace BloonsProject
             }
         }
 
-        public void TakeDamage(int damage) // Decreases health of the bloon by the damage of the projectile it is shot by.
+        public virtual void TakeDamage(int damage) // Decreases health of the bloon by the damage of the projectile it is shot by.
         {
             if (damage > Health) Health = damage;
             Health -= damage;

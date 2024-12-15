@@ -170,11 +170,6 @@ public class GameHub : Hub
         var bloonInstance = _bloonTowerFactory.CreateBloonOfType(request.Name);
         
         var gameSession = GameSession.GetInstance();
-
-        if (gameSession.GameState.Player.Round > 5)
-        {
-            bloonInstance = _extremeBloonTowerFactory.CreateBloonOfType(request.Name);
-        }
         
         gameSession.GameState.AddBloon(bloonInstance);
         

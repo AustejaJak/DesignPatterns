@@ -12,6 +12,12 @@ namespace BloonLibrary
             if (bloon == GreenBloon.Name) return new GreenBloon();
 
             if (bloon == RedBloon.Name) return new RedBloon();
+            
+            if (bloon == OrangeBloon.Name) return new OrangeBloon();
+            
+            if (bloon == BlackBloon.Name) return new BlackBloon();
+
+            if (bloon == YellowBloon.Name) return new YellowBloon();
 
             throw new Exception("You are trying to create a bloon type that does not exist.");
         }
