@@ -16,7 +16,7 @@ public class GameDbContext : DbContext
     {
         if (!optionsBuilder.IsConfigured)
         {
-            var connectionString = "Server=localhost;Database=bloonsdb;User=root;Password=;";
+            var connectionString = "Server=192.168.0.104;Database=bloonsdb;User=austeja;Password=pass;";
 
             var serverVersion = new MySqlServerVersion(new Version(10, 4, 32));
 
