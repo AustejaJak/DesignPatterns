@@ -21,7 +21,9 @@ namespace BloonsServer
             Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder
+                        .UseUrls("http://192.168.0.104:5000")
+                        .UseStartup<Startup>();
                 });
     }
 }

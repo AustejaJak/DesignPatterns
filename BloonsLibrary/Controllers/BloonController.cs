@@ -239,8 +239,7 @@ namespace BloonsProject
 
             ticksSinceLastSentBloon = 0;
         }
-
-
+        
         public async void ProcessBloons(Player player, Map map)
         {
             ticksSinceLastSentBloon++;

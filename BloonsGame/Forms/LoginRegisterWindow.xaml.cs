@@ -1,6 +1,7 @@
 using BloonLibrary;
 using System;
 using System.Windows;
+using BloonsGame.Mediator;
 
 namespace BloonsGame
 {
@@ -8,11 +9,13 @@ namespace BloonsGame
     {
         private UserController _userController;
         private GameClient _gameclient;
+        private IWindowNavigationMediator _navigationMediator;
 
         public LoginRegisterWindow()
         {
             InitializeComponent();
             _gameclient = new GameClient();
+            _navigationMediator = new WindowNavigationMediator();
 
             this.Loaded += LoginRegisterWindow_Loaded;
         }
@@ -21,7 +24,7 @@ namespace BloonsGame
         {
             try
             {
-                await _gameclient.ConnectToServer("http://localhost:5000/gamehub");
+                await _gameclient.ConnectToServer("http://192.168.0.104:5000/gamehub");
 
                 MessageBox.Show("Connected to the server!", "Connection Successful", MessageBoxButton.OK, MessageBoxImage.Information);
             }
@@ -59,7 +62,8 @@ namespace BloonsGame
                         _userController.AddPassword(password);
                         await _gameclient.SendUsernameAsync(existingUser.Username);
                         _gameclient.JoinGameAsync(existingUser.Username);
-                        OpenMainWindow(_gameclient);
+                        _navigationMediator.NavigateToMainWindow(_gameclient, _userController);
+                        this.Close();
                     }
                     else
                     {
@@ -79,16 +83,10 @@ namespace BloonsGame
                     MessageBox.Show("User registered successfully!", "Success", MessageBoxButton.OK, MessageBoxImage.Information);
                     await _gameclient.SendUsernameAsync(newUser.Username);
                     _gameclient.JoinGameAsync(newUser.Username);
-                    OpenMainWindow(_gameclient);
+                    _navigationMediator.NavigateToMainWindow(_gameclient, _userController);
+                    this.Close();
                 }
             }
-        }
-        private void OpenMainWindow(GameClient gameclient)
-        {
-            var mainWindow = new MainWindow(gameclient, _userController);
-            mainWindow.Show();
-
-            this.Close();
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿using BloonsProject;
+﻿﻿using BloonsProject;
 using System.Windows;
 using System;
 using BloonLibrary;
@@ -10,7 +10,7 @@ using System.Windows.Input;
 using System.Linq;
 
 using BloonsGame.Forms;
-
+using BloonsGame.Mediator;
 using BloonsGame.States;
 
 
@@ -34,6 +34,8 @@ namespace BloonsGame
 
         private UserController _userController;
 
+        private IWindowNavigationMediator _navigationMediator;
+
         
 
         // The current UI state of the MainWindow
@@ -44,6 +46,7 @@ namespace BloonsGame
             InitializeComponent();
             _gameClient = gameClient;
             _userController = userController;
+            _navigationMediator = new WindowNavigationMediator();
             MapComboBox.Items.Add("The Original");
             MapComboBox.Items.Add("Farmers Paradise");
             MapComboBox.Items.Add("Ocean Road");
@@ -187,11 +190,12 @@ namespace BloonsGame
         {
             var map = MapManager.GetMapByName(MapComboBox.SelectedItem.ToString());
             _programController = new SplashKitController(map, _gameClient);
-            OpenPauseScreen();
-            _pauseWindow.Hide();
+            _navigationMediator.NavigateToPauseWindow(_programController);
+            //OpenPauseScreen();
+            //_pauseWindow.Hide();
             Close();
-            _programController.PauseEventHandler += OpenPauseScreen;
-            _programController.LoseEventHandler += OpenLossScreen;
+            _programController.PauseEventHandler += () => _navigationMediator.NavigateToPauseWindow(_programController);;
+            _programController.LoseEventHandler += () => _navigationMediator.NavigateToLoseWindow(_gameClient);
             _programController.Start();
         }
 
@@ -202,19 +206,7 @@ namespace BloonsGame
                 PlayerListView.ItemsSource = players;
             });
         }
-
-        public void OpenLossScreen()
-        {
-            var loseWindow = new LoseWindow(_gameClient);
-            loseWindow.Show();
-        }
-
-        public void OpenPauseScreen()
-        {
-            _pauseWindow = new PauseWindow(_programController);
-            _pauseWindow.Show();
-        }
-
+        
         private async void ReadyButton_Click(object sender, RoutedEventArgs e)
         {
             if (MapComboBox.SelectedItem == null)
@@ -291,10 +283,7 @@ namespace BloonsGame
 
         private void ChangePasswordButton_Click(object sender, RoutedEventArgs e)
         {
-            var ChangePasswordWindow = new ChangePasswordWindow(_gameClient, _userController, this);
-            ChangePasswordWindow.Show();
-
-            this.Hide();
+            _navigationMediator.NavigateToChangePasswordWindow(_gameClient, _userController, this);
         }
 
         private void OnAllPlayersReady()
